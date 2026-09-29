@@ -11,16 +11,28 @@ namespace ChompChompPanic
         public float ReferenceRadius = 0.5f;
 
         Blob blob;
+        SpriteAnimator animator;
 
         void Awake()
         {
             blob = GetComponent<Blob>();
         }
 
+        void Start()
+        {
+            // Optional: added after this component when the player has character sprites.
+            animator = GetComponent<SpriteAnimator>();
+        }
+
         void Update()
         {
+            // Ignore input while the game is paused (e.g. on the game-over screen).
+            Vector2 move = Time.timeScale > 0f ? ReadMove() : Vector2.zero;
             float speed = SpeedForRadius(blob.Radius, BaseSpeed, ReferenceRadius);
-            transform.position += (Vector3)(ReadMove() * (speed * Time.deltaTime));
+            transform.position += (Vector3)(move * (speed * Time.deltaTime));
+
+            if (animator != null)
+                animator.SetMoving(move);
         }
 
         /// <summary>

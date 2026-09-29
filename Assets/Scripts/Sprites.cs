@@ -73,7 +73,9 @@ namespace ChompChompPanic
                     for (int x = 0; x < size; x++)
                     {
                         bool line = x < lineWidth || y < lineWidth;
-                        pixels[y * size + x] = line ? new Color32(255, 255, 255, 7) : new Color32(0, 0, 0, 0);
+                        // Opaque dark line rather than faint white: low-alpha white blends far too
+                        // brightly in linear color space.
+                        pixels[y * size + x] = line ? new Color32(27, 30, 41, 255) : new Color32(0, 0, 0, 0);
                     }
                 }
                 tex.SetPixels32(pixels);

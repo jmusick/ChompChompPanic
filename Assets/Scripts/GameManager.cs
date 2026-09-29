@@ -20,7 +20,9 @@ namespace ChompChompPanic
         [Header("Player")]
         [SerializeField] float playerStartRadius = 0.5f;
         [SerializeField] float playerBaseSpeed = 5f;
-        [SerializeField] Color playerColor = new(0.35f, 0.75f, 1f);
+        [SerializeField, Tooltip("Player tint when no character sprites are assigned")]
+        Color playerColor = new(0.35f, 0.75f, 1f);
+        [SerializeField] CharacterSprites playerSprites;
 
         [Header("Eating")]
         [SerializeField, Tooltip("How many times bigger (by radius) a blob must be to eat another")]
@@ -57,6 +59,7 @@ namespace ChompChompPanic
         readonly List<EnemyBlob> blobs = new();
         Camera cam;
         Blob player;
+        SpriteAnimator playerAnimator;
         Transform blobRoot;
         SpriteRenderer grid;
         float elapsed;
@@ -138,6 +141,8 @@ namespace ChompChompPanic
                 {
                     player.Absorb(blobRadius, growthEfficiency);
                     eatenCount++;
+                    if (playerAnimator != null)
+                        playerAnimator.PlayChomp();
                     RemoveBlob(i);
                     continue;
                 }
@@ -200,7 +205,15 @@ namespace ChompChompPanic
             var go = new GameObject("Player");
             player = go.AddComponent<Blob>();
             player.Radius = playerStartRadius;
-            player.Sprite.color = playerColor;
+            if (playerSprites != null && playerSprites.IsValid)
+            {
+                playerAnimator = go.AddComponent<SpriteAnimator>();
+                playerAnimator.Init(playerSprites);
+            }
+            else
+            {
+                player.Sprite.color = playerColor;
+            }
 
             var controller = go.AddComponent<PlayerController>();
             controller.BaseSpeed = playerBaseSpeed;
@@ -238,7 +251,12 @@ namespace ChompChompPanic
             state = result;
             Time.timeScale = 0f;
             if (result == State.Lost)
-                player.gameObject.SetActive(false);
+            {
+                if (playerAnimator != null)
+                    playerAnimator.PlayDeath();
+                else
+                    player.gameObject.SetActive(false);
+            }
         }
 
         static bool RestartPressed()
