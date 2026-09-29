@@ -10,14 +10,19 @@ namespace ChompChompPanic
 
         public SpriteRenderer Sprite { get; private set; }
 
+        /// <summary>
+        /// World-space diameter of the sprite's body at scale 1. The circle sprite is 1 unit across;
+        /// character sprites may differ. Set before <see cref="Radius"/>.
+        /// </summary>
+        public float VisualDiameter { get; set; } = 1f;
+
         public float Radius
         {
             get => radius;
             set
             {
                 radius = Mathf.Max(0.05f, value);
-                // The circle sprite is 1 unit across, so scale = diameter.
-                transform.localScale = Vector3.one * (radius * 2f);
+                transform.localScale = Vector3.one * (radius * 2f / VisualDiameter);
                 // Bigger blobs draw on top of smaller ones.
                 Sprite.sortingOrder = Mathf.Min(Mathf.RoundToInt(radius * 100f), short.MaxValue);
             }

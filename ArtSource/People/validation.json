@@ -1,0 +1,676 @@
+{
+  "status": "PASS",
+  "game_folder": "C:\\Users\\JD\\source\\ChompChompPanic\\Assets\\Art\\People",
+  "source_folder": "C:\\Users\\JD\\source\\ChompChompPanic\\ArtSource\\People",
+  "frame_size": [
+    32,
+    32
+  ],
+  "foot_baseline_zero_based": 26,
+  "outline": "#10152D",
+  "palette": [
+    "#10152D",
+    "#34324A",
+    "#402B34",
+    "#704337",
+    "#A76348",
+    "#CB8A60",
+    "#EDB58C",
+    "#FFD8AF",
+    "#FFF0DA",
+    "#D8C4A7",
+    "#B95D32",
+    "#EF8544",
+    "#FFB666",
+    "#593C78",
+    "#8857A6",
+    "#BD86D1",
+    "#AE466E",
+    "#E9719B",
+    "#FFA9BE",
+    "#71677C",
+    "#F1FCFF",
+    "#563B34",
+    "#8D5C47"
+  ],
+  "files": {
+    "person_office_run.png": {
+      "frames": 6,
+      "dimensions": [
+        192,
+        32
+      ],
+      "opaque_colors": 21,
+      "unique_frames": 6,
+      "frame_checks": [
+        {
+          "bounds": [
+            8,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.57,
+            15.09
+          ]
+        },
+        {
+          "bounds": [
+            8,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.59,
+            14.74
+          ]
+        },
+        {
+          "bounds": [
+            8,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.63,
+            14.89
+          ]
+        },
+        {
+          "bounds": [
+            8,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.59,
+            15.13
+          ]
+        },
+        {
+          "bounds": [
+            8,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.83,
+            14.7
+          ]
+        },
+        {
+          "bounds": [
+            8,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.55,
+            14.9
+          ]
+        }
+      ]
+    },
+    "person_office_idle.png": {
+      "frames": 4,
+      "dimensions": [
+        128,
+        32
+      ],
+      "opaque_colors": 20,
+      "unique_frames": 4,
+      "frame_checks": [
+        {
+          "bounds": [
+            7,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.11,
+            15.16
+          ]
+        },
+        {
+          "bounds": [
+            6,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            14.29,
+            15.07
+          ]
+        },
+        {
+          "bounds": [
+            6,
+            5,
+            26,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.62,
+            14.8
+          ]
+        },
+        {
+          "bounds": [
+            6,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            14.35,
+            15.15
+          ]
+        }
+      ]
+    },
+    "person_jogger_run.png": {
+      "frames": 6,
+      "dimensions": [
+        192,
+        32
+      ],
+      "opaque_colors": 16,
+      "unique_frames": 6,
+      "frame_checks": [
+        {
+          "bounds": [
+            7,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.19,
+            14.9
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.17,
+            14.26
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.17,
+            14.81
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.1,
+            14.72
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.09,
+            14.04
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.15,
+            14.77
+          ]
+        }
+      ]
+    },
+    "person_jogger_idle.png": {
+      "frames": 4,
+      "dimensions": [
+        128,
+        32
+      ],
+      "opaque_colors": 17,
+      "unique_frames": 4,
+      "frame_checks": [
+        {
+          "bounds": [
+            7,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.76,
+            14.75
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            24,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.2,
+            14.84
+          ]
+        },
+        {
+          "bounds": [
+            6,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            14.93,
+            14.76
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.76,
+            14.89
+          ]
+        }
+      ]
+    },
+    "person_tourist_run.png": {
+      "frames": 6,
+      "dimensions": [
+        192,
+        32
+      ],
+      "opaque_colors": 21,
+      "unique_frames": 6,
+      "frame_checks": [
+        {
+          "bounds": [
+            6,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.69,
+            15.03
+          ]
+        },
+        {
+          "bounds": [
+            6,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.59,
+            14.81
+          ]
+        },
+        {
+          "bounds": [
+            6,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.17,
+            14.88
+          ]
+        },
+        {
+          "bounds": [
+            6,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.38,
+            14.94
+          ]
+        },
+        {
+          "bounds": [
+            6,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.52,
+            14.48
+          ]
+        },
+        {
+          "bounds": [
+            6,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.66,
+            14.95
+          ]
+        }
+      ]
+    },
+    "person_tourist_idle.png": {
+      "frames": 4,
+      "dimensions": [
+        128,
+        32
+      ],
+      "opaque_colors": 20,
+      "unique_frames": 4,
+      "frame_checks": [
+        {
+          "bounds": [
+            6,
+            5,
+            26,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            16.07,
+            15.05
+          ]
+        },
+        {
+          "bounds": [
+            5,
+            5,
+            26,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.3,
+            14.96
+          ]
+        },
+        {
+          "bounds": [
+            5,
+            5,
+            26,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.04,
+            15.02
+          ]
+        },
+        {
+          "bounds": [
+            6,
+            5,
+            26,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.76,
+            15.05
+          ]
+        }
+      ]
+    },
+    "person_kid_run.png": {
+      "frames": 6,
+      "dimensions": [
+        192,
+        32
+      ],
+      "opaque_colors": 21,
+      "unique_frames": 6,
+      "frame_checks": [
+        {
+          "bounds": [
+            7,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.61,
+            15.07
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.36,
+            14.64
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.28,
+            14.98
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.37,
+            15.19
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.44,
+            14.67
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.38,
+            15.16
+          ]
+        }
+      ]
+    },
+    "person_kid_idle.png": {
+      "frames": 4,
+      "dimensions": [
+        128,
+        32
+      ],
+      "opaque_colors": 19,
+      "unique_frames": 4,
+      "frame_checks": [
+        {
+          "bounds": [
+            7,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.39,
+            15.07
+          ]
+        },
+        {
+          "bounds": [
+            7,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            15.43,
+            15.0
+          ]
+        },
+        {
+          "bounds": [
+            6,
+            5,
+            25,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            14.91,
+            14.93
+          ]
+        },
+        {
+          "bounds": [
+            6,
+            5,
+            26,
+            27
+          ],
+          "baseline": 26,
+          "alpha_centroid": [
+            14.86,
+            14.91
+          ]
+        }
+      ]
+    }
+  },
+  "preview_rows": [
+    "person_office_run.png",
+    "person_office_idle.png",
+    "person_jogger_run.png",
+    "person_jogger_idle.png",
+    "person_tourist_run.png",
+    "person_tourist_idle.png",
+    "person_kid_run.png",
+    "person_kid_idle.png",
+    "64x64 kaiju idle frame + office, jogger, tourist, kid at identical 8x scale"
+  ],
+  "total_opaque_colors": 22,
+  "total_colors_including_transparency": 23,
+  "preview_dimensions": [
+    1536,
+    2560
+  ],
+  "checks": [
+    "exact strip dimensions",
+    "binary alpha",
+    "shared palette <=24 including transparency",
+    "three pixel margins",
+    "18-22px character height",
+    "centered bounds",
+    "foot baseline row 26",
+    "dark one-pixel perimeter",
+    "all frames unique",
+    "nearest-neighbor 8x preview",
+    "preview matches game strips"
+  ]
+}

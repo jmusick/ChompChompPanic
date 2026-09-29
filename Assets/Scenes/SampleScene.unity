@@ -187,9 +187,89 @@ MonoBehaviour:
   finalSizeMultiplier: 8
   startBiggerChance: 0.1
   endBiggerChance: 0.6
-  smallerSizeRange: {x: 0.25, y: 0.9}
+  smallerSizeRange: {x: 0.5, y: 0.9}
   biggerSizeRange: {x: 1.15, y: 2}
   blobSpeedFactor: 0.4
+  peopleVariants:
+  - Idle:
+    - {fileID: -5715363953399831357, guid: cd86a86d407a69343a61d0875ff38e42, type: 3}
+    - {fileID: -1530380160152824476, guid: cd86a86d407a69343a61d0875ff38e42, type: 3}
+    - {fileID: 5408370588216039635, guid: cd86a86d407a69343a61d0875ff38e42, type: 3}
+    - {fileID: 6578384231760053925, guid: cd86a86d407a69343a61d0875ff38e42, type: 3}
+    Walk:
+    - {fileID: -9141811248731631995, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
+    - {fileID: -8779332224796537038, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
+    - {fileID: -607235850347327610, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
+    - {fileID: 2811648202035205129, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
+    - {fileID: -7747724282984194636, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
+    - {fileID: 1080884204229933501, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
+    Chomp: []
+    Death: []
+    IdleFps: 8
+    WalkFps: 12
+    ChompFps: 14
+    DeathFps: 10
+  - Idle:
+    - {fileID: -2004988968616296339, guid: 297bbad9cc17866479fef9a859d5c5b7, type: 3}
+    - {fileID: -5493907558911769274, guid: 297bbad9cc17866479fef9a859d5c5b7, type: 3}
+    - {fileID: -6606471800663393016, guid: 297bbad9cc17866479fef9a859d5c5b7, type: 3}
+    - {fileID: -962903440033824868, guid: 297bbad9cc17866479fef9a859d5c5b7, type: 3}
+    Walk:
+    - {fileID: -377595770601197623, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
+    - {fileID: 4903309100300502176, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
+    - {fileID: 5604428554921300891, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
+    - {fileID: -5493889587243765646, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
+    - {fileID: 8719739892888274410, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
+    - {fileID: -4256188461045930521, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
+    Chomp: []
+    Death: []
+    IdleFps: 8
+    WalkFps: 12
+    ChompFps: 14
+    DeathFps: 10
+  - Idle:
+    - {fileID: 917662342702018585, guid: 68f99b5c9a0e73d42aa280a9f75dd2bd, type: 3}
+    - {fileID: 1217028058411411604, guid: 68f99b5c9a0e73d42aa280a9f75dd2bd, type: 3}
+    - {fileID: 5668128266949033223, guid: 68f99b5c9a0e73d42aa280a9f75dd2bd, type: 3}
+    - {fileID: -3209278414974128819, guid: 68f99b5c9a0e73d42aa280a9f75dd2bd, type: 3}
+    Walk:
+    - {fileID: 6889590194366436740, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
+    - {fileID: -1766601018676568427, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
+    - {fileID: -1004390149783250532, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
+    - {fileID: 404792367473926834, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
+    - {fileID: 7269641563109089188, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
+    - {fileID: 2619542239675072160, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
+    Chomp: []
+    Death: []
+    IdleFps: 8
+    WalkFps: 12
+    ChompFps: 14
+    DeathFps: 10
+  - Idle:
+    - {fileID: -4117028704961737097, guid: fa989db35fc555247bf5217bb6c8bcc3, type: 3}
+    - {fileID: -1370968501670789904, guid: fa989db35fc555247bf5217bb6c8bcc3, type: 3}
+    - {fileID: 2807066114713129578, guid: fa989db35fc555247bf5217bb6c8bcc3, type: 3}
+    - {fileID: -4296968905631246591, guid: fa989db35fc555247bf5217bb6c8bcc3, type: 3}
+    Walk:
+    - {fileID: 8439490068691004898, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
+    - {fileID: -7427714793276767515, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
+    - {fileID: -1788812334084252187, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
+    - {fileID: 5738398422986471735, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
+    - {fileID: -2126313153567294518, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
+    - {fileID: -158471340641689187, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
+    Chomp: []
+    Death: []
+    IdleFps: 8
+    WalkFps: 12
+    ChompFps: 14
+    DeathFps: 10
+  peopleCount: 40
+  personRadius: 0.17
+  personVisualDiameter: 0.34
+  personWanderSpeed: 1.2
+  personFleeSpeed: 3.2
+  personFleeDistance: 2.5
+  personIdleChance: 0.3
   cameraBaseSize: 6
   cameraZoomExponent: 0.6
   backgroundColor: {r: 0.07, g: 0.08, b: 0.11, a: 1}

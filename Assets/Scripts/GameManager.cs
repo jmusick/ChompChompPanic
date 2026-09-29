@@ -38,12 +38,27 @@ namespace ChompChompPanic
         float startBiggerChance = 0.1f;
         [SerializeField, Range(0f, 1f), Tooltip("Chance a new blob is bigger than the baseline at the end")]
         float endBiggerChance = 0.6f;
-        [SerializeField, Tooltip("Radius range for smaller blobs, as a multiple of the baseline")]
-        Vector2 smallerSizeRange = new(0.25f, 0.9f);
+        [SerializeField, Tooltip("Radius range for smaller blobs, as a multiple of the baseline (people fill the tier below this)")]
+        Vector2 smallerSizeRange = new(0.5f, 0.9f);
         [SerializeField, Tooltip("Radius range for bigger blobs, as a multiple of the baseline")]
         Vector2 biggerSizeRange = new(1.15f, 2f);
         [SerializeField, Tooltip("Blob wander speed relative to a player of the same size")]
         float blobSpeedFactor = 0.4f;
+
+        [Header("People (smallest prey, fixed size)")]
+        [SerializeField, Tooltip("One entry per person variant; a random one is picked for each spawn")]
+        CharacterSprites[] peopleVariants;
+        [SerializeField] int peopleCount = 40;
+        [SerializeField, Tooltip("Collision radius of a person. People don't grow over the session.")]
+        float personRadius = 0.17f;
+        [SerializeField, Tooltip("World size of a person's body at scale 1 (about 22 px at 64 px/unit). Equal to 2 x radius keeps them at native pixel scale.")]
+        float personVisualDiameter = 0.34f;
+        [SerializeField] float personWanderSpeed = 1.2f;
+        [SerializeField] float personFleeSpeed = 3.2f;
+        [SerializeField, Tooltip("People start running away when the kaiju's edge is this close")]
+        float personFleeDistance = 2.5f;
+        [SerializeField, Range(0f, 1f), Tooltip("Chance a wandering person stands still (panicking on the spot) instead of walking")]
+        float personIdleChance = 0.3f;
 
         [Header("Camera")]
         [SerializeField] float cameraBaseSize = 6f;
@@ -62,6 +77,8 @@ namespace ChompChompPanic
         SpriteAnimator playerAnimator;
         Transform blobRoot;
         SpriteRenderer grid;
+        int circleCount;
+        int personCount;
         float elapsed;
         int eatenCount;
         State state;
@@ -87,7 +104,12 @@ namespace ChompChompPanic
             blobRoot = new GameObject("Blobs").transform;
             for (int i = 0; i < blobCount; i++)
                 SpawnBlob(initial: true);
+            if (HasPeople)
+                for (int i = 0; i < peopleCount; i++)
+                    SpawnPerson(initial: true);
         }
+
+        bool HasPeople => peopleVariants is { Length: > 0 };
 
         void Update()
         {
@@ -159,11 +181,16 @@ namespace ChompChompPanic
                     continue;
                 }
 
-                blob.Blob.Sprite.color = playerCanEat ? edibleColor : blobCanEat ? dangerColor : neutralColor;
+                // People keep their own colors; circles are tinted to show whether they're safe to eat.
+                if (!blob.IsPerson)
+                    blob.Blob.Sprite.color = playerCanEat ? edibleColor : blobCanEat ? dangerColor : neutralColor;
             }
 
-            while (blobs.Count < blobCount)
+            while (circleCount < blobCount)
                 SpawnBlob(initial: false);
+            if (HasPeople)
+                while (personCount < peopleCount)
+                    SpawnPerson(initial: false);
         }
 
         void SpawnBlob(bool initial)
@@ -175,6 +202,23 @@ namespace ChompChompPanic
             var range = bigger ? biggerSizeRange : smallerSizeRange;
             float radius = baseline * Random.Range(range.x, range.y);
 
+            var enemy = CreateEnemy("Blob", radius, 1f, initial);
+            enemy.Init(PlayerController.SpeedForRadius(radius, playerBaseSpeed, playerStartRadius) * blobSpeedFactor);
+            circleCount++;
+        }
+
+        void SpawnPerson(bool initial)
+        {
+            var enemy = CreateEnemy("Person", personRadius, personVisualDiameter, initial);
+            var animator = enemy.gameObject.AddComponent<SpriteAnimator>();
+            animator.Init(peopleVariants[Random.Range(0, peopleVariants.Length)]);
+            enemy.Init(personWanderSpeed);
+            enemy.InitPerson(player, personFleeSpeed, personFleeDistance, personIdleChance);
+            personCount++;
+        }
+
+        EnemyBlob CreateEnemy(string objectName, float radius, float visualDiameter, bool initial)
+        {
             // At the start, fill the area around the player (leaving some breathing room).
             // Afterwards, spawn just off screen.
             float view = ViewRadius;
@@ -182,21 +226,25 @@ namespace ChompChompPanic
             distance += radius;
             Vector2 position = (Vector2)player.transform.position + Random.insideUnitCircle.normalized * distance;
 
-            var go = new GameObject("Blob");
+            var go = new GameObject(objectName);
             go.transform.SetParent(blobRoot, false);
             go.transform.position = position;
 
             var blob = go.AddComponent<Blob>();
+            blob.VisualDiameter = visualDiameter;
             blob.Radius = radius;
 
             var enemy = go.AddComponent<EnemyBlob>();
-            enemy.Init(PlayerController.SpeedForRadius(radius, playerBaseSpeed, playerStartRadius) * blobSpeedFactor);
             blobs.Add(enemy);
+            return enemy;
         }
 
         void RemoveBlob(int index)
         {
-            Destroy(blobs[index].gameObject);
+            var blob = blobs[index];
+            if (blob.IsPerson) personCount--;
+            else circleCount--;
+            Destroy(blob.gameObject);
             blobs.RemoveAt(index);
         }
 
