@@ -1,0 +1,1690 @@
+fileFormatVersion: 2
+guid: 761870544aa99f6408946a6dc5947392
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -938126713290526166
+    second: city_atlas_0
+  - first:
+      213: 1299259409091322716
+    second: city_atlas_1
+  - first:
+      213: 5820129251242545280
+    second: city_atlas_2
+  - first:
+      213: -171062167162363934
+    second: city_atlas_3
+  - first:
+      213: -2554113981864999343
+    second: city_atlas_4
+  - first:
+      213: 3485702216746434100
+    second: city_atlas_5
+  - first:
+      213: 1621596388601468763
+    second: city_atlas_6
+  - first:
+      213: 7150339393242080804
+    second: city_atlas_7
+  - first:
+      213: -6702599704849465828
+    second: city_atlas_8
+  - first:
+      213: -2953162792256872246
+    second: city_atlas_9
+  - first:
+      213: -8094402314781767518
+    second: city_atlas_10
+  - first:
+      213: -7986294691236681227
+    second: city_atlas_11
+  - first:
+      213: -6098315657541968833
+    second: city_atlas_12
+  - first:
+      213: -8436947748671425718
+    second: city_atlas_13
+  - first:
+      213: -88096881660940793
+    second: city_atlas_14
+  - first:
+      213: 9119917004154893527
+    second: city_atlas_15
+  - first:
+      213: 1388876796947913314
+    second: city_atlas_16
+  - first:
+      213: 3147429019674041389
+    second: city_atlas_17
+  - first:
+      213: -6780727541550922514
+    second: city_atlas_18
+  - first:
+      213: -4934617944635739217
+    second: city_atlas_19
+  - first:
+      213: 6910551882397638688
+    second: city_atlas_20
+  - first:
+      213: 3108924883830692086
+    second: city_atlas_21
+  - first:
+      213: -4198954724674954375
+    second: city_atlas_22
+  - first:
+      213: -7691504942987314791
+    second: city_atlas_23
+  - first:
+      213: -6039334027520057533
+    second: city_atlas_24
+  - first:
+      213: 6168298843581717219
+    second: city_atlas_25
+  - first:
+      213: -3560595968386532070
+    second: city_atlas_26
+  - first:
+      213: 1509779709274466276
+    second: city_atlas_27
+  - first:
+      213: -1020418557491172470
+    second: city_atlas_28
+  - first:
+      213: 7287668164902985415
+    second: city_atlas_29
+  - first:
+      213: 2188610152259780134
+    second: city_atlas_30
+  - first:
+      213: -4511720931505637330
+    second: city_atlas_31
+  - first:
+      213: -3302520313279982868
+    second: city_atlas_32
+  - first:
+      213: -7375352894690120923
+    second: city_atlas_33
+  - first:
+      213: -7909831922465576051
+    second: city_atlas_34
+  - first:
+      213: -1169777923913200771
+    second: city_atlas_35
+  - first:
+      213: 6518932425211023448
+    second: city_atlas_36
+  - first:
+      213: 4491360601201856947
+    second: city_atlas_37
+  - first:
+      213: -3297536552933026717
+    second: city_atlas_38
+  - first:
+      213: -3703890533330997254
+    second: city_atlas_39
+  - first:
+      213: -22506371963520169
+    second: city_atlas_40
+  - first:
+      213: 460718853732197365
+    second: city_atlas_41
+  - first:
+      213: 6360114403208053780
+    second: city_atlas_42
+  - first:
+      213: 474630418741663613
+    second: city_atlas_43
+  - first:
+      213: 3645922255924949662
+    second: city_atlas_44
+  - first:
+      213: -155065319104467236
+    second: city_atlas_45
+  - first:
+      213: -2604389756759594581
+    second: city_atlas_46
+  - first:
+      213: -2364511475936487738
+    second: city_atlas_47
+  - first:
+      213: -2195367171558443601
+    second: city_atlas_48
+  - first:
+      213: -8902876833961117310
+    second: city_atlas_49
+  - first:
+      213: -2032953036030135688
+    second: city_atlas_50
+  - first:
+      213: 2820422797074163309
+    second: city_atlas_51
+  - first:
+      213: -5811048663210370937
+    second: city_atlas_52
+  - first:
+      213: -5843798380747746901
+    second: city_atlas_53
+  - first:
+      213: 3831438158012531052
+    second: city_atlas_54
+  - first:
+      213: -8597840712540390912
+    second: city_atlas_55
+  - first:
+      213: 5311128318267886547
+    second: city_atlas_56
+  - first:
+      213: 6471764117015406754
+    second: city_atlas_57
+  - first:
+      213: 4690855418059869092
+    second: city_atlas_58
+  - first:
+      213: 4109887024874602762
+    second: city_atlas_59
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 0
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 4096
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: city_atlas_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 171
+        width: 1549
+        height: 1033
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a22730489ba1bf2f0800000000000000
+      internalID: -938126713290526166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_1
+      rect:
+        serializedVersion: 2
+        x: 1459
+        y: 575
+        width: 108
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c53e8fd7c85e70210800000000000000
+      internalID: 1299259409091322716
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_2
+      rect:
+        serializedVersion: 2
+        x: 1573
+        y: 573
+        width: 114
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0801c27b7b045c050800000000000000
+      internalID: 5820129251242545280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_3
+      rect:
+        serializedVersion: 2
+        x: 1693
+        y: 575
+        width: 110
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ef57c38dd340adf0800000000000000
+      internalID: -171062167162363934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_4
+      rect:
+        serializedVersion: 2
+        x: 1805
+        y: 573
+        width: 114
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1560413add6fd8cd0800000000000000
+      internalID: -2554113981864999343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_5
+      rect:
+        serializedVersion: 2
+        x: 1923
+        y: 575
+        width: 108
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 43e76f5b2b3bf5030800000000000000
+      internalID: 3485702216746434100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_6
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 57
+        width: 114
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5795a7e251118610800000000000000
+      internalID: 1621596388601468763
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_7
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 59
+        width: 108
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4262da54bcb1b3360800000000000000
+      internalID: 7150339393242080804
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_8
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 57
+        width: 114
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1e3fc094159bf2a0800000000000000
+      internalID: -6702599704849465828
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_9
+      rect:
+        serializedVersion: 2
+        x: 350
+        y: 59
+        width: 109
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac0e0a346124407d0800000000000000
+      internalID: -2953162792256872246
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_10
+      rect:
+        serializedVersion: 2
+        x: 465
+        y: 57
+        width: 114
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a8455e0bf7eaaf80800000000000000
+      internalID: -8094402314781767518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_11
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 59
+        width: 107
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f9ef31aa4bfa2190800000000000000
+      internalID: -7986294691236681227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_12
+      rect:
+        serializedVersion: 2
+        x: 697
+        y: 57
+        width: 114
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3c1200483e6e5ba0800000000000000
+      internalID: -6098315657541968833
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_13
+      rect:
+        serializedVersion: 2
+        x: 814
+        y: 59
+        width: 111
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a4378e339b0f9ea80800000000000000
+      internalID: -8436947748671425718
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_14
+      rect:
+        serializedVersion: 2
+        x: 929
+        y: 57
+        width: 54
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 70ea7c65a5407cef0800000000000000
+      internalID: -88096881660940793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_15
+      rect:
+        serializedVersion: 2
+        x: 987
+        y: 59
+        width: 51
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d472b52234709e70800000000000000
+      internalID: 9119917004154893527
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_16
+      rect:
+        serializedVersion: 2
+        x: 1041
+        y: 57
+        width: 54
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 26adcd69618464310800000000000000
+      internalID: 1388876796947913314
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_17
+      rect:
+        serializedVersion: 2
+        x: 1100
+        y: 59
+        width: 50
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d2c5d61840aedab20800000000000000
+      internalID: 3147429019674041389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_18
+      rect:
+        serializedVersion: 2
+        x: 1153
+        y: 57
+        width: 54
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee4462f0a3406e1a0800000000000000
+      internalID: -6780727541550922514
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_19
+      rect:
+        serializedVersion: 2
+        x: 1210
+        y: 59
+        width: 52
+        height: 111
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa3f7b3cf17b48bb0800000000000000
+      internalID: -4934617944635739217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_20
+      rect:
+        serializedVersion: 2
+        x: 1265
+        y: 57
+        width: 54
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 020e738c25637ef50800000000000000
+      internalID: 6910551882397638688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_21
+      rect:
+        serializedVersion: 2
+        x: 1323
+        y: 59
+        width: 50
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f8d916c5be152b20800000000000000
+      internalID: 3108924883830692086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_22
+      rect:
+        serializedVersion: 2
+        x: 1377
+        y: 57
+        width: 54
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 97b1dc7cce05ab5c0800000000000000
+      internalID: -4198954724674954375
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_23
+      rect:
+        serializedVersion: 2
+        x: 1435
+        y: 60
+        width: 50
+        height: 107
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99974157109424590800000000000000
+      internalID: -7691504942987314791
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_24
+      rect:
+        serializedVersion: 2
+        x: 1489
+        y: 57
+        width: 54
+        height: 114
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 34fdcb123b9ff2ca0800000000000000
+      internalID: -6039334027520057533
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_25
+      rect:
+        serializedVersion: 2
+        x: 1547
+        y: 59
+        width: 50
+        height: 109
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ea14200e133a9550800000000000000
+      internalID: 6168298843581717219
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_26
+      rect:
+        serializedVersion: 2
+        x: 1601
+        y: 117
+        width: 114
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a1df1a3e4d8369ec0800000000000000
+      internalID: -3560595968386532070
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_27
+      rect:
+        serializedVersion: 2
+        x: 1718
+        y: 118
+        width: 111
+        height: 52
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4e7a56c75a0d3f410800000000000000
+      internalID: 1509779709274466276
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_28
+      rect:
+        serializedVersion: 2
+        x: 1833
+        y: 117
+        width: 114
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8ba5867abeb6d1f0800000000000000
+      internalID: -1020418557491172470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_29
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 2
+        width: 108
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ce17f1959ff22560800000000000000
+      internalID: 7287668164902985415
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_30
+      rect:
+        serializedVersion: 2
+        x: 117
+        y: 1
+        width: 114
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 62ef14576518f5e10800000000000000
+      internalID: 2188610152259780134
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_31
+      rect:
+        serializedVersion: 2
+        x: 236
+        y: 2
+        width: 110
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e2879e787b52361c0800000000000000
+      internalID: -4511720931505637330
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_32
+      rect:
+        serializedVersion: 2
+        x: 349
+        y: 1
+        width: 114
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ce25f67c5471b22d0800000000000000
+      internalID: -3302520313279982868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_33
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 2
+        width: 110
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52ba8da5e9b75a990800000000000000
+      internalID: -7375352894690120923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_34
+      rect:
+        serializedVersion: 2
+        x: 581
+        y: 1
+        width: 114
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8be46c46c1aa3290800000000000000
+      internalID: -7909831922465576051
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_35
+      rect:
+        serializedVersion: 2
+        x: 702
+        y: 2
+        width: 107
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7b4f0b0d2d14cfe0800000000000000
+      internalID: -1169777923913200771
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_36
+      rect:
+        serializedVersion: 2
+        x: 811
+        y: 0
+        width: 58
+        height: 57
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8509a7f7086e77a50800000000000000
+      internalID: 6518932425211023448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_37
+      rect:
+        serializedVersion: 2
+        x: 869
+        y: 1
+        width: 54
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3b152d8aba4845e30800000000000000
+      internalID: 4491360601201856947
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_38
+      rect:
+        serializedVersion: 2
+        x: 927
+        y: 2
+        width: 50
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3649f88e9fbcc32d0800000000000000
+      internalID: -3297536552933026717
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_39
+      rect:
+        serializedVersion: 2
+        x: 981
+        y: 1
+        width: 54
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: affafd91f23299cc0800000000000000
+      internalID: -3703890533330997254
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_40
+      rect:
+        serializedVersion: 2
+        x: 1038
+        y: 1
+        width: 51
+        height: 53
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75b7eede29a00bff0800000000000000
+      internalID: -22506371963520169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_41
+      rect:
+        serializedVersion: 2
+        x: 1093
+        y: 1
+        width: 54
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5f368024b5dc46600800000000000000
+      internalID: 460718853732197365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_42
+      rect:
+        serializedVersion: 2
+        x: 1152
+        y: 2
+        width: 49
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 414cf063a5aa34850800000000000000
+      internalID: 6360114403208053780
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_43
+      rect:
+        serializedVersion: 2
+        x: 1205
+        y: 1
+        width: 54
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d7711b4e9d9369600800000000000000
+      internalID: 474630418741663613
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_44
+      rect:
+        serializedVersion: 2
+        x: 1264
+        y: 2
+        width: 49
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e92f81f89fae89230800000000000000
+      internalID: 3645922255924949662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_45
+      rect:
+        serializedVersion: 2
+        x: 1317
+        y: 1
+        width: 54
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cdeabc1f9e819ddf0800000000000000
+      internalID: -155065319104467236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_46
+      rect:
+        serializedVersion: 2
+        x: 1376
+        y: 3
+        width: 49
+        height: 49
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba9adab90595bdbd0800000000000000
+      internalID: -2604389756759594581
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_47
+      rect:
+        serializedVersion: 2
+        x: 1429
+        y: 1
+        width: 54
+        height: 54
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6c6987127519f2fd0800000000000000
+      internalID: -2364511475936487738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_48
+      rect:
+        serializedVersion: 2
+        x: 1488
+        y: 2
+        width: 49
+        height: 51
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa574b3603d7881e0800000000000000
+      internalID: -2195367171558443601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_49
+      rect:
+        serializedVersion: 2
+        x: 1654
+        y: 16
+        width: 34
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28971b060b0a27480800000000000000
+      internalID: -8902876833961117310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_50
+      rect:
+        serializedVersion: 2
+        x: 1704
+        y: 15
+        width: 39
+        height: 33
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8723f5a1cff79c3e0800000000000000
+      internalID: -2032953036030135688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_51
+      rect:
+        serializedVersion: 2
+        x: 1756
+        y: 25
+        width: 16
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d66e4083797242720800000000000000
+      internalID: 2820422797074163309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_52
+      rect:
+        serializedVersion: 2
+        x: 1772
+        y: 36
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 78856d077020b5fa0800000000000000
+      internalID: -5811048663210370937
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_53
+      rect:
+        serializedVersion: 2
+        x: 1808
+        y: 29
+        width: 12
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba11780a558a6eea0800000000000000
+      internalID: -5843798380747746901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_54
+      rect:
+        serializedVersion: 2
+        x: 1827
+        y: 42
+        width: 9
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c61c63374b00c2530800000000000000
+      internalID: 3831438158012531052
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_55
+      rect:
+        serializedVersion: 2
+        x: 1558
+        y: 20
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00a73addc655ea880800000000000000
+      internalID: -8597840712540390912
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_56
+      rect:
+        serializedVersion: 2
+        x: 1605
+        y: 18
+        width: 27
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3db00eed01be4b940800000000000000
+      internalID: 5311128318267886547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_57
+      rect:
+        serializedVersion: 2
+        x: 1775
+        y: 16
+        width: 21
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a8a2d0fc2350d950800000000000000
+      internalID: 6471764117015406754
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_58
+      rect:
+        serializedVersion: 2
+        x: 1839
+        y: 29
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4abcc264624491140800000000000000
+      internalID: 4690855418059869092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: city_atlas_59
+      rect:
+        serializedVersion: 2
+        x: 1830
+        y: 17
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0143a85970490930800000000000000
+      internalID: 4109887024874602762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      city_atlas_0: -938126713290526166
+      city_atlas_1: 1299259409091322716
+      city_atlas_10: -8094402314781767518
+      city_atlas_11: -7986294691236681227
+      city_atlas_12: -6098315657541968833
+      city_atlas_13: -8436947748671425718
+      city_atlas_14: -88096881660940793
+      city_atlas_15: 9119917004154893527
+      city_atlas_16: 1388876796947913314
+      city_atlas_17: 3147429019674041389
+      city_atlas_18: -6780727541550922514
+      city_atlas_19: -4934617944635739217
+      city_atlas_2: 5820129251242545280
+      city_atlas_20: 6910551882397638688
+      city_atlas_21: 3108924883830692086
+      city_atlas_22: -4198954724674954375
+      city_atlas_23: -7691504942987314791
+      city_atlas_24: -6039334027520057533
+      city_atlas_25: 6168298843581717219
+      city_atlas_26: -3560595968386532070
+      city_atlas_27: 1509779709274466276
+      city_atlas_28: -1020418557491172470
+      city_atlas_29: 7287668164902985415
+      city_atlas_3: -171062167162363934
+      city_atlas_30: 2188610152259780134
+      city_atlas_31: -4511720931505637330
+      city_atlas_32: -3302520313279982868
+      city_atlas_33: -7375352894690120923
+      city_atlas_34: -7909831922465576051
+      city_atlas_35: -1169777923913200771
+      city_atlas_36: 6518932425211023448
+      city_atlas_37: 4491360601201856947
+      city_atlas_38: -3297536552933026717
+      city_atlas_39: -3703890533330997254
+      city_atlas_4: -2554113981864999343
+      city_atlas_40: -22506371963520169
+      city_atlas_41: 460718853732197365
+      city_atlas_42: 6360114403208053780
+      city_atlas_43: 474630418741663613
+      city_atlas_44: 3645922255924949662
+      city_atlas_45: -155065319104467236
+      city_atlas_46: -2604389756759594581
+      city_atlas_47: -2364511475936487738
+      city_atlas_48: -2195367171558443601
+      city_atlas_49: -8902876833961117310
+      city_atlas_5: 3485702216746434100
+      city_atlas_50: -2032953036030135688
+      city_atlas_51: 2820422797074163309
+      city_atlas_52: -5811048663210370937
+      city_atlas_53: -5843798380747746901
+      city_atlas_54: 3831438158012531052
+      city_atlas_55: -8597840712540390912
+      city_atlas_56: 5311128318267886547
+      city_atlas_57: 6471764117015406754
+      city_atlas_58: 4690855418059869092
+      city_atlas_59: 4109887024874602762
+      city_atlas_6: 1621596388601468763
+      city_atlas_7: 7150339393242080804
+      city_atlas_8: -6702599704849465828
+      city_atlas_9: -2953162792256872246
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

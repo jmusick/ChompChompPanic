@@ -6,8 +6,8 @@ using UnityEngine.SceneManagement;
 namespace ChompChompPanic
 {
     /// <summary>
-    /// Runs a session: spawns the player and blobs, resolves eating, follows with the camera,
-    /// tracks the timer and draws a minimal HUD.
+    /// Runs a session: spawns the player and blobs, resolves eating and building smashing,
+    /// follows with the camera, tracks the timer and draws a minimal HUD.
     /// </summary>
     public class GameManager : MonoBehaviour
     {
@@ -67,6 +67,13 @@ namespace ChompChompPanic
         [SerializeField, Tooltip("How much the camera zooms out as the player grows (0 = never, 1 = player stays the same size on screen)")]
         float cameraZoomExponent = 0.6f;
         [SerializeField] Color backgroundColor = new(0.07f, 0.08f, 0.11f);
+        [SerializeField, Tooltip("Camera shake per smashed building, as a fraction of the camera's half-height")]
+        float smashShake = 0.015f;
+
+        [Header("City (from ArtSource/City/build_city.py; a plain grid is drawn without it)")]
+        [SerializeField] Texture2D cityAtlas;
+        [SerializeField, Tooltip("city_atlas.json: where each sprite sits in the atlas")]
+        TextAsset cityAtlasData;
 
         [Header("Blob colors (relative to the player)")]
         [SerializeField] Color edibleColor = new(0.45f, 0.9f, 0.5f);
@@ -79,6 +86,9 @@ namespace ChompChompPanic
         SpriteAnimator playerAnimator;
         Transform blobRoot;
         SpriteRenderer grid;
+        CityMap city;
+        float shake;
+        int smashedCount;
         int circleCount;
         int personCount;
         float elapsed;
@@ -100,7 +110,10 @@ namespace ChompChompPanic
             cam.backgroundColor = backgroundColor;
             cam.orthographicSize = TargetCameraSize(playerStartRadius);
 
-            CreateGrid();
+            if (cityAtlas != null && cityAtlasData != null)
+                city = new CityMap(cityAtlas, cityAtlasData.text, Random.Range(int.MinValue, int.MaxValue));
+            else
+                CreateGrid();
             CreatePlayer();
 
             blobRoot = new GameObject("Blobs").transform;
@@ -130,6 +143,17 @@ namespace ChompChompPanic
             }
 
             UpdateBlobs();
+            if (state == State.Playing && city != null)
+                StompBuildings();
+        }
+
+        void StompBuildings()
+        {
+            int count = city.Stomp(player.transform.position, player.Radius);
+            if (count == 0)
+                return;
+            smashedCount += count;
+            shake = Mathf.Min(shake + smashShake * count, smashShake * 4f);
         }
 
         void LateUpdate()
@@ -142,7 +166,15 @@ namespace ChompChompPanic
             cam.orthographicSize = Mathf.Lerp(cam.orthographicSize, TargetCameraSize(player.Radius),
                 1f - Mathf.Exp(-3f * Time.unscaledDeltaTime));
 
-            UpdateGrid();
+            // Shake decays even while paused, so the game-over screen settles.
+            shake *= Mathf.Exp(-12f * Time.unscaledDeltaTime);
+            if (shake > 0.0005f)
+                cam.transform.position += (Vector3)(Random.insideUnitCircle * (shake * cam.orthographicSize));
+
+            if (city != null)
+                city.UpdateView(cam.transform.position, ViewRadius + 1f);
+            else
+                UpdateGrid();
         }
 
         void UpdateBlobs()
@@ -215,22 +247,21 @@ namespace ChompChompPanic
             var animator = enemy.gameObject.AddComponent<SpriteAnimator>();
             animator.Init(peopleVariants[Random.Range(0, peopleVariants.Length)]);
             enemy.Init(personWanderSpeed);
-            enemy.InitPerson(player, personFleeSpeed, personFleeDistance, personIdleChance);
+            enemy.InitPerson(player, personFleeSpeed, personFleeDistance, personIdleChance, city?.Layout);
+            // Moving onto the nearest street can pull a new person into view; try other spots.
+            for (int tries = 0; !initial && tries < 6 && IsOnScreen(enemy.transform.position); tries++)
+            {
+                enemy.transform.position = SpawnPoint(personRadius, initial);
+                enemy.InitPerson(player, personFleeSpeed, personFleeDistance, personIdleChance, city?.Layout);
+            }
             personCount++;
         }
 
         EnemyBlob CreateEnemy(string objectName, float radius, float visualDiameter, bool initial)
         {
-            // At the start, fill the area around the player (leaving some breathing room).
-            // Afterwards, spawn just off screen.
-            float view = ViewRadius;
-            float distance = initial ? Random.Range(view * 0.4f, view * 2.5f) : Random.Range(view * 1.1f, view * 2.5f);
-            distance += radius;
-            Vector2 position = (Vector2)player.transform.position + Random.insideUnitCircle.normalized * distance;
-
             var go = new GameObject(objectName);
             go.transform.SetParent(blobRoot, false);
-            go.transform.position = position;
+            go.transform.position = SpawnPoint(radius, initial);
 
             var blob = go.AddComponent<Blob>();
             blob.VisualDiameter = visualDiameter;
@@ -239,6 +270,22 @@ namespace ChompChompPanic
             var enemy = go.AddComponent<EnemyBlob>();
             blobs.Add(enemy);
             return enemy;
+        }
+
+        /// <summary>
+        /// At the start, fill the area around the player (leaving some breathing room).
+        /// Afterwards, spawn just off screen.
+        /// </summary>
+        Vector2 SpawnPoint(float radius, bool initial)
+        {
+            float view = ViewRadius;
+            float distance = initial ? Random.Range(view * 0.4f, view * 2.5f) : Random.Range(view * 1.1f, view * 2.5f);
+            return (Vector2)player.transform.position + Random.insideUnitCircle.normalized * (distance + radius);
+        }
+
+        bool IsOnScreen(Vector2 position)
+        {
+            return Vector2.Distance(position, cam.transform.position) < ViewRadius;
         }
 
         void RemoveBlob(int index)
@@ -333,7 +380,7 @@ namespace ChompChompPanic
             int minutes = Mathf.FloorToInt(remaining / 60f);
             int seconds = Mathf.FloorToInt(remaining % 60f);
             float size = player != null ? player.Radius / playerStartRadius : 1f;
-            string hud = $"{minutes:00}:{seconds:00}     Size {size * size * 10f:0}     Chomped {eatenCount}";
+            string hud = $"{minutes:00}:{seconds:00}     Size {size * size * 10f:0}     Chomped {eatenCount}     Smashed {smashedCount}";
             GUI.Label(new Rect(0, Screen.height * 0.02f, Screen.width, Screen.height * 0.1f), hud, hudStyle);
 
             if (state == State.Playing)
