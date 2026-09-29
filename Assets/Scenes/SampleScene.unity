@@ -277,6 +277,20 @@ MonoBehaviour:
   smashShake: 0.015
   cityAtlas: {fileID: 2800000, guid: 761870544aa99f6408946a6dc5947392, type: 3}
   cityAtlasData: {fileID: 4900000, guid: 86b5c2d88e8691f45b63692e4397f99c, type: 3}
+  bloodBurst:
+  - {fileID: 3361417202449918247, guid: f55aa724d68af784292f1a113ed4a326, type: 3}
+  - {fileID: 784285171514844051, guid: f55aa724d68af784292f1a113ed4a326, type: 3}
+  - {fileID: 4614423876834499705, guid: f55aa724d68af784292f1a113ed4a326, type: 3}
+  - {fileID: -2147984148781695792, guid: f55aa724d68af784292f1a113ed4a326, type: 3}
+  - {fileID: 9118884371003699824, guid: f55aa724d68af784292f1a113ed4a326, type: 3}
+  - {fileID: 4246034053467160438, guid: f55aa724d68af784292f1a113ed4a326, type: 3}
+  bloodStains:
+  - {fileID: -1010736916, guid: da62907bd3055bf408a832a4a285f1d9, type: 3}
+  - {fileID: -722369106, guid: da62907bd3055bf408a832a4a285f1d9, type: 3}
+  - {fileID: 1970673487, guid: da62907bd3055bf408a832a4a285f1d9, type: 3}
+  - {fileID: 465634310, guid: da62907bd3055bf408a832a4a285f1d9, type: 3}
+  bloodBurstSize: 0.8
+  bloodStainHoldAndFade: {x: 6, y: 2}
   edibleColor: {r: 0.45, g: 0.9, b: 0.5, a: 1}
   neutralColor: {r: 0.95, g: 0.85, b: 0.35, a: 1}
   dangerColor: {r: 1, g: 0.35, b: 0.35, a: 1}

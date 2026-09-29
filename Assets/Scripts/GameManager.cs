@@ -75,6 +75,16 @@ namespace ChompChompPanic
         [SerializeField, Tooltip("city_atlas.json: where each sprite sits in the atlas")]
         TextAsset cityAtlasData;
 
+        [Header("Blood (from ArtSource/Effects/build_effects.py; none is shown without it)")]
+        [SerializeField, Tooltip("Spurt played on top of the kaiju when it eats a person")]
+        Sprite[] bloodBurst;
+        [SerializeField, Tooltip("Ground splats left behind; one is picked at random")]
+        Sprite[] bloodStains;
+        [SerializeField, Tooltip("World size of the blood spurt at the kaiju's start size (grows with the square root of its size)")]
+        float bloodBurstSize = 0.8f;
+        [SerializeField, Tooltip("Seconds a stain stays before it starts to fade, and how long the fade takes")]
+        Vector2 bloodStainHoldAndFade = new(6f, 2f);
+
         [Header("Blob colors (relative to the player)")]
         [SerializeField] Color edibleColor = new(0.45f, 0.9f, 0.5f);
         [SerializeField] Color neutralColor = new(0.95f, 0.85f, 0.35f);
@@ -199,6 +209,8 @@ namespace ChompChompPanic
                     eatenCount++;
                     if (playerAnimator != null)
                         playerAnimator.PlayChomp();
+                    if (blob.IsPerson)
+                        SplatterBlood(blob.transform.position);
                     RemoveBlob(i);
                     continue;
                 }
@@ -225,6 +237,24 @@ namespace ChompChompPanic
             if (HasPeople)
                 while (personCount < peopleCount)
                     SpawnPerson(initial: false);
+        }
+
+        void SplatterBlood(Vector2 position)
+        {
+            // Stains lie on the ground (under buildings and characters); the spurt shows on top of the kaiju.
+            const int stainOrder = -850;
+            if (bloodStains is { Length: > 0 })
+                GroundStain.Spawn(bloodStains[Random.Range(0, bloodStains.Length)], position, 1f, stainOrder,
+                    bloodStainHoldAndFade.x, bloodStainHoldAndFade.y);
+            if (bloodBurst is { Length: > 0 })
+            {
+                // Spurt from the kaiju's mouth: the front edge of the sprite, on the side it faces.
+                float radius = player.Radius;
+                float facing = player.Sprite.flipX ? -1f : 1f;
+                var mouth = (Vector2)player.transform.position + new Vector2(facing * 0.6f, -0.1f) * radius;
+                float size = bloodBurstSize * Mathf.Sqrt(radius / playerStartRadius);
+                DustPuff.Spawn(bloodBurst, mouth, size / bloodBurst[0].bounds.size.x, short.MaxValue);
+            }
         }
 
         void SpawnBlob(bool initial)
