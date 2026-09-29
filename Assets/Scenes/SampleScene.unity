@@ -264,8 +264,9 @@ MonoBehaviour:
     ChompFps: 14
     DeathFps: 10
   peopleCount: 40
-  personRadius: 0.17
-  personVisualDiameter: 0.34
+  personRadius: 0.45
+  personVisualDiameter: 0.45
+  personGrowthEfficiency: 0.25
   personWanderSpeed: 1.2
   personFleeSpeed: 3.2
   personFleeDistance: 2.5

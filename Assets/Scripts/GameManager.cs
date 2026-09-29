@@ -49,10 +49,12 @@ namespace ChompChompPanic
         [SerializeField, Tooltip("One entry per person variant; a random one is picked for each spawn")]
         CharacterSprites[] peopleVariants;
         [SerializeField] int peopleCount = 40;
-        [SerializeField, Tooltip("Collision radius of a person. People don't grow over the session.")]
-        float personRadius = 0.17f;
-        [SerializeField, Tooltip("World size of a person's body at scale 1 (about 22 px at 64 px/unit). Equal to 2 x radius keeps them at native pixel scale.")]
-        float personVisualDiameter = 0.34f;
+        [SerializeField, Tooltip("Collision radius of a person. People don't grow over the session. Must be under the kaiju's start radius / eat ratio to be edible from the start.")]
+        float personRadius = 0.45f;
+        [SerializeField, Tooltip("Sets the sprite's scale: scale = 2 x radius / this. 0.45 with radius 0.45 draws people at exactly 2x pixel scale.")]
+        float personVisualDiameter = 0.45f;
+        [SerializeField, Tooltip("Fraction of a person's area the kaiju gains when eating one (circles use Growth Efficiency)")]
+        float personGrowthEfficiency = 0.25f;
         [SerializeField] float personWanderSpeed = 1.2f;
         [SerializeField] float personFleeSpeed = 3.2f;
         [SerializeField, Tooltip("People start running away when the kaiju's edge is this close")]
@@ -161,7 +163,7 @@ namespace ChompChompPanic
                 // A blob is eaten once its center is inside the eater.
                 if (playerCanEat && distance < playerRadius)
                 {
-                    player.Absorb(blobRadius, growthEfficiency);
+                    player.Absorb(blobRadius, blob.IsPerson ? personGrowthEfficiency : growthEfficiency);
                     eatenCount++;
                     if (playerAnimator != null)
                         playerAnimator.PlayChomp();
