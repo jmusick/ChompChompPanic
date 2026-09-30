@@ -486,6 +486,7 @@ namespace ChompChompPanic
             var controller = go.AddComponent<PlayerController>();
             controller.BaseSpeed = playerBaseSpeed;
             controller.ReferenceRadius = playerStartRadius;
+            controller.City = city;
         }
 
         void CreateGrid()

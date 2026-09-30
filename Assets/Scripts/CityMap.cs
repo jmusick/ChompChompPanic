@@ -8,7 +8,8 @@ namespace ChompChompPanic
     /// Endless night-time Tokyo drawn under everything else. The world is a grid of city blocks
     /// (chunks) that are created around the camera and destroyed once far away. The street network
     /// comes from <see cref="StreetLayout"/>; a block's contents come from a hash of its coordinates,
-    /// so it looks the same whenever you return. The kaiju smashes buildings by stepping on them;
+    /// so it looks the same whenever you return. The kaiju smashes buildings no bigger than itself by
+    /// stepping on them and is blocked by bigger ones;
     /// they stay rubble for the rest of the session. Art and sprite rects come from
     /// ArtSource/City/build_city.py.
     /// </summary>
@@ -148,10 +149,14 @@ namespace ChompChompPanic
             }
         }
 
-        /// <summary>Smash every standing building the circle touches. Returns how many were smashed.</summary>
+        /// <summary>
+        /// Smash every standing building the circle touches that is no bigger than the circle
+        /// (its longest side fits within the diameter). Returns how many were smashed.
+        /// </summary>
         public int Stomp(Vector2 position, float radius)
         {
             int count = 0;
+            float diameter = radius * 2f;
             // A block's buildings along its left and bottom edges stick out into the neighbouring
             // block, so also check the blocks one to the right and one above.
             var min = ChunkAt(position - Vector2.one * radius);
@@ -166,6 +171,8 @@ namespace ChompChompPanic
                         var building = chunk.Buildings[i];
                         if (building.Smashed || !Overlaps(building.Footprint, position, radius))
                             continue;
+                        if (TooBig(building, diameter))
+                            continue;
                         Smash(building);
                         smashed.Add((x, y, i));
                         SpawnDust(building.Footprint);
@@ -173,6 +180,53 @@ namespace ChompChompPanic
                     }
                 }
             return count;
+        }
+
+        /// <summary>
+        /// Push the circle out of every standing building too big for it to stomp, so it slides
+        /// along their walls. Returns the corrected position.
+        /// </summary>
+        public Vector2 PushOut(Vector2 position, float radius)
+        {
+            float diameter = radius * 2f;
+            var min = ChunkAt(position - Vector2.one * radius);
+            var max = ChunkAt(position + Vector2.one * radius) + Vector2Int.one;
+            for (int y = min.y; y <= max.y; y++)
+                for (int x = min.x; x <= max.x; x++)
+                {
+                    if (!chunks.TryGetValue(new Vector2Int(x, y), out var chunk))
+                        continue;
+                    foreach (var building in chunk.Buildings)
+                        if (!building.Smashed && TooBig(building, diameter))
+                            position = PushOutOfRect(building.Footprint, position, radius);
+                }
+            return position;
+        }
+
+        /// <summary>A building can only be knocked down once its longest side fits within the diameter.</summary>
+        static bool TooBig(Building building, float diameter)
+        {
+            return Mathf.Max(building.Footprint.width, building.Footprint.height) > diameter;
+        }
+
+        static Vector2 PushOutOfRect(Rect rect, Vector2 center, float radius)
+        {
+            var closest = new Vector2(Mathf.Clamp(center.x, rect.xMin, rect.xMax), Mathf.Clamp(center.y, rect.yMin, rect.yMax));
+            var away = center - closest;
+            float distance = away.magnitude;
+            if (distance >= radius)
+                return center;
+            if (distance > 0f)
+                return closest + away / distance * radius;
+
+            // Center is inside the building: leave through the nearest wall.
+            float left = center.x - rect.xMin, right = rect.xMax - center.x;
+            float bottom = center.y - rect.yMin, top = rect.yMax - center.y;
+            float nearest = Mathf.Min(Mathf.Min(left, right), Mathf.Min(bottom, top));
+            if (nearest == left) return new Vector2(rect.xMin - radius, center.y);
+            if (nearest == right) return new Vector2(rect.xMax + radius, center.y);
+            if (nearest == bottom) return new Vector2(center.x, rect.yMin - radius);
+            return new Vector2(center.x, rect.yMax + radius);
         }
 
         static bool Overlaps(Rect rect, Vector2 center, float radius)

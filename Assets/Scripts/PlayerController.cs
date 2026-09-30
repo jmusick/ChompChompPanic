@@ -9,6 +9,8 @@ namespace ChompChompPanic
     {
         public float BaseSpeed = 5f;
         public float ReferenceRadius = 0.5f;
+        /// <summary>Optional: buildings too big to stomp block movement.</summary>
+        public CityMap City;
 
         Blob blob;
         SpriteAnimator animator;
@@ -29,7 +31,10 @@ namespace ChompChompPanic
             // Ignore input while the game is paused (e.g. on the game-over screen).
             Vector2 move = Time.timeScale > 0f ? ReadMove() : Vector2.zero;
             float speed = SpeedForRadius(blob.Radius, BaseSpeed, ReferenceRadius);
-            transform.position += (Vector3)(move * (speed * Time.deltaTime));
+            var position = (Vector2)transform.position + move * (speed * Time.deltaTime);
+            if (City != null)
+                position = City.PushOut(position, blob.Radius);
+            transform.position = new Vector3(position.x, position.y, transform.position.z);
 
             if (animator != null)
                 animator.SetMoving(move);
