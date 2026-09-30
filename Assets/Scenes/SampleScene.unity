@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c33bad2acbcf82d44995b7a6988d0df8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChompChompPanic.GameManager
-  sessionLength: 1200
+  sessionLength: 600
   playerStartRadius: 0.5
   playerBaseSpeed: 5
   playerColor: {r: 0.35, g: 0.75, b: 1, a: 1}

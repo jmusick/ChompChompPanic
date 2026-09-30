@@ -15,7 +15,7 @@ namespace ChompChompPanic
 
         [Header("Session")]
         [SerializeField, Tooltip("Seconds the player must survive")]
-        float sessionLength = 20f * 60f;
+        float sessionLength = 10f * 60f;
 
         [Header("Player")]
         [SerializeField] float playerStartRadius = 0.5f;
