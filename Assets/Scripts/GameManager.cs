@@ -194,6 +194,8 @@ namespace ChompChompPanic
             {
                 if (RestartPressed())
                     SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                else if (TitlePressed())
+                    SceneManager.LoadScene(TitleScene);
                 return;
             }
 
@@ -529,6 +531,19 @@ namespace ChompChompPanic
             }
         }
 
+        /// <summary>The title screen is the first scene in the build profile.</summary>
+        const int TitleScene = 0;
+
+        static bool TitlePressed()
+        {
+            var kb = Keyboard.current;
+            if (kb != null && kb.escapeKey.wasPressedThisFrame)
+                return true;
+
+            var pad = Gamepad.current;
+            return pad != null && (pad.buttonEast.wasPressedThisFrame || pad.selectButton.wasPressedThisFrame);
+        }
+
         static bool RestartPressed()
         {
             var kb = Keyboard.current;
@@ -568,7 +583,7 @@ namespace ChompChompPanic
                 return;
 
             string title = state == State.Won ? "You survived!" : lossMessage ?? "CHOMPED!";
-            string subtitle = "Press R, Space or Enter to play again";
+            string subtitle = "Press R, Space or Enter to play again, Esc for the title screen";
             var bannerRect = new Rect(0, Screen.height * 0.35f, Screen.width, Screen.height * 0.15f);
             GUI.Label(bannerRect, title, bannerStyle);
             GUI.Label(new Rect(0, bannerRect.yMax, Screen.width, Screen.height * 0.1f), subtitle, hudStyle);
