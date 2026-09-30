@@ -1,0 +1,50 @@
+{
+  "car_sedan_side.png": [
+    64,
+    32
+  ],
+  "car_sedan_up.png": [
+    64,
+    32
+  ],
+  "car_sedan_down.png": [
+    64,
+    32
+  ],
+  "car_taxi_side.png": [
+    64,
+    32
+  ],
+  "car_taxi_up.png": [
+    64,
+    32
+  ],
+  "car_taxi_down.png": [
+    64,
+    32
+  ],
+  "car_kei_side.png": [
+    64,
+    32
+  ],
+  "car_kei_up.png": [
+    64,
+    32
+  ],
+  "car_kei_down.png": [
+    64,
+    32
+  ],
+  "car_van_side.png": [
+    64,
+    32
+  ],
+  "car_van_up.png": [
+    64,
+    32
+  ],
+  "car_van_down.png": [
+    64,
+    32
+  ]
+}

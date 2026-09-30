@@ -1,0 +1,78 @@
+{
+  "soldier_rifle_run.png": [
+    32,
+    32
+  ],
+  "soldier_rifle_idle.png": [
+    32,
+    32
+  ],
+  "soldier_rifle_shoot.png": [
+    32,
+    32
+  ],
+  "soldier_bazooka_run.png": [
+    32,
+    32
+  ],
+  "soldier_bazooka_idle.png": [
+    32,
+    32
+  ],
+  "soldier_bazooka_shoot.png": [
+    32,
+    32
+  ],
+  "jeep_army_side.png": [
+    64,
+    32
+  ],
+  "jeep_army_up.png": [
+    64,
+    32
+  ],
+  "jeep_army_down.png": [
+    64,
+    32
+  ],
+  "tank_army_side.png": [
+    128,
+    64
+  ],
+  "tank_army_up.png": [
+    128,
+    64
+  ],
+  "tank_army_down.png": [
+    128,
+    64
+  ],
+  "plane_jet_fly.png": [
+    176,
+    176
+  ],
+  "fx_bullet.png": [
+    8,
+    4
+  ],
+  "fx_rocket.png": [
+    20,
+    8
+  ],
+  "fx_shell.png": [
+    16,
+    8
+  ],
+  "fx_missile.png": [
+    28,
+    10
+  ],
+  "fx_muzzle.png": [
+    16,
+    16
+  ],
+  "fx_explosion.png": [
+    48,
+    48
+  ]
+}

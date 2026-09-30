@@ -11,17 +11,27 @@ namespace ChompChompPanic
         public Sprite[] Walk;
         public Sprite[] Chomp;
         public Sprite[] Death;
+        [Tooltip("Optional: shown instead of Walk while moving up the screen (seen from behind)")]
+        public Sprite[] WalkUp;
+        [Tooltip("Optional: shown instead of Walk while moving down the screen (seen from the front)")]
+        public Sprite[] WalkDown;
+        [Tooltip("Optional: played once each time it fires (soldiers)")]
+        public Sprite[] Attack;
         public float IdleFps = 6f;
         public float WalkFps = 10f;
         public float ChompFps = 14f;
         public float DeathFps = 10f;
+        public float AttackFps = 14f;
 
         public bool IsValid => Idle is { Length: > 0 } && Walk is { Length: > 0 };
+
+        public bool HasVerticalViews => WalkUp is { Length: > 0 } && WalkDown is { Length: > 0 };
     }
 
     /// <summary>
-    /// Code-driven frame animation: loops idle/walk, plays chomp and death as one-shots.
+    /// Code-driven frame animation: loops idle/walk, plays chomp, attack and death as one-shots.
     /// Uses unscaled time so the death animation still plays after the game pauses.
+    /// Characters with up/down views (cars) turn to face the way they move; others flip left/right.
     /// </summary>
     [RequireComponent(typeof(SpriteRenderer))]
     public class SpriteAnimator : MonoBehaviour
@@ -34,6 +44,8 @@ namespace ChompChompPanic
         bool loop;
         bool moving;
         bool dead;
+        /// <summary>-1 facing down the screen, 0 sideways, 1 up the screen.</summary>
+        int facing;
 
         void Awake()
         {
@@ -46,15 +58,34 @@ namespace ChompChompPanic
             Play(sprites.Idle, sprites.IdleFps, true);
         }
 
+        /// <summary>Walk (or idle, for a zero direction) and face the way it's going.</summary>
         public void SetMoving(Vector2 direction)
         {
-            if (direction.x > 0.01f) sprite.flipX = false;
+            bool isMoving = direction.sqrMagnitude > 0.0001f;
+            Turn(isMoving ? direction : Vector2.zero, isMoving);
+        }
+
+        /// <summary>Stand still, facing <paramref name="direction"/> (e.g. aiming at a target).</summary>
+        public void StandFacing(Vector2 direction)
+        {
+            Turn(direction, false);
+        }
+
+        void Turn(Vector2 direction, bool isMoving)
+        {
+            int newFacing = facing;
+            if (direction != Vector2.zero && sprites.HasVerticalViews)
+                newFacing = Mathf.Abs(direction.y) > Mathf.Abs(direction.x) ? (direction.y > 0f ? 1 : -1) : 0;
+
+            // Front and back views are never mirrored.
+            if (newFacing != 0) sprite.flipX = false;
+            else if (direction.x > 0.01f) sprite.flipX = false;
             else if (direction.x < -0.01f) sprite.flipX = true;
 
-            bool isMoving = direction.sqrMagnitude > 0.0001f;
-            if (isMoving == moving)
+            if (isMoving == moving && newFacing == facing)
                 return;
             moving = isMoving;
+            facing = newFacing;
             if (loop && !dead)
                 PlayLoop();
         }
@@ -63,6 +94,12 @@ namespace ChompChompPanic
         {
             if (!dead && sprites.Chomp is { Length: > 0 })
                 Play(sprites.Chomp, sprites.ChompFps, false);
+        }
+
+        public void PlayAttack()
+        {
+            if (!dead && sprites.Attack is { Length: > 0 })
+                Play(sprites.Attack, sprites.AttackFps, false);
         }
 
         public void PlayDeath()
@@ -104,7 +141,10 @@ namespace ChompChompPanic
 
         void PlayLoop()
         {
-            if (moving) Play(sprites.Walk, sprites.WalkFps, true);
+            var walk = facing > 0 ? sprites.WalkUp : facing < 0 ? sprites.WalkDown : sprites.Walk;
+            if (moving) Play(walk, sprites.WalkFps, true);
+            // Standing still facing up or down: hold the first frame of that view.
+            else if (facing != 0) Play(walk, 0f, true);
             else Play(sprites.Idle, sprites.IdleFps, true);
         }
 

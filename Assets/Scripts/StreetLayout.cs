@@ -32,6 +32,8 @@ namespace ChompChompPanic
         public const float RoadHalfWidth = 2f;
         /// <summary>Walkable half-width of an alley.</summary>
         public const float AlleyHalfWidth = 0.5f;
+        /// <summary>Distance from a road's center line to the middle of each traffic lane (traffic keeps left, as in Japan).</summary>
+        public const float CarLaneOffset = 0.75f;
 
         // Streets removed inside a 2 x 2 cell, as bit masks. Vertical lines between the cell's
         // left and right columns (bottom / top row); horizontal lines between its rows (left / right column).
@@ -125,17 +127,21 @@ namespace ChompChompPanic
 
         public static bool IsWalkable(Edge edge) => edge == Edge.Road || edge == Edge.Alley;
 
+        public static bool IsDrivable(Edge edge) => edge == Edge.Road;
+
         public static float HalfWidth(Edge edge) => edge == Edge.Alley ? AlleyHalfWidth : RoadHalfWidth;
 
         public static Vector2 NodePosition(Vector2Int node) => (Vector2)node * BlockSize;
 
         /// <summary>
-        /// The closest point on a walkable street's center line to <paramref name="position"/>, and the
-        /// two junctions at the ends of that street. Every block has a road on at least one of its
-        /// left or right sides, so this always finds one.
+        /// The closest point on a walkable (or, with <paramref name="roadsOnly"/>, drivable) street's center
+        /// line to <paramref name="position"/>, and the two junctions at the ends of that street. Every block
+        /// has a road on at least one of its left or right sides, so this always finds one.
         /// </summary>
-        public (Vector2 point, Vector2Int nodeA, Vector2Int nodeB) SnapToStreet(Vector2 position)
+        public (Vector2 point, Vector2Int nodeA, Vector2Int nodeB) SnapToStreet(Vector2 position, bool roadsOnly = false)
         {
+            bool Usable(Edge edge) => roadsOnly ? IsDrivable(edge) : IsWalkable(edge);
+
             var block = new Vector2Int(Mathf.FloorToInt(position.x / BlockSize), Mathf.FloorToInt(position.y / BlockSize));
             var local = position / BlockSize - block;
 
@@ -150,13 +156,13 @@ namespace ChompChompPanic
                 }
             }
 
-            Consider(IsWalkable(VerticalEdge(block.x, block.y)), local.x, new Vector2(block.x, block.y + local.y),
+            Consider(Usable(VerticalEdge(block.x, block.y)), local.x, new Vector2(block.x, block.y + local.y),
                 block, block + Vector2Int.up);
-            Consider(IsWalkable(VerticalEdge(block.x + 1, block.y)), 1f - local.x, new Vector2(block.x + 1, block.y + local.y),
+            Consider(Usable(VerticalEdge(block.x + 1, block.y)), 1f - local.x, new Vector2(block.x + 1, block.y + local.y),
                 block + Vector2Int.right, block + Vector2Int.one);
-            Consider(IsWalkable(HorizontalEdge(block.x, block.y)), local.y, new Vector2(block.x + local.x, block.y),
+            Consider(Usable(HorizontalEdge(block.x, block.y)), local.y, new Vector2(block.x + local.x, block.y),
                 block, block + Vector2Int.right);
-            Consider(IsWalkable(HorizontalEdge(block.x, block.y + 1)), 1f - local.y, new Vector2(block.x + local.x, block.y + 1),
+            Consider(Usable(HorizontalEdge(block.x, block.y + 1)), 1f - local.y, new Vector2(block.x + local.x, block.y + 1),
                 block + Vector2Int.up, block + Vector2Int.one);
             return result;
         }

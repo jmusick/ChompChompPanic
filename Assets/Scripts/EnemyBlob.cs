@@ -1,35 +1,72 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace ChompChompPanic
 {
     /// <summary>
-    /// Non-player blob that wanders in random directions. People also flee from the kaiju
-    /// when it gets close. Given a street map, people stay on the streets: they walk from junction
-    /// to junction, and flee by turning around or taking the side street that leads away.
+    /// Everything that isn't the player: prey (people, soldiers, cars, jeeps, tanks, planes) and rival kaiju.
+    ///
+    /// Prey moves according to its <see cref="PreyType.Movement"/>. Given a street map, walkers and drivers
+    /// stay on the streets: they move from junction to junction, and flee by turning around or taking the
+    /// side street that leads away. Drivers keep to roads (no alleys) in the left-hand lane. Planes make
+    /// straight passes over the kaiju. Armed prey fires at the kaiju while it is in range; some stand
+    /// still to do it.
+    ///
+    /// Rival kaiju roam freely: they hunt the player when they're big enough to eat it, run when the
+    /// player is big enough to eat them, and wander off after a while.
     /// </summary>
     [RequireComponent(typeof(Blob))]
     public class EnemyBlob : MonoBehaviour
     {
-        Vector2 velocity;
-        float speed;
-        float turnTimer;
-        float idleChance;
+        /// <summary>Planes draw over everything on the ground (but under projectiles and effects).</summary>
+        const int FlyingOrder = short.MaxValue - 100;
+        /// <summary>Plane shadows lie on the streets, over ground stains, under buildings.</summary>
+        const int ShadowOrder = -840;
+
         Blob threat;
+        SpriteAnimator animator;
+        Movement movement;
+        float speed;
         float fleeSpeed;
         float fleeDistance;
-        SpriteAnimator animator;
+        float idleChance;
 
-        // Street walking (people only, when there is a city)
+        // Free movement (no city, planes and rivals)
+        Vector2 velocity;
+        float turnTimer;
+
+        // Street walking and driving
         StreetLayout streets;
         Vector2Int fromNode;
         Vector2Int toNode;
-        /// <summary>Where across the street this person walks, from -1 to 1 (sidewalks are near the ends).</summary>
+        /// <summary>Where across the street this walks, from -1 to 1 (sidewalks are near the ends).</summary>
         float lane;
         float strideFactor = 1f;
         float idleTimer;
 
+        // Weapon
+        Weapon weapon;
+        Action<EnemyBlob, Vector2, Vector2> fire;
+        float cooldown;
+        int burstLeft;
+        float burstTimer;
+
+        // Rival kaiju
+        RivalSettings rival;
+        float eatRatio;
+        float playerBaseSpeed;
+        float referenceRadius;
+        float stayTimer;
+
         public Blob Blob { get; private set; }
-        public bool IsPerson { get; private set; }
+        /// <summary>The prey type, or null for a rival kaiju.</summary>
+        public PreyType Type { get; private set; }
+        /// <summary>Index of <see cref="Type"/> in the spawner's list.</summary>
+        public int TypeIndex { get; private set; }
+        public bool IsRival => rival != null;
+        /// <summary>A rival that has had its time and is heading away.</summary>
+        public bool IsLeaving => IsRival && stayTimer <= 0f;
 
         void Awake()
         {
@@ -38,55 +75,187 @@ namespace ChompChompPanic
 
         void Start()
         {
-            // Optional: people have one, plain circles don't.
             animator = GetComponent<SpriteAnimator>();
         }
 
-        public void Init(float wanderSpeed)
-        {
-            speed = wanderSpeed;
-            PickDirection();
-        }
-
         /// <summary>
-        /// Make this a person: sometimes stands still, and runs from <paramref name="kaiju"/>.
-        /// With <paramref name="streetLayout"/>, the person moves onto the nearest street and stays on streets.
+        /// Set up as prey that runs from (or fights) <paramref name="kaiju"/>. With <paramref name="streetLayout"/>,
+        /// walkers and drivers move onto the nearest street and stay on streets.
         /// </summary>
-        public void InitPerson(Blob kaiju, float runSpeed, float panicDistance, float standStillChance, StreetLayout streetLayout = null)
+        /// <param name="onFire">Fires one shot: (shooter, muzzle position, direction).</param>
+        public void InitPrey(int typeIndex, PreyType type, Blob kaiju, StreetLayout streetLayout,
+            Action<EnemyBlob, Vector2, Vector2> onFire)
         {
-            IsPerson = true;
+            TypeIndex = typeIndex;
+            Type = type;
             threat = kaiju;
-            fleeSpeed = runSpeed;
-            fleeDistance = panicDistance;
-            idleChance = standStillChance;
-            PickDirection();
+            movement = type.Movement;
+            speed = type.Speed;
+            fleeSpeed = type.FleeSpeed;
+            fleeDistance = type.FleeDistance;
+            idleChance = type.IdleChance;
+            if (type.Weapon is { IsArmed: true })
+            {
+                weapon = type.Weapon;
+                fire = onFire;
+                cooldown = Random.Range(0.5f, weapon.Cooldown.y);
+            }
 
+            if (movement == Movement.Fly)
+            {
+                StartFlightPass();
+                return;
+            }
+
+            PickDirection();
             streets = streetLayout;
             if (streets == null)
                 return;
-            var (point, a, b) = streets.SnapToStreet(transform.position);
+            var (point, a, b) = streets.SnapToStreet(transform.position, movement == Movement.Drive);
             (fromNode, toNode) = Random.value < 0.5f ? (a, b) : (b, a);
             PickLane();
             transform.position = point + Perpendicular(Direction) * LaneOffset;
         }
 
+        /// <summary>Set up as a rival kaiju sizing up <paramref name="kaiju"/>.</summary>
+        public void InitRival(RivalSettings settings, Blob kaiju, float eatRatioToEat, float baseSpeed, float startRadius)
+        {
+            rival = settings;
+            threat = kaiju;
+            movement = Movement.Roam;
+            eatRatio = eatRatioToEat;
+            playerBaseSpeed = baseSpeed;
+            referenceRadius = startRadius;
+            stayTimer = Random.Range(settings.StayTime.x, settings.StayTime.y);
+            speed = RivalSpeed;
+            PickDirection();
+        }
+
+        /// <summary>
+        /// Moves like a kaiju its size, but never as fast as the player: a big rival hunting the player
+        /// can be outrun, and a small one fleeing can be caught.
+        /// </summary>
+        float RivalSpeed => PlayerController.SpeedForRadius(Mathf.Min(Blob.Radius, threat.Radius), playerBaseSpeed, referenceRadius)
+            * rival.SpeedFactor;
+
         void Update()
         {
-            Vector2 away = Vector2.zero;
-            bool fleeing = false;
-            if (threat != null)
+            if (threat == null)
+                return;
+            if (IsRival)
             {
-                away = transform.position - threat.transform.position;
-                float panicRange = fleeDistance + threat.Radius;
-                fleeing = away.sqrMagnitude < panicRange * panicRange;
+                RivalUpdate();
+                return;
+            }
+            if (movement == Movement.Fly)
+            {
+                transform.position += (Vector3)(velocity * Time.deltaTime);
+                UpdateWeapon(threat.transform.position - transform.position);
+                return;
             }
 
-            Vector2 move = streets != null ? StreetMove(fleeing, away) : FreeMove(fleeing, away);
+            Vector2 away = transform.position - threat.transform.position;
+            float edgeDistance = away.magnitude - threat.Radius;
+            bool fleeing = fleeDistance > 0f && edgeDistance < fleeDistance;
+            bool engaged = weapon != null && edgeDistance <= weapon.Range;
+            bool holding = engaged && weapon.HoldsPosition && !fleeing;
+
+            Vector2 move = holding ? Vector2.zero : streets != null ? StreetMove(fleeing, away) : FreeMove(fleeing, away);
             transform.position += (Vector3)(move * Time.deltaTime);
 
             if (animator != null)
+            {
+                if (holding) animator.StandFacing(-away);
+                else animator.SetMoving(move);
+            }
+            if (weapon != null)
+                UpdateWeapon(-away);
+        }
+
+        // ------------------------------------------------------------------ weapons
+
+        void UpdateWeapon(Vector2 toTarget)
+        {
+            cooldown -= Time.deltaTime;
+            if (burstLeft > 0)
+            {
+                burstTimer -= Time.deltaTime;
+                if (burstTimer <= 0f)
+                {
+                    Shoot(toTarget);
+                    burstLeft--;
+                    burstTimer = weapon.BurstInterval;
+                }
+                return;
+            }
+
+            if (cooldown > 0f || toTarget.magnitude - threat.Radius > weapon.Range)
+                return;
+            if (weapon.ForwardArc > 0f && Vector2.Angle(velocity, toTarget) > weapon.ForwardArc)
+                return;
+            burstLeft = Mathf.Max(1, weapon.BurstCount);
+            burstTimer = 0f;
+            cooldown = Random.Range(weapon.Cooldown.x, weapon.Cooldown.y);
+            if (animator != null)
+                animator.PlayAttack();
+        }
+
+        void Shoot(Vector2 toTarget)
+        {
+            var direction = (Vector2)(Quaternion.Euler(0f, 0f, Random.Range(-weapon.Spread, weapon.Spread)) * toTarget.normalized);
+            // From the front of the sprite, a little above its middle (where the guns are).
+            var muzzle = (Vector2)transform.position + direction * (Blob.Radius * 0.6f);
+            if (movement != Movement.Fly)
+                muzzle += Vector2.up * (Blob.Radius * 0.15f);
+            fire(this, muzzle, direction);
+        }
+
+        // ------------------------------------------------------------------ flying
+
+        /// <summary>Head for a point near the kaiju and keep going straight until far past it.</summary>
+        void StartFlightPass()
+        {
+            var aim = (Vector2)threat.transform.position + Random.insideUnitCircle * (threat.Radius * 2f);
+            velocity = (aim - (Vector2)transform.position).normalized * speed;
+            transform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(velocity.y, velocity.x) * Mathf.Rad2Deg);
+            Blob.Sprite.sortingOrder = FlyingOrder;
+            FlyingShadow.Attach(Blob.Sprite, new Vector2(0.3f, -0.6f) * Blob.Radius, ShadowOrder);
+        }
+
+        // ------------------------------------------------------------------ rival kaiju
+
+        void RivalUpdate()
+        {
+            Vector2 toPlayer = threat.transform.position - transform.position;
+            float distance = toPlayer.magnitude;
+            bool inSight = distance < rival.SightRadii * Blob.Radius;
+            bool canEatPlayer = Blob.Radius >= threat.Radius * eatRatio;
+            bool isEdible = threat.Radius >= Blob.Radius * eatRatio;
+            stayTimer -= Time.deltaTime;
+            speed = RivalSpeed;
+
+            Vector2 move;
+            if (IsLeaving || (isEdible && inSight))
+                move = -toPlayer.normalized * speed;
+            else if (canEatPlayer && inSight)
+                move = toPlayer.normalized * speed;
+            else
+            {
+                // Prowl: wander, drifting towards the player so it stays around.
+                turnTimer -= Time.deltaTime;
+                if (turnTimer <= 0f)
+                {
+                    velocity = (Random.insideUnitCircle.normalized + toPlayer.normalized * 0.8f).normalized * (speed * 0.6f);
+                    turnTimer = Random.Range(1.5f, 3f);
+                }
+                move = velocity;
+            }
+            transform.position += (Vector3)(move * Time.deltaTime);
+            if (animator != null)
                 animator.SetMoving(move);
         }
+
+        // ------------------------------------------------------------------ free movement
 
         Vector2 FreeMove(bool fleeing, Vector2 away)
         {
@@ -107,7 +276,7 @@ namespace ChompChompPanic
             turnTimer = Random.Range(1.5f, 4f);
         }
 
-        // ------------------------------------------------------------------ street walking
+        // ------------------------------------------------------------------ street walking and driving
 
         Vector2 Direction => (Vector2)(toNode - fromNode);
 
@@ -152,7 +321,8 @@ namespace ChompChompPanic
             float bestScore = float.MinValue;
             foreach (var direction in StreetLayout.Directions)
             {
-                if (!StreetLayout.IsWalkable(streets.Arm(node, direction)))
+                var arm = streets.Arm(node, direction);
+                if (movement == Movement.Drive ? !StreetLayout.IsDrivable(arm) : !StreetLayout.IsWalkable(arm))
                     continue;
                 float score = fleeing ? Vector2.Dot(direction, away.normalized) : Random.value;
                 if (direction == back)
@@ -173,9 +343,16 @@ namespace ChompChompPanic
                 idleTimer = Random.Range(1f, 3f);
         }
 
-        /// <summary>Mostly on the sidewalks, sometimes out on the road.</summary>
+        /// <summary>Walkers: mostly on the sidewalks, sometimes out on the road. Drivers: the left-hand lane.</summary>
         void PickLane()
         {
+            if (movement == Movement.Drive)
+            {
+                // Perpendicular() points to the left of the direction of travel.
+                lane = StreetLayout.CarLaneOffset / StreetLayout.RoadHalfWidth;
+                return;
+            }
+
             float side = Random.value < 0.5f ? -1f : 1f;
             lane = Random.value < 0.75f ? side * Random.Range(0.8f, 0.95f) : Random.Range(-0.6f, 0.6f);
         }

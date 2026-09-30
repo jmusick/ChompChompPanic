@@ -1,0 +1,26 @@
+{
+  "rival_crimson_idle.png": [
+    64,
+    64
+  ],
+  "rival_crimson_walk.png": [
+    64,
+    64
+  ],
+  "rival_crimson_chomp.png": [
+    64,
+    64
+  ],
+  "rival_toxic_idle.png": [
+    64,
+    64
+  ],
+  "rival_toxic_walk.png": [
+    64,
+    64
+  ],
+  "rival_toxic_chomp.png": [
+    64,
+    64
+  ]
+}

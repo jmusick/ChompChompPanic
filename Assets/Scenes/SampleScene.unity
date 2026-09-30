@@ -177,104 +177,616 @@ MonoBehaviour:
     - {fileID: -5508302552761064948, guid: 02679cd524c98e04880982b5dcebc88e, type: 3}
     - {fileID: 456115106162782844, guid: 02679cd524c98e04880982b5dcebc88e, type: 3}
     - {fileID: -4283301781325502089, guid: 02679cd524c98e04880982b5dcebc88e, type: 3}
+    WalkUp: []
+    WalkDown: []
+    Attack: []
     IdleFps: 6
     WalkFps: 10
     ChompFps: 14
     DeathFps: 10
+    AttackFps: 14
+  maxHealth: 100
+  hurtColor: {r: 1, g: 0.3, b: 0.3, a: 1}
+  healColor: {r: 0.55, g: 1, b: 0.55, a: 1}
   eatRatio: 1.05
-  growthEfficiency: 1
-  blobCount: 80
-  finalSizeMultiplier: 8
-  startBiggerChance: 0.1
-  endBiggerChance: 0.6
-  smallerSizeRange: {x: 0.5, y: 0.9}
-  biggerSizeRange: {x: 1.15, y: 2}
-  blobSpeedFactor: 0.4
-  peopleVariants:
-  - Idle:
-    - {fileID: -5715363953399831357, guid: cd86a86d407a69343a61d0875ff38e42, type: 3}
-    - {fileID: -1530380160152824476, guid: cd86a86d407a69343a61d0875ff38e42, type: 3}
-    - {fileID: 5408370588216039635, guid: cd86a86d407a69343a61d0875ff38e42, type: 3}
-    - {fileID: 6578384231760053925, guid: cd86a86d407a69343a61d0875ff38e42, type: 3}
-    Walk:
-    - {fileID: -9141811248731631995, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
-    - {fileID: -8779332224796537038, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
-    - {fileID: -607235850347327610, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
-    - {fileID: 2811648202035205129, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
-    - {fileID: -7747724282984194636, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
-    - {fileID: 1080884204229933501, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
-    Chomp: []
-    Death: []
-    IdleFps: 8
-    WalkFps: 12
-    ChompFps: 14
-    DeathFps: 10
-  - Idle:
-    - {fileID: -2004988968616296339, guid: 297bbad9cc17866479fef9a859d5c5b7, type: 3}
-    - {fileID: -5493907558911769274, guid: 297bbad9cc17866479fef9a859d5c5b7, type: 3}
-    - {fileID: -6606471800663393016, guid: 297bbad9cc17866479fef9a859d5c5b7, type: 3}
-    - {fileID: -962903440033824868, guid: 297bbad9cc17866479fef9a859d5c5b7, type: 3}
-    Walk:
-    - {fileID: -377595770601197623, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
-    - {fileID: 4903309100300502176, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
-    - {fileID: 5604428554921300891, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
-    - {fileID: -5493889587243765646, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
-    - {fileID: 8719739892888274410, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
-    - {fileID: -4256188461045930521, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
-    Chomp: []
-    Death: []
-    IdleFps: 8
-    WalkFps: 12
-    ChompFps: 14
-    DeathFps: 10
-  - Idle:
-    - {fileID: 917662342702018585, guid: 68f99b5c9a0e73d42aa280a9f75dd2bd, type: 3}
-    - {fileID: 1217028058411411604, guid: 68f99b5c9a0e73d42aa280a9f75dd2bd, type: 3}
-    - {fileID: 5668128266949033223, guid: 68f99b5c9a0e73d42aa280a9f75dd2bd, type: 3}
-    - {fileID: -3209278414974128819, guid: 68f99b5c9a0e73d42aa280a9f75dd2bd, type: 3}
-    Walk:
-    - {fileID: 6889590194366436740, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
-    - {fileID: -1766601018676568427, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
-    - {fileID: -1004390149783250532, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
-    - {fileID: 404792367473926834, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
-    - {fileID: 7269641563109089188, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
-    - {fileID: 2619542239675072160, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
-    Chomp: []
-    Death: []
-    IdleFps: 8
-    WalkFps: 12
-    ChompFps: 14
-    DeathFps: 10
-  - Idle:
-    - {fileID: -4117028704961737097, guid: fa989db35fc555247bf5217bb6c8bcc3, type: 3}
-    - {fileID: -1370968501670789904, guid: fa989db35fc555247bf5217bb6c8bcc3, type: 3}
-    - {fileID: 2807066114713129578, guid: fa989db35fc555247bf5217bb6c8bcc3, type: 3}
-    - {fileID: -4296968905631246591, guid: fa989db35fc555247bf5217bb6c8bcc3, type: 3}
-    Walk:
-    - {fileID: 8439490068691004898, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
-    - {fileID: -7427714793276767515, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
-    - {fileID: -1788812334084252187, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
-    - {fileID: 5738398422986471735, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
-    - {fileID: -2126313153567294518, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
-    - {fileID: -158471340641689187, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
-    Chomp: []
-    Death: []
-    IdleFps: 8
-    WalkFps: 12
-    ChompFps: 14
-    DeathFps: 10
-  peopleCount: 40
-  personRadius: 0.45
-  personVisualDiameter: 0.45
-  personGrowthEfficiency: 0.25
-  personWanderSpeed: 1.2
-  personFleeSpeed: 3.2
-  personFleeDistance: 2.5
-  personIdleChance: 0.3
+  preyTypes:
+  - Name: People
+    SpritePrefix: person
+    Variants:
+    - Idle:
+      - {fileID: -2004988968616296339, guid: 297bbad9cc17866479fef9a859d5c5b7, type: 3}
+      - {fileID: -5493907558911769274, guid: 297bbad9cc17866479fef9a859d5c5b7, type: 3}
+      - {fileID: -6606471800663393016, guid: 297bbad9cc17866479fef9a859d5c5b7, type: 3}
+      - {fileID: -962903440033824868, guid: 297bbad9cc17866479fef9a859d5c5b7, type: 3}
+      Walk:
+      - {fileID: -377595770601197623, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
+      - {fileID: 4903309100300502176, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
+      - {fileID: 5604428554921300891, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
+      - {fileID: -5493889587243765646, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
+      - {fileID: 8719739892888274410, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
+      - {fileID: -4256188461045930521, guid: 5edb083b993df9842acd7592a6138d8b, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp: []
+      WalkDown: []
+      Attack: []
+      IdleFps: 8
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    - Idle:
+      - {fileID: -4117028704961737097, guid: fa989db35fc555247bf5217bb6c8bcc3, type: 3}
+      - {fileID: -1370968501670789904, guid: fa989db35fc555247bf5217bb6c8bcc3, type: 3}
+      - {fileID: 2807066114713129578, guid: fa989db35fc555247bf5217bb6c8bcc3, type: 3}
+      - {fileID: -4296968905631246591, guid: fa989db35fc555247bf5217bb6c8bcc3, type: 3}
+      Walk:
+      - {fileID: 8439490068691004898, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
+      - {fileID: -7427714793276767515, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
+      - {fileID: -1788812334084252187, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
+      - {fileID: 5738398422986471735, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
+      - {fileID: -2126313153567294518, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
+      - {fileID: -158471340641689187, guid: ab832286f9528e840b3f98fcd33884a8, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp: []
+      WalkDown: []
+      Attack: []
+      IdleFps: 8
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    - Idle:
+      - {fileID: -5715363953399831357, guid: cd86a86d407a69343a61d0875ff38e42, type: 3}
+      - {fileID: -1530380160152824476, guid: cd86a86d407a69343a61d0875ff38e42, type: 3}
+      - {fileID: 5408370588216039635, guid: cd86a86d407a69343a61d0875ff38e42, type: 3}
+      - {fileID: 6578384231760053925, guid: cd86a86d407a69343a61d0875ff38e42, type: 3}
+      Walk:
+      - {fileID: -9141811248731631995, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
+      - {fileID: -8779332224796537038, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
+      - {fileID: -607235850347327610, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
+      - {fileID: 2811648202035205129, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
+      - {fileID: -7747724282984194636, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
+      - {fileID: 1080884204229933501, guid: 98dc26c8494e79144b70e6ec130ebaad, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp: []
+      WalkDown: []
+      Attack: []
+      IdleFps: 8
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    - Idle:
+      - {fileID: 917662342702018585, guid: 68f99b5c9a0e73d42aa280a9f75dd2bd, type: 3}
+      - {fileID: 1217028058411411604, guid: 68f99b5c9a0e73d42aa280a9f75dd2bd, type: 3}
+      - {fileID: 5668128266949033223, guid: 68f99b5c9a0e73d42aa280a9f75dd2bd, type: 3}
+      - {fileID: -3209278414974128819, guid: 68f99b5c9a0e73d42aa280a9f75dd2bd, type: 3}
+      Walk:
+      - {fileID: 6889590194366436740, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
+      - {fileID: -1766601018676568427, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
+      - {fileID: -1004390149783250532, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
+      - {fileID: 404792367473926834, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
+      - {fileID: 7269641563109089188, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
+      - {fileID: 2619542239675072160, guid: ab6f3cca60bfe8744810752f99c8943a, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp: []
+      WalkDown: []
+      Attack: []
+      IdleFps: 8
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    Count: {x: 40, y: 28}
+    Radius: 0.45
+    VisualDiameter: 0.45
+    GrowthEfficiency: 0.25
+    Heal: 3
+    Movement: 0
+    Speed: 1.2
+    FleeSpeed: 3.2
+    FleeDistance: 2.5
+    IdleChance: 0.3
+    Bleeds: 1
+    CrunchShake: 0
+    Weapon:
+      Range: 6
+      Cooldown: {x: 2, y: 3}
+      BurstCount: 1
+      BurstInterval: 0.12
+      Damage: 0
+      ProjectileSpeed: 12
+      Spread: 5
+      ForwardArc: 0
+      HoldsPosition: 0
+      Explodes: 0
+      Projectile: []
+      ProjectileArt: 
+      ProjectileScale: 2
+  - Name: Riflemen
+    SpritePrefix: soldier_rifle
+    Variants:
+    - Idle:
+      - {fileID: -5989256864448566272, guid: 806e4dab797836e4fb577542d3578cb5, type: 3}
+      - {fileID: -6433854689065961127, guid: 806e4dab797836e4fb577542d3578cb5, type: 3}
+      Walk:
+      - {fileID: -3062020629992785998, guid: d45f170171faed9418b23dae800914f9, type: 3}
+      - {fileID: -303698824256731512, guid: d45f170171faed9418b23dae800914f9, type: 3}
+      - {fileID: 5258714543925260223, guid: d45f170171faed9418b23dae800914f9, type: 3}
+      - {fileID: -6826540004697727334, guid: d45f170171faed9418b23dae800914f9, type: 3}
+      - {fileID: 2636765530774415713, guid: d45f170171faed9418b23dae800914f9, type: 3}
+      - {fileID: -2972488843907103355, guid: d45f170171faed9418b23dae800914f9, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp: []
+      WalkDown: []
+      Attack:
+      - {fileID: 7361954574859416693, guid: 85841fbe1b781fc48b0a1093dfe234e3, type: 3}
+      - {fileID: -1472482031041829298, guid: 85841fbe1b781fc48b0a1093dfe234e3, type: 3}
+      - {fileID: -5914285333530033586, guid: 85841fbe1b781fc48b0a1093dfe234e3, type: 3}
+      IdleFps: 3
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    Count: {x: 4, y: 18}
+    Radius: 0.45
+    VisualDiameter: 0.45
+    GrowthEfficiency: 0.25
+    Heal: 5
+    Movement: 0
+    Speed: 1.4
+    FleeSpeed: 3
+    FleeDistance: 1
+    IdleChance: 0.15
+    Bleeds: 1
+    CrunchShake: 0
+    Weapon:
+      Range: 6
+      Cooldown: {x: 1.8, y: 2.8}
+      BurstCount: 3
+      BurstInterval: 0.12
+      Damage: 1
+      ProjectileSpeed: 14
+      Spread: 6
+      ForwardArc: 0
+      HoldsPosition: 1
+      Explodes: 0
+      Projectile:
+      - {fileID: -1522337724058789391, guid: c63bb8437341b7b4292fa77b264a2455, type: 3}
+      ProjectileArt: fx_bullet
+      ProjectileScale: 2
+  - Name: Bazooka troops
+    SpritePrefix: soldier_bazooka
+    Variants:
+    - Idle:
+      - {fileID: 7368044528502355378, guid: a84a4b4d64e43be449941f9033dda663, type: 3}
+      - {fileID: -8651738982535868927, guid: a84a4b4d64e43be449941f9033dda663, type: 3}
+      Walk:
+      - {fileID: -5906577674667004810, guid: 431d8d2d74836184ca8c39f298cb6555, type: 3}
+      - {fileID: 8095102793134606619, guid: 431d8d2d74836184ca8c39f298cb6555, type: 3}
+      - {fileID: -5608694496051530731, guid: 431d8d2d74836184ca8c39f298cb6555, type: 3}
+      - {fileID: -1145466713750586249, guid: 431d8d2d74836184ca8c39f298cb6555, type: 3}
+      - {fileID: 3799721974912751415, guid: 431d8d2d74836184ca8c39f298cb6555, type: 3}
+      - {fileID: -2376267906438461222, guid: 431d8d2d74836184ca8c39f298cb6555, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp: []
+      WalkDown: []
+      Attack:
+      - {fileID: -2914063300209695488, guid: 37a89ca951138e041a36022bf4db3511, type: 3}
+      - {fileID: -8564696462856548419, guid: 37a89ca951138e041a36022bf4db3511, type: 3}
+      - {fileID: -1807550216257103332, guid: 37a89ca951138e041a36022bf4db3511, type: 3}
+      IdleFps: 3
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    Count: {x: 1, y: 8}
+    Radius: 0.45
+    VisualDiameter: 0.45
+    GrowthEfficiency: 0.25
+    Heal: 5
+    Movement: 0
+    Speed: 1.2
+    FleeSpeed: 2.8
+    FleeDistance: 1
+    IdleChance: 0.15
+    Bleeds: 1
+    CrunchShake: 0
+    Weapon:
+      Range: 7
+      Cooldown: {x: 4, y: 5.5}
+      BurstCount: 1
+      BurstInterval: 0.12
+      Damage: 6
+      ProjectileSpeed: 8
+      Spread: 3
+      ForwardArc: 0
+      HoldsPosition: 1
+      Explodes: 1
+      Projectile:
+      - {fileID: 3417492405901455273, guid: 45e04ab7b0861e14881d83c9fbc85451, type: 3}
+      - {fileID: -4584110336769581998, guid: 45e04ab7b0861e14881d83c9fbc85451, type: 3}
+      ProjectileArt: fx_rocket
+      ProjectileScale: 2
+  - Name: Cars
+    SpritePrefix: car
+    Variants:
+    - Idle:
+      - {fileID: -2356253709631008602, guid: acec8ede07c89634a938a2829931d694, type: 3}
+      Walk:
+      - {fileID: -2356253709631008602, guid: acec8ede07c89634a938a2829931d694, type: 3}
+      - {fileID: 4179209554467706400, guid: acec8ede07c89634a938a2829931d694, type: 3}
+      - {fileID: -6695917350638922966, guid: acec8ede07c89634a938a2829931d694, type: 3}
+      - {fileID: 7223048760239749, guid: acec8ede07c89634a938a2829931d694, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp:
+      - {fileID: -5656452630269565620, guid: 688aa8c5e1584994ba29e3b2b2100350, type: 3}
+      - {fileID: 5284723092873657422, guid: 688aa8c5e1584994ba29e3b2b2100350, type: 3}
+      - {fileID: 4538429924176663994, guid: 688aa8c5e1584994ba29e3b2b2100350, type: 3}
+      - {fileID: 3183097249527297990, guid: 688aa8c5e1584994ba29e3b2b2100350, type: 3}
+      WalkDown:
+      - {fileID: 4385565887909287065, guid: ebda77d961bd0a248bc737b8de518539, type: 3}
+      - {fileID: 3652897059052948569, guid: ebda77d961bd0a248bc737b8de518539, type: 3}
+      - {fileID: -6345198793142552114, guid: ebda77d961bd0a248bc737b8de518539, type: 3}
+      - {fileID: 344540403202385816, guid: ebda77d961bd0a248bc737b8de518539, type: 3}
+      Attack: []
+      IdleFps: 3
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    - Idle:
+      - {fileID: 1035871184392622970, guid: 430abe92f80688f4188af1e795ed6a58, type: 3}
+      Walk:
+      - {fileID: 1035871184392622970, guid: 430abe92f80688f4188af1e795ed6a58, type: 3}
+      - {fileID: 450267603761109497, guid: 430abe92f80688f4188af1e795ed6a58, type: 3}
+      - {fileID: -409879822608973960, guid: 430abe92f80688f4188af1e795ed6a58, type: 3}
+      - {fileID: -1334116510801932297, guid: 430abe92f80688f4188af1e795ed6a58, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp:
+      - {fileID: 9215626260235708245, guid: 1e0503bdb7c819645b22524816f4c790, type: 3}
+      - {fileID: -412196822605998399, guid: 1e0503bdb7c819645b22524816f4c790, type: 3}
+      - {fileID: 4290148660775540349, guid: 1e0503bdb7c819645b22524816f4c790, type: 3}
+      - {fileID: -2210841615098744610, guid: 1e0503bdb7c819645b22524816f4c790, type: 3}
+      WalkDown:
+      - {fileID: -6077567632745660967, guid: 3d027018ca1dfe94fbc085552f0524ba, type: 3}
+      - {fileID: -4906805138166790962, guid: 3d027018ca1dfe94fbc085552f0524ba, type: 3}
+      - {fileID: 8715303570100525244, guid: 3d027018ca1dfe94fbc085552f0524ba, type: 3}
+      - {fileID: -6285668766721889373, guid: 3d027018ca1dfe94fbc085552f0524ba, type: 3}
+      Attack: []
+      IdleFps: 3
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    - Idle:
+      - {fileID: 1002367884367532380, guid: 982eb8480ed8a304585c02d6b9d80b89, type: 3}
+      Walk:
+      - {fileID: 1002367884367532380, guid: 982eb8480ed8a304585c02d6b9d80b89, type: 3}
+      - {fileID: -7500820518162784704, guid: 982eb8480ed8a304585c02d6b9d80b89, type: 3}
+      - {fileID: -8712820660228336820, guid: 982eb8480ed8a304585c02d6b9d80b89, type: 3}
+      - {fileID: 4594894003518595457, guid: 982eb8480ed8a304585c02d6b9d80b89, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp:
+      - {fileID: 1684754812325263775, guid: 63a8b941dc27b3f45885f571e5619451, type: 3}
+      - {fileID: -4016312510661198203, guid: 63a8b941dc27b3f45885f571e5619451, type: 3}
+      - {fileID: 672193915413153180, guid: 63a8b941dc27b3f45885f571e5619451, type: 3}
+      - {fileID: -6155758341846384846, guid: 63a8b941dc27b3f45885f571e5619451, type: 3}
+      WalkDown:
+      - {fileID: 3610597827025257519, guid: c60c0f8fb1af48945b344d1aa3b01030, type: 3}
+      - {fileID: 7745610903897722815, guid: c60c0f8fb1af48945b344d1aa3b01030, type: 3}
+      - {fileID: 5412664740278219976, guid: c60c0f8fb1af48945b344d1aa3b01030, type: 3}
+      - {fileID: -6521859747259138488, guid: c60c0f8fb1af48945b344d1aa3b01030, type: 3}
+      Attack: []
+      IdleFps: 3
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    - Idle:
+      - {fileID: 3258004230433724328, guid: f29c3152e4a71df46ae161b890a6b508, type: 3}
+      Walk:
+      - {fileID: 3258004230433724328, guid: f29c3152e4a71df46ae161b890a6b508, type: 3}
+      - {fileID: -5063455954572853446, guid: f29c3152e4a71df46ae161b890a6b508, type: 3}
+      - {fileID: -1042213433977366175, guid: f29c3152e4a71df46ae161b890a6b508, type: 3}
+      - {fileID: -1316393114336532784, guid: f29c3152e4a71df46ae161b890a6b508, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp:
+      - {fileID: 8995556393011856980, guid: adab5778164a7a5438d65b4fa74a651d, type: 3}
+      - {fileID: 1523837026502107168, guid: adab5778164a7a5438d65b4fa74a651d, type: 3}
+      - {fileID: 5091053205609741855, guid: adab5778164a7a5438d65b4fa74a651d, type: 3}
+      - {fileID: -1948304344468294206, guid: adab5778164a7a5438d65b4fa74a651d, type: 3}
+      WalkDown:
+      - {fileID: -5057221230428028494, guid: 86d252783afc0764fb9081454ed77521, type: 3}
+      - {fileID: 3673088116796616104, guid: 86d252783afc0764fb9081454ed77521, type: 3}
+      - {fileID: -9109171165838394744, guid: 86d252783afc0764fb9081454ed77521, type: 3}
+      - {fileID: -4499252527797831557, guid: 86d252783afc0764fb9081454ed77521, type: 3}
+      Attack: []
+      IdleFps: 3
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    Count: {x: 14, y: 10}
+    Radius: 0.9
+    VisualDiameter: 0.9
+    GrowthEfficiency: 0.25
+    Heal: 0
+    Movement: 1
+    Speed: 2.5
+    FleeSpeed: 4.5
+    FleeDistance: 3.5
+    IdleChance: 0
+    Bleeds: 1
+    CrunchShake: 0.03
+    Weapon:
+      Range: 6
+      Cooldown: {x: 2, y: 3}
+      BurstCount: 1
+      BurstInterval: 0.12
+      Damage: 0
+      ProjectileSpeed: 12
+      Spread: 5
+      ForwardArc: 0
+      HoldsPosition: 0
+      Explodes: 0
+      Projectile: []
+      ProjectileArt: 
+      ProjectileScale: 2
+  - Name: Jeeps
+    SpritePrefix: jeep
+    Variants:
+    - Idle:
+      - {fileID: -633894647042195167, guid: 432cbbc7d1a0faf4c979b7ea0037b378, type: 3}
+      Walk:
+      - {fileID: -633894647042195167, guid: 432cbbc7d1a0faf4c979b7ea0037b378, type: 3}
+      - {fileID: 4865635618757167557, guid: 432cbbc7d1a0faf4c979b7ea0037b378, type: 3}
+      - {fileID: -2835578283618486601, guid: 432cbbc7d1a0faf4c979b7ea0037b378, type: 3}
+      - {fileID: 8266860850319402360, guid: 432cbbc7d1a0faf4c979b7ea0037b378, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp:
+      - {fileID: 1432667061283025319, guid: a56e5514743f4ff4c860193799fb7569, type: 3}
+      - {fileID: 459707530504817981, guid: a56e5514743f4ff4c860193799fb7569, type: 3}
+      - {fileID: -6809977823281247769, guid: a56e5514743f4ff4c860193799fb7569, type: 3}
+      - {fileID: -2845641009658993183, guid: a56e5514743f4ff4c860193799fb7569, type: 3}
+      WalkDown:
+      - {fileID: 4695870021040971698, guid: 589826caae12e884698b98644d8d1806, type: 3}
+      - {fileID: 3315948847809059599, guid: 589826caae12e884698b98644d8d1806, type: 3}
+      - {fileID: 5566405127074279214, guid: 589826caae12e884698b98644d8d1806, type: 3}
+      - {fileID: 6933253577840930242, guid: 589826caae12e884698b98644d8d1806, type: 3}
+      Attack: []
+      IdleFps: 3
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    Count: {x: 0, y: 6}
+    Radius: 0.9
+    VisualDiameter: 0.9
+    GrowthEfficiency: 0.25
+    Heal: 0
+    Movement: 1
+    Speed: 3
+    FleeSpeed: 4.5
+    FleeDistance: 2
+    IdleChance: 0
+    Bleeds: 1
+    CrunchShake: 0.03
+    Weapon:
+      Range: 6
+      Cooldown: {x: 1.6, y: 2.4}
+      BurstCount: 4
+      BurstInterval: 0.1
+      Damage: 1
+      ProjectileSpeed: 14
+      Spread: 8
+      ForwardArc: 0
+      HoldsPosition: 0
+      Explodes: 0
+      Projectile:
+      - {fileID: -1522337724058789391, guid: c63bb8437341b7b4292fa77b264a2455, type: 3}
+      ProjectileArt: fx_bullet
+      ProjectileScale: 2
+  - Name: Tanks
+    SpritePrefix: tank
+    Variants:
+    - Idle:
+      - {fileID: -625474297357069004, guid: 11e9af47b2be301448987ace2f25ca1f, type: 3}
+      Walk:
+      - {fileID: -625474297357069004, guid: 11e9af47b2be301448987ace2f25ca1f, type: 3}
+      - {fileID: -978181710589280697, guid: 11e9af47b2be301448987ace2f25ca1f, type: 3}
+      - {fileID: -226143659728934114, guid: 11e9af47b2be301448987ace2f25ca1f, type: 3}
+      - {fileID: -7342266089784654003, guid: 11e9af47b2be301448987ace2f25ca1f, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp:
+      - {fileID: 6720730203578539215, guid: 0d610fa1829a92a4fad8fcbe24bbb7f8, type: 3}
+      - {fileID: 8062940571880668841, guid: 0d610fa1829a92a4fad8fcbe24bbb7f8, type: 3}
+      - {fileID: -3636556862833506015, guid: 0d610fa1829a92a4fad8fcbe24bbb7f8, type: 3}
+      - {fileID: 8394204627536433101, guid: 0d610fa1829a92a4fad8fcbe24bbb7f8, type: 3}
+      WalkDown:
+      - {fileID: -7076350267493130949, guid: 57992679b28844f4d92df286d758ee57, type: 3}
+      - {fileID: -86207218269325257, guid: 57992679b28844f4d92df286d758ee57, type: 3}
+      - {fileID: 7323350084086957488, guid: 57992679b28844f4d92df286d758ee57, type: 3}
+      - {fileID: -6544327215230151558, guid: 57992679b28844f4d92df286d758ee57, type: 3}
+      Attack: []
+      IdleFps: 3
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    Count: {x: 1, y: 7}
+    Radius: 1.8
+    VisualDiameter: 1.8
+    GrowthEfficiency: 0.25
+    Heal: 0
+    Movement: 1
+    Speed: 1.4
+    FleeSpeed: 1.4
+    FleeDistance: 0
+    IdleChance: 0
+    Bleeds: 1
+    CrunchShake: 0.06
+    Weapon:
+      Range: 9
+      Cooldown: {x: 3.5, y: 5}
+      BurstCount: 1
+      BurstInterval: 0.12
+      Damage: 10
+      ProjectileSpeed: 11
+      Spread: 2
+      ForwardArc: 0
+      HoldsPosition: 1
+      Explodes: 1
+      Projectile:
+      - {fileID: 5382068575707446174, guid: 8ecc72194c537ad43a75a2e8fcbba05f, type: 3}
+      - {fileID: -7951609021266799612, guid: 8ecc72194c537ad43a75a2e8fcbba05f, type: 3}
+      ProjectileArt: fx_shell
+      ProjectileScale: 2
+  - Name: Fighter jets
+    SpritePrefix: plane
+    Variants:
+    - Idle:
+      - {fileID: 3911034208798814690, guid: 7a9a18c4179ce9743b8dbcc65a1af9b3, type: 3}
+      - {fileID: -2230656336336476329, guid: 7a9a18c4179ce9743b8dbcc65a1af9b3, type: 3}
+      - {fileID: 108057883560870156, guid: 7a9a18c4179ce9743b8dbcc65a1af9b3, type: 3}
+      - {fileID: -7065352089694888638, guid: 7a9a18c4179ce9743b8dbcc65a1af9b3, type: 3}
+      Walk:
+      - {fileID: 3911034208798814690, guid: 7a9a18c4179ce9743b8dbcc65a1af9b3, type: 3}
+      - {fileID: -2230656336336476329, guid: 7a9a18c4179ce9743b8dbcc65a1af9b3, type: 3}
+      - {fileID: 108057883560870156, guid: 7a9a18c4179ce9743b8dbcc65a1af9b3, type: 3}
+      - {fileID: -7065352089694888638, guid: 7a9a18c4179ce9743b8dbcc65a1af9b3, type: 3}
+      Chomp: []
+      Death: []
+      WalkUp: []
+      WalkDown: []
+      Attack: []
+      IdleFps: 12
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    Count: {x: 0, y: 3}
+    Radius: 2.7
+    VisualDiameter: 2.7
+    GrowthEfficiency: 0.25
+    Heal: 0
+    Movement: 2
+    Speed: 10
+    FleeSpeed: 3.2
+    FleeDistance: 0
+    IdleChance: 0
+    Bleeds: 1
+    CrunchShake: 0.08
+    Weapon:
+      Range: 11
+      Cooldown: {x: 1, y: 1.6}
+      BurstCount: 2
+      BurstInterval: 0.25
+      Damage: 7
+      ProjectileSpeed: 18
+      Spread: 2
+      ForwardArc: 30
+      HoldsPosition: 0
+      Explodes: 1
+      Projectile:
+      - {fileID: -6564625099696147848, guid: d01e9c4d929f91c4db7109a8ec3c0230, type: 3}
+      - {fileID: 6725264508387322777, guid: d01e9c4d929f91c4db7109a8ec3c0230, type: 3}
+      ProjectileArt: fx_missile
+      ProjectileScale: 2
+  rivals:
+    SpritePrefix: rival
+    Variants:
+    - Idle:
+      - {fileID: -2865851842978950614, guid: 9b63f975a273b7243adabd6984b13042, type: 3}
+      - {fileID: -2400155089534431525, guid: 9b63f975a273b7243adabd6984b13042, type: 3}
+      - {fileID: -5244831283406872839, guid: 9b63f975a273b7243adabd6984b13042, type: 3}
+      - {fileID: 7832159421665301005, guid: 9b63f975a273b7243adabd6984b13042, type: 3}
+      Walk:
+      - {fileID: 2392205440068748689, guid: 7fbfedd54471c0d4ca0c1c4c3f327b53, type: 3}
+      - {fileID: 2328317735449270992, guid: 7fbfedd54471c0d4ca0c1c4c3f327b53, type: 3}
+      - {fileID: -6582044907339061783, guid: 7fbfedd54471c0d4ca0c1c4c3f327b53, type: 3}
+      - {fileID: 8586909839501250585, guid: 7fbfedd54471c0d4ca0c1c4c3f327b53, type: 3}
+      - {fileID: 5139605903751164970, guid: 7fbfedd54471c0d4ca0c1c4c3f327b53, type: 3}
+      - {fileID: 5376401370756797353, guid: 7fbfedd54471c0d4ca0c1c4c3f327b53, type: 3}
+      Chomp:
+      - {fileID: -2176107916704141635, guid: 154b1467e964b174a86bd0e3d34fb5ec, type: 3}
+      - {fileID: 1595118451126337647, guid: 154b1467e964b174a86bd0e3d34fb5ec, type: 3}
+      - {fileID: -4156444396378290864, guid: 154b1467e964b174a86bd0e3d34fb5ec, type: 3}
+      - {fileID: 2733468658451108382, guid: 154b1467e964b174a86bd0e3d34fb5ec, type: 3}
+      Death: []
+      WalkUp: []
+      WalkDown: []
+      Attack: []
+      IdleFps: 8
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    - Idle:
+      - {fileID: -2475192730492362682, guid: 38f946e346aaa4a47b61ecc10dba4565, type: 3}
+      - {fileID: 3677425084535268010, guid: 38f946e346aaa4a47b61ecc10dba4565, type: 3}
+      - {fileID: -6095632373737389102, guid: 38f946e346aaa4a47b61ecc10dba4565, type: 3}
+      - {fileID: 1332211441472854458, guid: 38f946e346aaa4a47b61ecc10dba4565, type: 3}
+      Walk:
+      - {fileID: -8748809518232784109, guid: 1323ec063af08044ebf4f0b68ba34e36, type: 3}
+      - {fileID: 343733865545891732, guid: 1323ec063af08044ebf4f0b68ba34e36, type: 3}
+      - {fileID: 4853161690641489300, guid: 1323ec063af08044ebf4f0b68ba34e36, type: 3}
+      - {fileID: 331612958506585622, guid: 1323ec063af08044ebf4f0b68ba34e36, type: 3}
+      - {fileID: 958537181729803928, guid: 1323ec063af08044ebf4f0b68ba34e36, type: 3}
+      - {fileID: -7169955030017369158, guid: 1323ec063af08044ebf4f0b68ba34e36, type: 3}
+      Chomp:
+      - {fileID: 3403285514303478269, guid: 6ead740e7ee71f64487aa058cca74f24, type: 3}
+      - {fileID: -5344923769853840188, guid: 6ead740e7ee71f64487aa058cca74f24, type: 3}
+      - {fileID: 2431212276753713383, guid: 6ead740e7ee71f64487aa058cca74f24, type: 3}
+      - {fileID: -6447963784736922171, guid: 6ead740e7ee71f64487aa058cca74f24, type: 3}
+      Death: []
+      WalkUp: []
+      WalkDown: []
+      Attack: []
+      IdleFps: 8
+      WalkFps: 12
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    FirstArrival: 60
+    Interval: {x: 70, y: 130}
+    StartSize: {x: 3.5, y: 5}
+    EndSize: {x: 10, y: 16}
+    SpeedFactor: 0.85
+    SightRadii: 8
+    StayTime: {x: 45, y: 75}
+    GrowthEfficiency: 0.5
+  muzzleFlash:
+  - {fileID: -5926081187967098936, guid: 7d6d845c18cd57440bd8d8dd2d7893a9, type: 3}
+  - {fileID: -622164153606335717, guid: 7d6d845c18cd57440bd8d8dd2d7893a9, type: 3}
+  - {fileID: 7453773897529607183, guid: 7d6d845c18cd57440bd8d8dd2d7893a9, type: 3}
+  explosion:
+  - {fileID: -3374386822094675814, guid: baa940049a8412543a53a6e0ee069ddd, type: 3}
+  - {fileID: -4886962310830628408, guid: baa940049a8412543a53a6e0ee069ddd, type: 3}
+  - {fileID: -2583550513521173832, guid: baa940049a8412543a53a6e0ee069ddd, type: 3}
+  - {fileID: 5569436001695930908, guid: baa940049a8412543a53a6e0ee069ddd, type: 3}
+  - {fileID: 228512524152782516, guid: baa940049a8412543a53a6e0ee069ddd, type: 3}
+  - {fileID: -1627363009740932813, guid: baa940049a8412543a53a6e0ee069ddd, type: 3}
+  - {fileID: 8712214450860489902, guid: baa940049a8412543a53a6e0ee069ddd, type: 3}
+  - {fileID: 2135928020575977925, guid: baa940049a8412543a53a6e0ee069ddd, type: 3}
+  explosionSize: 1.6
   cameraBaseSize: 6
   cameraZoomExponent: 0.6
   backgroundColor: {r: 0.07, g: 0.08, b: 0.11, a: 1}
   smashShake: 0.015
+  explosionShake: 0.04
   cityAtlas: {fileID: 2800000, guid: 761870544aa99f6408946a6dc5947392, type: 3}
   cityAtlasData: {fileID: 4900000, guid: 86b5c2d88e8691f45b63692e4397f99c, type: 3}
   bloodBurst:
@@ -291,9 +803,6 @@ MonoBehaviour:
   - {fileID: 465634310, guid: da62907bd3055bf408a832a4a285f1d9, type: 3}
   bloodBurstSize: 0.8
   bloodStainHoldAndFade: {x: 6, y: 2}
-  edibleColor: {r: 0.45, g: 0.9, b: 0.5, a: 1}
-  neutralColor: {r: 0.95, g: 0.85, b: 0.35, a: 1}
-  dangerColor: {r: 1, g: 0.35, b: 0.35, a: 1}
 --- !u!4 &310349947
 Transform:
   m_ObjectHideFlags: 0

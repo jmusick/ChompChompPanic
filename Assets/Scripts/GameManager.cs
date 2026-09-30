@@ -6,8 +6,8 @@ using UnityEngine.SceneManagement;
 namespace ChompChompPanic
 {
     /// <summary>
-    /// Runs a session: spawns the player and blobs, resolves eating and building smashing,
-    /// follows with the camera, tracks the timer and draws a minimal HUD.
+    /// Runs a session: spawns the player, prey and rival kaiju, resolves eating, gunfire and building
+    /// smashing, follows with the camera, tracks the timer and health, and draws a minimal HUD.
     /// </summary>
     public class GameManager : MonoBehaviour
     {
@@ -23,44 +23,28 @@ namespace ChompChompPanic
         [SerializeField, Tooltip("Player tint when no character sprites are assigned")]
         Color playerColor = new(0.35f, 0.75f, 1f);
         [SerializeField] CharacterSprites playerSprites;
+        [SerializeField] float maxHealth = 100f;
+        [SerializeField, Tooltip("Player tint when hit, and when healed by eating a human")]
+        Color hurtColor = new(1f, 0.3f, 0.3f);
+        [SerializeField] Color healColor = new(0.55f, 1f, 0.55f);
 
         [Header("Eating")]
-        [SerializeField, Tooltip("How many times bigger (by radius) a blob must be to eat another")]
+        [SerializeField, Tooltip("How many times bigger (by radius) something must be to eat another")]
         float eatRatio = 1.05f;
-        [SerializeField, Tooltip("Fraction of an eaten blob's area added to the eater")]
-        float growthEfficiency = 1f;
 
-        [Header("Blob spawning")]
-        [SerializeField] int blobCount = 80;
-        [SerializeField, Tooltip("Baseline blob radius at the end of the session, as a multiple of the player's start radius")]
-        float finalSizeMultiplier = 8f;
-        [SerializeField, Range(0f, 1f), Tooltip("Chance a new blob is bigger than the baseline at the start")]
-        float startBiggerChance = 0.1f;
-        [SerializeField, Range(0f, 1f), Tooltip("Chance a new blob is bigger than the baseline at the end")]
-        float endBiggerChance = 0.6f;
-        [SerializeField, Tooltip("Radius range for smaller blobs, as a multiple of the baseline (people fill the tier below this)")]
-        Vector2 smallerSizeRange = new(0.5f, 0.9f);
-        [SerializeField, Tooltip("Radius range for bigger blobs, as a multiple of the baseline")]
-        Vector2 biggerSizeRange = new(1.15f, 2f);
-        [SerializeField, Tooltip("Blob wander speed relative to a player of the same size")]
-        float blobSpeedFactor = 0.4f;
+        [Header("Prey (smallest first). Sprites: Chomp Chomp Panic > Import Art")]
+        [SerializeField] PreyType[] preyTypes = DefaultPreyTypes();
 
-        [Header("People (smallest prey, fixed size)")]
-        [SerializeField, Tooltip("One entry per person variant; a random one is picked for each spawn")]
-        CharacterSprites[] peopleVariants;
-        [SerializeField] int peopleCount = 40;
-        [SerializeField, Tooltip("Collision radius of a person. People don't grow over the session. Must be under the kaiju's start radius / eat ratio to be edible from the start.")]
-        float personRadius = 0.45f;
-        [SerializeField, Tooltip("Sets the sprite's scale: scale = 2 x radius / this. 0.45 with radius 0.45 draws people at exactly 2x pixel scale.")]
-        float personVisualDiameter = 0.45f;
-        [SerializeField, Tooltip("Fraction of a person's area the kaiju gains when eating one (circles use Growth Efficiency)")]
-        float personGrowthEfficiency = 0.25f;
-        [SerializeField] float personWanderSpeed = 1.2f;
-        [SerializeField] float personFleeSpeed = 3.2f;
-        [SerializeField, Tooltip("People start running away when the kaiju's edge is this close")]
-        float personFleeDistance = 2.5f;
-        [SerializeField, Range(0f, 1f), Tooltip("Chance a wandering person stands still (panicking on the spot) instead of walking")]
-        float personIdleChance = 0.3f;
+        [Header("Rival kaiju")]
+        [SerializeField] RivalSettings rivals = new();
+
+        [Header("Weapon effects (from ArtSource/Military/build_military.py)")]
+        [SerializeField, Tooltip("Flash at the muzzle of every shot")]
+        Sprite[] muzzleFlash;
+        [SerializeField, Tooltip("Shells, rockets and missiles blow up with this")]
+        Sprite[] explosion;
+        [SerializeField, Tooltip("World size of an explosion")]
+        float explosionSize = 1.6f;
 
         [Header("Camera")]
         [SerializeField] float cameraBaseSize = 6f;
@@ -69,6 +53,8 @@ namespace ChompChompPanic
         [SerializeField] Color backgroundColor = new(0.07f, 0.08f, 0.11f);
         [SerializeField, Tooltip("Camera shake per smashed building, as a fraction of the camera's half-height")]
         float smashShake = 0.015f;
+        [SerializeField, Tooltip("Camera shake when an explosive shot hits the kaiju")]
+        float explosionShake = 0.04f;
 
         [Header("City (from ArtSource/City/build_city.py; a plain grid is drawn without it)")]
         [SerializeField] Texture2D cityAtlas;
@@ -76,7 +62,7 @@ namespace ChompChompPanic
         TextAsset cityAtlasData;
 
         [Header("Blood (from ArtSource/Effects/build_effects.py; none is shown without it)")]
-        [SerializeField, Tooltip("Spurt played on top of the kaiju when it eats a person")]
+        [SerializeField, Tooltip("Spurt played on top of the kaiju when it eats someone")]
         Sprite[] bloodBurst;
         [SerializeField, Tooltip("Ground splats left behind; one is picked at random")]
         Sprite[] bloodStains;
@@ -85,12 +71,10 @@ namespace ChompChompPanic
         [SerializeField, Tooltip("Seconds a stain stays before it starts to fade, and how long the fade takes")]
         Vector2 bloodStainHoldAndFade = new(6f, 2f);
 
-        [Header("Blob colors (relative to the player)")]
-        [SerializeField] Color edibleColor = new(0.45f, 0.9f, 0.5f);
-        [SerializeField] Color neutralColor = new(0.95f, 0.85f, 0.35f);
-        [SerializeField] Color dangerColor = new(1f, 0.35f, 0.35f);
-
         readonly List<EnemyBlob> blobs = new();
+        int[] liveCounts;
+        EnemyBlob rival;
+        float nextRivalTime;
         Camera cam;
         Blob player;
         SpriteAnimator playerAnimator;
@@ -99,22 +83,95 @@ namespace ChompChompPanic
         CityMap city;
         float shake;
         int smashedCount;
-        int circleCount;
-        int personCount;
         float elapsed;
         int eatenCount;
+        float health;
+        float tint;
+        Color tintColor;
         State state;
+        string lossMessage;
         GUIStyle hudStyle;
         GUIStyle bannerStyle;
+        GUIStyle markerStyle;
 
         float Progress => Mathf.Clamp01(elapsed / sessionLength);
 
         /// <summary>Distance from the camera center to a screen corner.</summary>
         float ViewRadius => cam.orthographicSize * Mathf.Sqrt(1f + cam.aspect * cam.aspect);
 
+        /// <summary>
+        /// The prey ladder: each tier is about twice the one before, so the kaiju has to grow to reach the next.
+        /// People and soldiers (0.45) -> cars and jeeps (0.9) -> tanks (1.8) -> fighter jets (2.7).
+        /// </summary>
+        static PreyType[] DefaultPreyTypes() => new[]
+        {
+            new PreyType
+            {
+                Name = "People", SpritePrefix = "person", Count = new(40f, 28f), Radius = 0.45f, VisualDiameter = 0.45f,
+                Heal = 3f, Movement = Movement.Walk, Speed = 1.2f, FleeSpeed = 3.2f, FleeDistance = 2.5f, IdleChance = 0.3f,
+            },
+            new PreyType
+            {
+                Name = "Riflemen", SpritePrefix = "soldier_rifle", Count = new(4f, 18f), Radius = 0.45f, VisualDiameter = 0.45f,
+                Heal = 5f, Movement = Movement.Walk, Speed = 1.4f, FleeSpeed = 3f, FleeDistance = 1f, IdleChance = 0.15f,
+                Weapon = new Weapon
+                {
+                    Range = 6f, Cooldown = new(1.8f, 2.8f), BurstCount = 3, BurstInterval = 0.12f, Damage = 1f,
+                    ProjectileSpeed = 14f, Spread = 6f, HoldsPosition = true, ProjectileArt = "fx_bullet",
+                },
+            },
+            new PreyType
+            {
+                Name = "Bazooka troops", SpritePrefix = "soldier_bazooka", Count = new(1f, 8f), Radius = 0.45f, VisualDiameter = 0.45f,
+                Heal = 5f, Movement = Movement.Walk, Speed = 1.2f, FleeSpeed = 2.8f, FleeDistance = 1f, IdleChance = 0.15f,
+                Weapon = new Weapon
+                {
+                    Range = 7f, Cooldown = new(4f, 5.5f), Damage = 6f, ProjectileSpeed = 8f, Spread = 3f,
+                    HoldsPosition = true, Explodes = true, ProjectileArt = "fx_rocket",
+                },
+            },
+            new PreyType
+            {
+                Name = "Cars", SpritePrefix = "car", Count = new(14f, 10f), Radius = 0.9f, VisualDiameter = 0.9f,
+                Movement = Movement.Drive, Speed = 2.5f, FleeSpeed = 4.5f, FleeDistance = 3.5f, CrunchShake = 0.03f,
+            },
+            new PreyType
+            {
+                Name = "Jeeps", SpritePrefix = "jeep", Count = new(0f, 6f), Radius = 0.9f, VisualDiameter = 0.9f,
+                Movement = Movement.Drive, Speed = 3f, FleeSpeed = 4.5f, FleeDistance = 2f, CrunchShake = 0.03f,
+                Weapon = new Weapon
+                {
+                    Range = 6f, Cooldown = new(1.6f, 2.4f), BurstCount = 4, BurstInterval = 0.1f, Damage = 1f,
+                    ProjectileSpeed = 14f, Spread = 8f, ProjectileArt = "fx_bullet",
+                },
+            },
+            new PreyType
+            {
+                Name = "Tanks", SpritePrefix = "tank", Count = new(1f, 7f), Radius = 1.8f, VisualDiameter = 1.8f,
+                Movement = Movement.Drive, Speed = 1.4f, FleeSpeed = 1.4f, FleeDistance = 0f, CrunchShake = 0.06f,
+                Weapon = new Weapon
+                {
+                    Range = 9f, Cooldown = new(3.5f, 5f), Damage = 10f, ProjectileSpeed = 11f, Spread = 2f,
+                    HoldsPosition = true, Explodes = true, ProjectileArt = "fx_shell",
+                },
+            },
+            new PreyType
+            {
+                Name = "Fighter jets", SpritePrefix = "plane", Count = new(0f, 3f), Radius = 2.7f, VisualDiameter = 2.7f,
+                Movement = Movement.Fly, Speed = 10f, FleeDistance = 0f, CrunchShake = 0.08f,
+                Weapon = new Weapon
+                {
+                    Range = 11f, Cooldown = new(1f, 1.6f), BurstCount = 2, BurstInterval = 0.25f, Damage = 7f,
+                    ProjectileSpeed = 18f, Spread = 2f, ForwardArc = 30f, Explodes = true, ProjectileArt = "fx_missile",
+                },
+            },
+        };
+
         void Start()
         {
             Time.timeScale = 1f;
+            health = maxHealth;
+            nextRivalTime = rivals.FirstArrival;
 
             cam = Camera.main;
             cam.backgroundColor = backgroundColor;
@@ -126,15 +183,10 @@ namespace ChompChompPanic
                 CreateGrid();
             CreatePlayer();
 
-            blobRoot = new GameObject("Blobs").transform;
-            for (int i = 0; i < blobCount; i++)
-                SpawnBlob(initial: true);
-            if (HasPeople)
-                for (int i = 0; i < peopleCount; i++)
-                    SpawnPerson(initial: true);
+            blobRoot = new GameObject("Prey").transform;
+            liveCounts = new int[preyTypes.Length];
+            SpawnPrey(initial: true);
         }
-
-        bool HasPeople => peopleVariants is { Length: > 0 };
 
         void Update()
         {
@@ -153,17 +205,26 @@ namespace ChompChompPanic
             }
 
             UpdateBlobs();
-            if (state == State.Playing && city != null)
+            if (state != State.Playing)
+                return;
+            SpawnPrey(initial: false);
+            if (rival == null && elapsed >= nextRivalTime && rivals.HasSprites)
+                SpawnRival();
+            if (city != null)
                 StompBuildings();
         }
 
         void StompBuildings()
         {
             int count = city.Stomp(player.transform.position, player.Radius);
-            if (count == 0)
-                return;
-            smashedCount += count;
-            shake = Mathf.Min(shake + smashShake * count, smashShake * 4f);
+            if (count > 0)
+            {
+                smashedCount += count;
+                shake = Mathf.Min(shake + smashShake * count, smashShake * 4f);
+            }
+            // Rivals flatten the city too.
+            if (rival != null)
+                city.Stomp(rival.transform.position, rival.Blob.Radius);
         }
 
         void LateUpdate()
@@ -181,11 +242,18 @@ namespace ChompChompPanic
             if (shake > 0.0005f)
                 cam.transform.position += (Vector3)(Random.insideUnitCircle * (shake * cam.orthographicSize));
 
+            // Hurt / heal tint fades back to normal.
+            tint *= Mathf.Exp(-6f * Time.unscaledDeltaTime);
+            var baseColor = playerAnimator != null ? Color.white : playerColor;
+            player.Sprite.color = Color.Lerp(baseColor, tintColor, tint);
+
             if (city != null)
                 city.UpdateView(cam.transform.position, ViewRadius + 1f);
             else
                 UpdateGrid();
         }
+
+        // ------------------------------------------------------------------ eating
 
         void UpdateBlobs()
         {
@@ -199,44 +267,43 @@ namespace ChompChompPanic
                 float blobRadius = blob.Blob.Radius;
                 float distance = Vector2.Distance(playerPos, blob.transform.position);
 
-                bool playerCanEat = playerRadius >= blobRadius * eatRatio;
-                bool blobCanEat = blobRadius >= playerRadius * eatRatio;
-
-                // A blob is eaten once its center is inside the eater.
-                if (playerCanEat && distance < playerRadius)
+                // Something is eaten once its center is inside the eater.
+                if (playerRadius >= blobRadius * eatRatio && distance < playerRadius)
                 {
-                    player.Absorb(blobRadius, blob.IsPerson ? personGrowthEfficiency : growthEfficiency);
-                    eatenCount++;
-                    if (playerAnimator != null)
-                        playerAnimator.PlayChomp();
-                    if (blob.IsPerson)
-                        SplatterBlood(blob.transform.position);
+                    Eat(blob);
                     RemoveBlob(i);
                     continue;
                 }
 
-                if (blobCanEat && distance < blobRadius)
+                // Only rival kaiju eat the player; prey that's too big just gets away.
+                if (blob.IsRival && blobRadius >= playerRadius * eatRatio && distance < blobRadius)
                 {
-                    EndSession(State.Lost);
+                    EndSession(State.Lost, "CHOMPED!");
                     return;
                 }
 
-                if (distance > despawnDistance)
-                {
+                // Rivals hang around until they've had their time.
+                bool farAway = distance > despawnDistance + blobRadius;
+                if (farAway && (!blob.IsRival || blob.IsLeaving || distance > despawnDistance * 2f))
                     RemoveBlob(i);
-                    continue;
-                }
-
-                // People keep their own colors; circles are tinted to show whether they're safe to eat.
-                if (!blob.IsPerson)
-                    blob.Blob.Sprite.color = playerCanEat ? edibleColor : blobCanEat ? dangerColor : neutralColor;
             }
+        }
 
-            while (circleCount < blobCount)
-                SpawnBlob(initial: false);
-            if (HasPeople)
-                while (personCount < peopleCount)
-                    SpawnPerson(initial: false);
+        void Eat(EnemyBlob blob)
+        {
+            var type = blob.Type;
+            player.Absorb(blob.Blob.Radius, blob.IsRival ? rivals.GrowthEfficiency : type.GrowthEfficiency);
+            eatenCount++;
+            if (playerAnimator != null)
+                playerAnimator.PlayChomp();
+            if (blob.IsRival || type.Bleeds)
+                SplatterBlood(blob.transform.position);
+            shake = Mathf.Min(shake + (blob.IsRival ? 0.1f : type.CrunchShake), 0.12f);
+            if (type != null && type.Heal > 0f)
+            {
+                health = Mathf.Min(maxHealth, health + type.Heal);
+                Flash(healColor, 0.6f);
+            }
         }
 
         void SplatterBlood(Vector2 position)
@@ -257,37 +324,97 @@ namespace ChompChompPanic
             }
         }
 
-        void SpawnBlob(bool initial)
-        {
-            // Blob sizes follow a baseline that grows over the session; over time
-            // more of them are bigger than the baseline, so the player has to keep growing.
-            float baseline = playerStartRadius * Mathf.Lerp(1f, finalSizeMultiplier, Progress);
-            bool bigger = Random.value < Mathf.Lerp(startBiggerChance, endBiggerChance, Progress);
-            var range = bigger ? biggerSizeRange : smallerSizeRange;
-            float radius = baseline * Random.Range(range.x, range.y);
+        // ------------------------------------------------------------------ gunfire and health
 
-            var enemy = CreateEnemy("Blob", radius, 1f, initial);
-            enemy.Init(PlayerController.SpeedForRadius(radius, playerBaseSpeed, playerStartRadius) * blobSpeedFactor);
-            circleCount++;
+        void Fire(EnemyBlob shooter, Vector2 muzzle, Vector2 direction)
+        {
+            var weapon = shooter.Type.Weapon;
+            if (muzzleFlash is { Length: > 0 })
+                DustPuff.Spawn(muzzleFlash, muzzle, weapon.ProjectileScale * Mathf.Sqrt(shooter.Blob.Radius / 0.45f),
+                    short.MaxValue - 30);
+            // Fly on a little past the kaiju's far side, so misses still sail by.
+            float range = weapon.Range + player.Radius * 2f + 2f;
+            Projectile.Fire(weapon, muzzle, direction, range, player, OnImpact);
         }
 
-        void SpawnPerson(bool initial)
+        void OnImpact(Projectile projectile, bool hit)
         {
-            var enemy = CreateEnemy("Person", personRadius, personVisualDiameter, initial);
-            var animator = enemy.gameObject.AddComponent<SpriteAnimator>();
-            animator.Init(peopleVariants[Random.Range(0, peopleVariants.Length)]);
-            enemy.Init(personWanderSpeed);
-            enemy.InitPerson(player, personFleeSpeed, personFleeDistance, personIdleChance, city?.Layout);
-            // Moving onto the nearest street can pull a new person into view; try other spots.
-            for (int tries = 0; !initial && tries < 6 && IsOnScreen(enemy.transform.position); tries++)
+            var position = (Vector2)projectile.transform.position;
+            if (projectile.Explodes && explosion is { Length: > 0 })
+                DustPuff.Spawn(explosion, position, explosionSize / explosion[0].bounds.size.x, short.MaxValue - 25);
+            else if (hit && muzzleFlash is { Length: > 0 })
+                DustPuff.Spawn(muzzleFlash, position, 1.5f, short.MaxValue - 25);  // spark off the hide
+
+            if (!hit || state != State.Playing)
+                return;
+            health -= projectile.Damage;
+            Flash(hurtColor, 0.8f);
+            if (projectile.Explodes)
+                shake = Mathf.Min(shake + explosionShake, 0.12f);
+            if (health <= 0f)
             {
-                enemy.transform.position = SpawnPoint(personRadius, initial);
-                enemy.InitPerson(player, personFleeSpeed, personFleeDistance, personIdleChance, city?.Layout);
+                health = 0f;
+                EndSession(State.Lost, "TAKEN DOWN!");
             }
-            personCount++;
         }
 
-        EnemyBlob CreateEnemy(string objectName, float radius, float visualDiameter, bool initial)
+        void Flash(Color color, float strength)
+        {
+            tintColor = color;
+            tint = Mathf.Max(tint, strength);
+        }
+
+        // ------------------------------------------------------------------ spawning
+
+        /// <summary>Top up every prey type to its count for this point in the session.</summary>
+        void SpawnPrey(bool initial)
+        {
+            for (int i = 0; i < preyTypes.Length; i++)
+            {
+                var type = preyTypes[i];
+                if (!type.HasSprites)
+                    continue;
+                int target = Mathf.RoundToInt(Mathf.Lerp(type.Count.x, type.Count.y, Progress));
+                while (liveCounts[i] < target)
+                    SpawnPrey(i, initial);
+            }
+        }
+
+        void SpawnPrey(int index, bool initial)
+        {
+            var type = preyTypes[index];
+            var enemy = CreateEnemy(type.Name, type.Radius, type.VisualDiameter, type.Variants, initial);
+            if (type.Movement == Movement.Fly)
+            {
+                // Planes always come in from off screen, on a pass over the kaiju.
+                enemy.transform.position = OffScreenPoint(type.Radius, 1.2f);
+                enemy.InitPrey(index, type, player, null, Fire);
+            }
+            else
+            {
+                void Place() => enemy.InitPrey(index, type, player, city?.Layout, Fire);
+                Place();
+                // Moving onto the nearest street can pull a new spawn into view; try other spots.
+                for (int tries = 0; !initial && tries < 6 && IsOnScreen(enemy.transform.position); tries++)
+                {
+                    enemy.transform.position = SpawnPoint(type.Radius, initial);
+                    Place();
+                }
+            }
+            liveCounts[index]++;
+        }
+
+        void SpawnRival()
+        {
+            var range = new Vector2(Mathf.Lerp(rivals.StartSize.x, rivals.EndSize.x, Progress),
+                Mathf.Lerp(rivals.StartSize.y, rivals.EndSize.y, Progress));
+            float radius = playerStartRadius * Random.Range(range.x, range.y);
+            rival = CreateEnemy("Rival kaiju", radius, 1f, rivals.Variants, initial: false);
+            rival.transform.position = OffScreenPoint(radius, 1.1f);
+            rival.InitRival(rivals, player, eatRatio, playerBaseSpeed, playerStartRadius);
+        }
+
+        EnemyBlob CreateEnemy(string objectName, float radius, float visualDiameter, CharacterSprites[] variants, bool initial)
         {
             var go = new GameObject(objectName);
             go.transform.SetParent(blobRoot, false);
@@ -296,6 +423,7 @@ namespace ChompChompPanic
             var blob = go.AddComponent<Blob>();
             blob.VisualDiameter = visualDiameter;
             blob.Radius = radius;
+            go.AddComponent<SpriteAnimator>().Init(variants[Random.Range(0, variants.Length)]);
 
             var enemy = go.AddComponent<EnemyBlob>();
             blobs.Add(enemy);
@@ -313,6 +441,12 @@ namespace ChompChompPanic
             return (Vector2)player.transform.position + Random.insideUnitCircle.normalized * (distance + radius);
         }
 
+        /// <summary>A point just outside the view, <paramref name="margin"/> view radii out.</summary>
+        Vector2 OffScreenPoint(float radius, float margin)
+        {
+            return (Vector2)player.transform.position + Random.insideUnitCircle.normalized * (ViewRadius * margin + radius);
+        }
+
         bool IsOnScreen(Vector2 position)
         {
             return Vector2.Distance(position, cam.transform.position) < ViewRadius;
@@ -321,8 +455,15 @@ namespace ChompChompPanic
         void RemoveBlob(int index)
         {
             var blob = blobs[index];
-            if (blob.IsPerson) personCount--;
-            else circleCount--;
+            if (blob.IsRival)
+            {
+                rival = null;
+                nextRivalTime = elapsed + Random.Range(rivals.Interval.x, rivals.Interval.y);
+            }
+            else
+            {
+                liveCounts[blob.TypeIndex]--;
+            }
             Destroy(blob.gameObject);
             blobs.RemoveAt(index);
         }
@@ -373,9 +514,10 @@ namespace ChompChompPanic
             return cameraBaseSize * Mathf.Pow(playerRadius / playerStartRadius, cameraZoomExponent);
         }
 
-        void EndSession(State result)
+        void EndSession(State result, string message = null)
         {
             state = result;
+            lossMessage = message;
             Time.timeScale = 0f;
             if (result == State.Lost)
             {
@@ -396,15 +538,19 @@ namespace ChompChompPanic
             return pad != null && (pad.buttonSouth.wasPressedThisFrame || pad.startButton.wasPressedThisFrame);
         }
 
+        // ------------------------------------------------------------------ HUD
+
         void OnGUI()
         {
             if (hudStyle == null)
             {
                 hudStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.UpperCenter };
                 bannerStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold };
+                markerStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold };
             }
             hudStyle.fontSize = Mathf.RoundToInt(Screen.height * 0.035f);
             bannerStyle.fontSize = Mathf.RoundToInt(Screen.height * 0.07f);
+            markerStyle.fontSize = Mathf.RoundToInt(Screen.height * 0.03f);
 
             float remaining = Mathf.Max(0f, sessionLength - elapsed);
             int minutes = Mathf.FloorToInt(remaining / 60f);
@@ -413,14 +559,62 @@ namespace ChompChompPanic
             string hud = $"{minutes:00}:{seconds:00}     Size {size * size * 10f:0}     Chomped {eatenCount}     Smashed {smashedCount}";
             GUI.Label(new Rect(0, Screen.height * 0.02f, Screen.width, Screen.height * 0.1f), hud, hudStyle);
 
+            DrawHealthBar();
+            if (rival != null && player != null)
+                DrawRivalMarker();
+
             if (state == State.Playing)
                 return;
 
-            string title = state == State.Won ? "You survived!" : "CHOMPED!";
+            string title = state == State.Won ? "You survived!" : lossMessage ?? "CHOMPED!";
             string subtitle = "Press R, Space or Enter to play again";
             var bannerRect = new Rect(0, Screen.height * 0.35f, Screen.width, Screen.height * 0.15f);
             GUI.Label(bannerRect, title, bannerStyle);
             GUI.Label(new Rect(0, bannerRect.yMax, Screen.width, Screen.height * 0.1f), subtitle, hudStyle);
+        }
+
+        void DrawHealthBar()
+        {
+            float width = Screen.width * 0.3f;
+            float height = Screen.height * 0.022f;
+            var back = new Rect((Screen.width - width) * 0.5f, Screen.height * 0.075f, width, height);
+            float fraction = Mathf.Clamp01(health / maxHealth);
+            var old = GUI.color;
+            GUI.color = new Color(0.06f, 0.08f, 0.18f, 0.85f);
+            GUI.DrawTexture(back, Texture2D.whiteTexture);
+            GUI.color = Color.Lerp(new Color(0.9f, 0.2f, 0.25f), new Color(0.35f, 0.85f, 0.4f), fraction);
+            var inner = new Rect(back.x + 2f, back.y + 2f, (back.width - 4f) * fraction, back.height - 4f);
+            GUI.DrawTexture(inner, Texture2D.whiteTexture);
+            GUI.color = old;
+        }
+
+        /// <summary>Warns about a rival: its color says whether it's dangerous, and an edge marker points at it off screen.</summary>
+        void DrawRivalMarker()
+        {
+            bool dangerous = rival.Blob.Radius >= player.Radius * eatRatio;
+            bool edible = player.Radius >= rival.Blob.Radius * eatRatio;
+            var color = dangerous ? new Color(1f, 0.35f, 0.35f) : edible ? new Color(0.45f, 0.95f, 0.5f) : new Color(1f, 0.85f, 0.35f);
+            string label = dangerous ? "RIVAL KAIJU - RUN!" : edible ? "RIVAL KAIJU - EAT IT!" : "RIVAL KAIJU";
+
+            var old = GUI.contentColor;
+            GUI.contentColor = color;
+            GUI.Label(new Rect(0, Screen.height * 0.105f, Screen.width, Screen.height * 0.06f), label, hudStyle);
+
+            var viewport = cam.WorldToViewportPoint(rival.transform.position);
+            bool onScreen = viewport.x is > 0f and < 1f && viewport.y is > 0f and < 1f;
+            if (!onScreen)
+            {
+                const float margin = 0.04f;
+                var center = new Vector2(0.5f, 0.5f);
+                var offset = (Vector2)viewport - center;
+                float scale = (0.5f - margin) / Mathf.Max(Mathf.Abs(offset.x), Mathf.Abs(offset.y));
+                var edge = center + offset * scale;
+                float boxSize = Screen.height * 0.05f;
+                var rect = new Rect(edge.x * Screen.width - boxSize * 0.5f, (1f - edge.y) * Screen.height - boxSize * 0.5f,
+                    boxSize, boxSize);
+                GUI.Label(rect, "!", markerStyle);
+            }
+            GUI.contentColor = old;
         }
     }
 }
