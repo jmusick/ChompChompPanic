@@ -285,9 +285,12 @@ namespace ChompChompPanic
 
         // ------------------------------------------------------------------ street walking and driving
 
-        Vector2 Direction => (Vector2)(toNode - fromNode);
+        Vector2 Direction => (streets.NodePosition(toNode) - streets.NodePosition(fromNode)).normalized;
 
         float LaneOffset => lane * StreetLayout.HalfWidth(streets.Arm(fromNode, toNode - fromNode));
+
+        /// <summary>How far ahead along the street walkers and drivers aim, so they merge into their lane quickly.</summary>
+        const float LaneMergeDistance = 2f;
 
         static Vector2 Perpendicular(Vector2 direction) => new(-direction.y, direction.x);
 
@@ -306,8 +309,17 @@ namespace ChompChompPanic
                 return Vector2.zero;
             }
 
-            var target = StreetLayout.NodePosition(toNode) + Perpendicular(Direction) * LaneOffset;
-            var toTarget = target - (Vector2)transform.position;
+            // Follow the lane line, merging onto it within a short distance (rather than drifting
+            // across over the whole street, which shows on long diagonal avenues).
+            var direction = Direction;
+            var offset = Perpendicular(direction) * LaneOffset;
+            var start = streets.NodePosition(fromNode) + offset;
+            var target = streets.NodePosition(toNode) + offset;
+            var position = (Vector2)transform.position;
+            float length = Vector2.Distance(start, target);
+            float along = Vector2.Dot(position - start, direction);
+            var aim = start + direction * Mathf.Min(length, along + LaneMergeDistance);
+            var toTarget = target - position;
             float moveSpeed = fleeing ? fleeSpeed : speed * strideFactor;
             float step = moveSpeed * Time.deltaTime;
             if (step > 0f && toTarget.magnitude <= step)
@@ -316,33 +328,34 @@ namespace ChompChompPanic
                 ArriveAtJunction(fleeing, away);
                 return Vector2.zero;
             }
-            return toTarget.normalized * moveSpeed;
+            return (aim - position).normalized * moveSpeed;
         }
 
         /// <summary>Pick the next street: any way but back when wandering, the way that leads furthest from the kaiju when fleeing.</summary>
         void ArriveAtJunction(bool fleeing, Vector2 away)
         {
             var node = toNode;
-            var back = fromNode - toNode;
-            Vector2Int best = back;
+            var position = streets.NodePosition(node);
+            Vector2Int best = fromNode;
             float bestScore = float.MinValue;
-            foreach (var direction in StreetLayout.Directions)
+            foreach (var direction in StreetLayout.AllDirections)
             {
                 var arm = streets.Arm(node, direction);
                 if (movement == Movement.Drive ? !StreetLayout.IsDrivable(arm) : !StreetLayout.IsWalkable(arm))
                     continue;
-                float score = fleeing ? Vector2.Dot(direction, away.normalized) : Random.value;
-                if (direction == back)
+                var next = StreetLayout.Neighbor(node, direction);
+                float score = fleeing ? Vector2.Dot((streets.NodePosition(next) - position).normalized, away.normalized) : Random.value;
+                if (next == fromNode)
                     score -= fleeing ? 0.5f : 2f;  // turning back is a last resort (dead ends)
                 if (score > bestScore)
                 {
                     bestScore = score;
-                    best = direction;
+                    best = next;
                 }
             }
 
             fromNode = node;
-            toNode = node + best;
+            toNode = best;
             if (Random.value < 0.3f)
                 PickLane();
             strideFactor = Random.Range(0.6f, 1f);

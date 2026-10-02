@@ -5,9 +5,11 @@ Writes Assets/Art/City/city_atlas.png and city_atlas.json (sprite rects, read at
 Requires Pillow only. Output is deterministic: the same script always draws the same art.
 
 Scale: 32 px per world unit (the same pixel size as the people, who are drawn at 2x).
-One chunk is a 512 px (16 unit) city block. Its ground is a base (pavement, park, shrine or plaza)
-with street pieces laid over each edge: half a road, half a canal, half an alley, or nothing when
-the block merges with its neighbour. Neighbouring chunks' halves join into full streets.
+One chunk is a city block, 256 to 768 px (8 to 24 units) along each side; a nominal block is 512 px.
+Its ground is a base (pavement, park, shrine or plaza) with street pieces laid over each edge: half a
+road, half a canal, half an alley, or nothing when the block merges with its neighbour. Neighbouring
+chunks' halves join into full streets. Diagonal avenues cross whole 2 x 2 cells (1024 px) corner to
+corner and are laid from an end piece at each end plus a repeating middle piece.
 View is top-down 3/4: buildings show their roof plus their front (south) face.
 """
 from pathlib import Path
@@ -24,6 +26,11 @@ CHUNK = 512
 ROAD = 48          # half-road width at each chunk edge
 SIDEWALK = 20
 INNER = ROAD + SIDEWALK  # first interior pixel (68); interior is 376 px across
+BLOCK_SIZES = (256, 384, 512, 640, 768)  # every block side length; road and canal strips come in each
+CELL = 2 * CHUNK   # diagonal avenues run corner to corner across a 2 x 2 cell
+DIAG_END = 256     # diagonal end pieces cover this square at each end of the cell
+DIAG_TILE = 256    # repeating middle piece of a diagonal, laid every DIAG_STEP px along both axes
+DIAG_STEP = 128
 ATLAS_WIDTH = 2048
 PAD = 2
 
@@ -735,22 +742,24 @@ ALLEY_TILE = 32    # alley half-lanes are tiled along their length in Unity
 ALLEY_WIDTH = 22   # half-lane (20) plus gutter (2), measured from the chunk edge
 
 
-def edge_distance(x, y, edge):
-    return {"left": x, "right": CHUNK - 1 - x, "top": y, "bottom": CHUNK - 1 - y}[edge]
+def edge_distance(x, y, edge, size=CHUNK):
+    return {"left": x, "right": size - 1 - x, "top": y, "bottom": size - 1 - y}[edge]
 
 
 def pavement_base(img):
     fill_pattern(img, 0, 0, CHUNK, CHUNK, PAVE, PAVE_JOINT, 16)
 
 
-def road_canvas(edges, crosswalks, rng, lamps=()):
-    """A transparent chunk with half-roads and sidewalks along the given edges. Every road piece is
-    cropped out of one of these, so pieces line up pixel-exactly (joints, dashes) wherever they meet."""
-    img = new(CHUNK, CHUNK)
+def road_canvas(edges, crosswalks, rng, lamps=(), size=CHUNK):
+    """A transparent square chunk with half-roads and sidewalks along the given edges. Every road piece
+    is cropped out of one of these, so pieces line up pixel-exactly (joints, dashes) wherever they meet.
+    Block sides are multiples of 128 px and the dashes repeat every 32 px, so chunks of different sizes
+    line up too."""
+    img = new(size, size)
     px = img.load()
-    for y in range(CHUNK):
-        for x in range(CHUNK):
-            dist = min(edge_distance(x, y, e) for e in edges)
+    for y in range(size):
+        for x in range(size):
+            dist = min(edge_distance(x, y, e, size) for e in edges)
             if dist >= INNER:
                 continue
             if dist < ROAD:
@@ -764,41 +773,41 @@ def road_canvas(edges, crosswalks, rng, lamps=()):
             else:
                 c = SIDEWALK_JOINT if x % 8 == 0 or y % 8 == 0 else SIDEWALK_C
             px[x, y] = c
-    speckle(img, 0, 0, CHUNK, CHUNK, [ASPHALT_DARK, ASPHALT_LIGHT], 0.05, rng, mask=ASPHALT)
+    speckle(img, 0, 0, size, size, [ASPHALT_DARK, ASPHALT_LIGHT], 0.05, rng, mask=ASPHALT)
     d = ImageDraw.Draw(img)
     # Dashed center line on the chunk edge (one pixel per chunk, two where chunks meet). It stops
     # short of intersections, which have crosswalks instead.
-    lo, hi = (INNER, CHUNK - INNER) if crosswalks else (0, CHUNK)
+    lo, hi = (INNER, size - INNER) if crosswalks else (0, size)
     for e in edges:
         for a in range(lo, hi):
-            if (a // 12) % 2 == 0:
-                p = {"left": (0, a), "right": (CHUNK - 1, a), "top": (a, 0), "bottom": (a, CHUNK - 1)}[e]
+            if (a // 16) % 2 == 0:
+                p = {"left": (0, a), "right": (size - 1, a), "top": (a, 0), "bottom": (a, size - 1)}[e]
                 if px[p] in (ASPHALT, ASPHALT_DARK, ASPHALT_LIGHT):
                     px[p] = ROAD_LINE
     if crosswalks:
         for e in edges:
-            for c0 in (ROAD + 2, CHUNK - ROAD - 18):
+            for c0 in (ROAD + 2, size - ROAD - 18):
                 for k in range(0, ROAD - 4, 6):
                     if e == "left":
                         rect(d, 2 + k, c0, 4, 16, ROAD_LINE)
                     elif e == "right":
-                        rect(d, CHUNK - 6 - k, c0, 4, 16, ROAD_LINE)
+                        rect(d, size - 6 - k, c0, 4, 16, ROAD_LINE)
                     elif e == "top":
                         rect(d, c0, 2 + k, 16, 4, ROAD_LINE)
                     else:
-                        rect(d, c0, CHUNK - 6 - k, 16, 4, ROAD_LINE)
+                        rect(d, c0, size - 6 - k, 16, 4, ROAD_LINE)
     for x, y in lamps:
         lamp(img, x, y, LAMP_POOL)
     return img
 
 
-def canal_canvas(rng):
+def canal_canvas(rng, width=CHUNK):
     """Canals along the top and bottom edges: water, stone embankment, railing and a brick promenade."""
-    img = new(CHUNK, CHUNK)
+    img = new(width, CHUNK)
     px = img.load()
     for y in list(range(INNER)) + list(range(CHUNK - INNER, CHUNK)):
         dist = min(y, CHUNK - 1 - y)
-        for x in range(CHUNK):
+        for x in range(width):
             if dist < CANAL_WATER:
                 c = WATER[0]
             elif dist < CANAL_WATER + 4:
@@ -816,16 +825,16 @@ def canal_canvas(rng):
     d = ImageDraw.Draw(img)
     # Ripples and reflected neon on the water
     for top in (0, CHUNK - CANAL_WATER):
-        for _ in range(60):
-            x, y = rng.randrange(CHUNK - 6), rng.randrange(top, top + CANAL_WATER)
+        for _ in range(60 * width // CHUNK):
+            x, y = rng.randrange(width - 6), rng.randrange(top, top + CANAL_WATER)
             rect(d, x, y, rng.randint(3, 7), 1, WATER[1] if rng.random() < 0.7 else WATER[2])
-        for _ in range(10):
-            x, y = rng.randrange(CHUNK - 6), rng.randrange(top, top + CANAL_WATER)
+        for _ in range(10 * width // CHUNK):
+            x, y = rng.randrange(width - 6), rng.randrange(top, top + CANAL_WATER)
             rect(d, x, y, rng.randint(2, 4), 1, rng.choice(NEON + WIN_LIT))
     # Sakura along the top promenade (blossoms hang over the water), lamps and benches along the bottom one.
-    for x in range(32, CHUNK, 64):
+    for x in range(32, width, 64):
         paste_tree(img, rng, x, 66, True, PROMENADE_JOINT)
-    for x in range(64, CHUNK, 128):
+    for x in range(64, width, 128):
         lamp(img, x, CHUNK - 1 - 48, LAMP_POOL)
         bench(img, x + 24, CHUNK - 1 - 60, True)
     return img
@@ -840,7 +849,7 @@ def bridge_canvas(rng):
         for x in list(range(INNER)) + list(range(CHUNK - INNER, CHUNK)):
             side = min(x, CHUNK - 1 - x)
             if side < ROAD:
-                c = ROAD_LINE if side == 0 and (y // 12) % 2 == 0 else ASPHALT
+                c = ROAD_LINE if side == 0 and (y // 16) % 2 == 0 else ASPHALT
             elif dist >= CANAL_WATER + 6:
                 continue  # the promenade doubles as the sidewalk here
             elif side < ROAD + 16:
@@ -902,14 +911,19 @@ def alley_tile(edge, rng):
 
 def road_pieces(rng):
     """All the street pieces a chunk is assembled from, keyed by name (tl/tr/bl/br are world corners)."""
-    full = road_canvas(EDGES, True, rng, lamps=[(52, 56), (460, 56), (52, 462), (460, 462),
-                                                (256, 58), (256, 462), (52, 256), (460, 256)])
+    full = road_canvas(EDGES, True, rng, lamps=[(52, 56), (460, 56), (52, 462), (460, 462)])
     pieces = {}
-    # Straight half-road strips between the corner regions (PIL y runs down, so "top" is PIL y = 0).
-    pieces["road_top"] = full.crop((INNER, 0, CHUNK - INNER, INNER))
-    pieces["road_bottom"] = full.crop((INNER, CHUNK - INNER, CHUNK - INNER, CHUNK))
-    pieces["road_left"] = full.crop((0, INNER, INNER, CHUNK - INNER))
-    pieces["road_right"] = full.crop((CHUNK - INNER, INNER, CHUNK, CHUNK - INNER))
+    # Straight half-road strips between the corner regions, one set per block size, named by the
+    # block's side length (PIL y runs down, so "top" is PIL y = 0). Lamps every 256 px from the middle.
+    for n in BLOCK_SIZES:
+        spots = [n // 2 + 256 * k for k in range(-2, 3) if INNER + 40 <= n // 2 + 256 * k <= n - INNER - 40]
+        lamps = ([(p, 58) for p in spots] + [(p, n - 50) for p in spots]
+                 + [(52, p) for p in spots] + [(n - 52, p) for p in spots])
+        canvas = road_canvas(EDGES, True, rng, lamps=lamps, size=n)
+        pieces[f"road_top_{n}"] = canvas.crop((INNER, 0, n - INNER, INNER))
+        pieces[f"road_bottom_{n}"] = canvas.crop((INNER, n - INNER, n - INNER, n))
+        pieces[f"road_left_{n}"] = canvas.crop((0, INNER, INNER, n - INNER))
+        pieces[f"road_right_{n}"] = canvas.crop((n - INNER, INNER, n, n - INNER))
     corners = {"tl": (0, 0), "tr": (CHUNK - INNER, 0), "bl": (0, CHUNK - INNER), "br": (CHUNK - INNER, CHUNK - INNER)}
     variants = {
         "corner": full,
@@ -921,9 +935,10 @@ def road_pieces(rng):
     for name, canvas in variants.items():
         for c, (x, y) in corners.items():
             pieces[f"{name}_{c}"] = canvas.crop((x, y, x + INNER, y + INNER))
-    canal = canal_canvas(rng)
-    pieces["canal_top"] = canal.crop((0, 0, CHUNK, INNER))
-    pieces["canal_bottom"] = canal.crop((0, CHUNK - INNER, CHUNK, CHUNK))
+    for n in BLOCK_SIZES:
+        canal = canal_canvas(rng, n)
+        pieces[f"canal_top_{n}"] = canal.crop((0, 0, n, INNER))
+        pieces[f"canal_bottom_{n}"] = canal.crop((0, CHUNK - INNER, n, CHUNK))
     bridge, deadend = bridge_canvas(rng), deadend_canvas(rng)
     for c, (x, y) in corners.items():
         pieces[f"bridge_{c}"] = bridge.crop((x, y, x + INNER, y + INNER))
@@ -931,7 +946,74 @@ def road_pieces(rng):
         pieces[f"deadend_{c}"] = deadend.crop((dx, y, dx + ROAD, y + INNER))
     for e in EDGES:
         pieces[f"alley_{e}"] = alley_tile(e, rng)
+    pieces.update(diagonal_pieces(rng))
+    # Crossing corners without the lamp, for the corner a diagonal avenue opens out of.
+    bare = road_canvas(EDGES, True, rng)
+    for c, (x, y) in corners.items():
+        pieces[f"corner_open_{c}"] = bare.crop((x, y, x + INNER, y + INNER))
     return pieces
+
+
+def diagonal_canvas(rng):
+    """A rising diagonal avenue across a whole 2 x 2 cell, from its bottom-left corner junction to its
+    top-right one, on a transparent CELL x CELL canvas. It has the same cross-section as the grid roads,
+    measured at right angles to the avenue. Near each end it leaves the crossing grid roads' asphalt
+    alone and only cuts through their sidewalks, so it opens into the junction there. Away from the
+    ends it repeats every DIAG_STEP px along both axes, so a middle crop tiles seamlessly."""
+    img = new(CELL, CELL)
+    px = img.load()
+    k = math.sqrt(2)
+    # Asphalt speckle from a DIAG_STEP-periodic table, so it repeats like everything else.
+    noise = [[rng.random() for _ in range(DIAG_STEP)] for _ in range(DIAG_STEP)]
+    lo, hi = ROAD, CELL - ROAD   # the crossing grid roads' asphalt lies outside [lo, hi)
+    for py in range(CELL):
+        wy = CELL - 1 - py       # world y runs up
+        if not lo <= wy < hi:
+            continue
+        for wx in range(lo, hi):
+            dist = abs(wx - wy) / k  # distance from the avenue's center line
+            if dist >= INNER:
+                continue
+            if dist < ROAD:
+                n = noise[wy % DIAG_STEP][wx % DIAG_STEP]
+                c = ASPHALT_DARK if n < 0.025 else ASPHALT_LIGHT if n < 0.05 else ASPHALT
+            elif dist < ROAD + 1.4:
+                c = CURB
+            elif dist < ROAD + 2.1:
+                c = shade(CURB, 0.15)
+            elif 55 <= dist < 59:
+                c = TACTILE_DOT if 56 <= dist < 57 and (wx + wy) % 2 == 0 else TACTILE
+            else:
+                c = SIDEWALK_JOINT if wx % 8 == 0 or wy % 8 == 0 else SIDEWALK_C
+            px[wx, py] = c
+    # Dashed center line: a two-pixel staircase, 32 px on and 32 px off, stopping short of the junctions.
+    for wx in range(INNER, CELL - INNER):
+        for wy in (wx, wx - 1):
+            if INNER <= wy < CELL - INNER and ((wx + wy) // 64) % 2 == 0:
+                px[wx, CELL - 1 - wy] = ROAD_LINE
+    # Lamps in pairs on both sidewalks, once per repeat, clear of the junctions.
+    a = 43
+    for m in range(DIAG_STEP + DIAG_STEP // 2, CELL - DIAG_STEP, DIAG_STEP):
+        for wx, wy in ((m + a, m - a), (m - a, m + a)):
+            lamp(img, wx, CELL - 1 - wy, LAMP_POOL)
+    return img
+
+
+def diagonal_pieces(rng):
+    """End pieces and the repeating middle piece for rising (bottom-left to top-right) and falling
+    (bottom-right to top-left) avenues. Names use the cell's world corners."""
+    rise = diagonal_canvas(rng)
+    fall = rise.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
+    e, c, t = DIAG_END, CELL // 2, DIAG_TILE // 2
+    mid = (c - t, c - t, c + t, c + t)
+    return {
+        "diag_rise_bl": rise.crop((0, CELL - e, e, CELL)),
+        "diag_rise_tr": rise.crop((CELL - e, 0, CELL, e)),
+        "diag_rise_mid": rise.crop(mid),
+        "diag_fall_br": fall.crop((CELL - e, CELL - e, CELL, CELL)),
+        "diag_fall_tl": fall.crop((0, 0, e, e)),
+        "diag_fall_mid": fall.crop(mid),
+    }
 
 
 def ground_downtown(rng):

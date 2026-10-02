@@ -25,7 +25,7 @@ Instructions for coding agents working on Chomp Chomp Panic!, a top-down 2D pixe
 | `EnemyBlob.cs` | Prey and rival AI: walking, driving, flying, roaming, fleeing, hunting, shooting |
 | `Blob.cs` | Shared radius/size component for the player and everything edible |
 | `PlayerController.cs` | Player movement; speed scales with size |
-| `CityMap.cs`, `StreetLayout.cs` | Endless streamed city built from the atlas; street network for pathing; building collision and smashing |
+| `CityMap.cs`, `StreetLayout.cs` | Endless streamed city built from the atlas; street network (uneven block sizes, diagonal avenues) for pathing; building collision and smashing |
 | `SpriteAnimator.cs`, `Sprites.cs` | Code-driven sprite animation (idle/walk/chomp/death) and sprite helpers |
 | `Projectile.cs`, `DustPuff.cs`, `GroundStain.cs`, `FlyingShadow.cs` | Small effect/behaviour components |
 | `TitleScreen.cs` | Title menu |

@@ -47,6 +47,9 @@ namespace ChompChompPanic
         /// <summary>-1 facing down the screen, 0 sideways, 1 up the screen.</summary>
         int facing;
 
+        /// <summary>How much one axis must win before a character with up/down views switches between them and its side view.</summary>
+        const float DiagonalHysteresis = 1.25f;
+
         void Awake()
         {
             sprite = GetComponent<SpriteRenderer>();
@@ -75,7 +78,14 @@ namespace ChompChompPanic
         {
             int newFacing = facing;
             if (direction != Vector2.zero && sprites.HasVerticalViews)
-                newFacing = Mathf.Abs(direction.y) > Mathf.Abs(direction.x) ? (direction.y > 0f ? 1 : -1) : 0;
+            {
+                // Near 45 degrees (diagonal avenues) keep the current view, so it doesn't flicker between views.
+                float x = Mathf.Abs(direction.x), y = Mathf.Abs(direction.y);
+                if (y > x * DiagonalHysteresis || (facing != 0 && y >= x / DiagonalHysteresis))
+                    newFacing = direction.y > 0f ? 1 : -1;
+                else
+                    newFacing = 0;
+            }
 
             // Front and back views are never mirrored.
             if (newFacing != 0) sprite.flipX = false;
