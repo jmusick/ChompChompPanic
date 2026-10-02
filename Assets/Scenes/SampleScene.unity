@@ -282,6 +282,7 @@ MonoBehaviour:
       DeathFps: 10
       AttackFps: 14
     Count: {x: 40, y: 28}
+    CountRampExponent: 1
     Radius: 0.45
     VisualDiameter: 0.45
     GrowthEfficiency: 0.25
@@ -334,6 +335,7 @@ MonoBehaviour:
       DeathFps: 10
       AttackFps: 14
     Count: {x: 4, y: 18}
+    CountRampExponent: 0.5
     Radius: 0.45
     VisualDiameter: 0.45
     GrowthEfficiency: 0.25
@@ -387,6 +389,7 @@ MonoBehaviour:
       DeathFps: 10
       AttackFps: 14
     Count: {x: 1, y: 8}
+    CountRampExponent: 0.5
     Radius: 0.45
     VisualDiameter: 0.45
     GrowthEfficiency: 0.25
@@ -518,6 +521,7 @@ MonoBehaviour:
       DeathFps: 10
       AttackFps: 14
     Count: {x: 14, y: 10}
+    CountRampExponent: 1
     Radius: 0.9
     VisualDiameter: 0.9
     GrowthEfficiency: 0.25
@@ -572,6 +576,7 @@ MonoBehaviour:
       DeathFps: 10
       AttackFps: 14
     Count: {x: 0, y: 6}
+    CountRampExponent: 0.5
     Radius: 0.9
     VisualDiameter: 0.9
     GrowthEfficiency: 0.25
@@ -627,6 +632,7 @@ MonoBehaviour:
       DeathFps: 10
       AttackFps: 14
     Count: {x: 1, y: 7}
+    CountRampExponent: 0.5
     Radius: 1.8
     VisualDiameter: 1.8
     GrowthEfficiency: 0.25
@@ -678,6 +684,7 @@ MonoBehaviour:
       DeathFps: 10
       AttackFps: 14
     Count: {x: 0, y: 3}
+    CountRampExponent: 1
     Radius: 2.7
     VisualDiameter: 2.7
     GrowthEfficiency: 0.25

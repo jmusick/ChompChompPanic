@@ -112,7 +112,7 @@ namespace ChompChompPanic
             },
             new PreyType
             {
-                Name = "Riflemen", SpritePrefix = "soldier_rifle", Count = new(4f, 18f), Radius = 0.45f, VisualDiameter = 0.45f,
+                Name = "Riflemen", SpritePrefix = "soldier_rifle", Count = new(4f, 18f), CountRampExponent = MilitaryRamp, Radius = 0.45f, VisualDiameter = 0.45f,
                 Heal = 5f, Movement = Movement.Walk, Speed = 1.4f, FleeSpeed = 3f, FleeDistance = 1f, IdleChance = 0.15f,
                 Weapon = new Weapon
                 {
@@ -122,7 +122,7 @@ namespace ChompChompPanic
             },
             new PreyType
             {
-                Name = "Bazooka troops", SpritePrefix = "soldier_bazooka", Count = new(1f, 8f), Radius = 0.45f, VisualDiameter = 0.45f,
+                Name = "Bazooka troops", SpritePrefix = "soldier_bazooka", Count = new(1f, 8f), CountRampExponent = MilitaryRamp, Radius = 0.45f, VisualDiameter = 0.45f,
                 Heal = 5f, Movement = Movement.Walk, Speed = 1.2f, FleeSpeed = 2.8f, FleeDistance = 1f, IdleChance = 0.15f,
                 Weapon = new Weapon
                 {
@@ -132,12 +132,18 @@ namespace ChompChompPanic
             },
             new PreyType
             {
+        /// <summary>
+        /// Count ramp for the ground military: front-loaded, so by minute 2 of 10 they are
+        /// about 45% of the way to their end-of-session numbers instead of 20%.
+        /// </summary>
+        const float MilitaryRamp = 0.5f;
+
                 Name = "Cars", SpritePrefix = "car", Count = new(14f, 10f), Radius = 0.9f, VisualDiameter = 0.9f,
                 Movement = Movement.Drive, Speed = 2.5f, FleeSpeed = 4.5f, FleeDistance = 3.5f, CrunchShake = 0.03f,
             },
             new PreyType
             {
-                Name = "Jeeps", SpritePrefix = "jeep", Count = new(0f, 6f), Radius = 0.9f, VisualDiameter = 0.9f,
+                Name = "Jeeps", SpritePrefix = "jeep", Count = new(0f, 6f), CountRampExponent = MilitaryRamp, Radius = 0.9f, VisualDiameter = 0.9f,
                 Movement = Movement.Drive, Speed = 3f, FleeSpeed = 4.5f, FleeDistance = 2f, CrunchShake = 0.03f,
                 Weapon = new Weapon
                 {
@@ -147,7 +153,7 @@ namespace ChompChompPanic
             },
             new PreyType
             {
-                Name = "Tanks", SpritePrefix = "tank", Count = new(1f, 7f), Radius = 1.8f, VisualDiameter = 1.8f,
+                Name = "Tanks", SpritePrefix = "tank", Count = new(1f, 7f), CountRampExponent = MilitaryRamp, Radius = 1.8f, VisualDiameter = 1.8f,
                 Movement = Movement.Drive, Speed = 1.4f, FleeSpeed = 1.4f, FleeDistance = 0f, CrunchShake = 0.06f,
                 Weapon = new Weapon
                 {
@@ -376,7 +382,8 @@ namespace ChompChompPanic
                 var type = preyTypes[i];
                 if (!type.HasSprites)
                     continue;
-                int target = Mathf.RoundToInt(Mathf.Lerp(type.Count.x, type.Count.y, Progress));
+                float ramp = Mathf.Pow(Progress, type.CountRampExponent);
+                int target = Mathf.RoundToInt(Mathf.Lerp(type.Count.x, type.Count.y, ramp));
                 while (liveCounts[i] < target)
                     SpawnPrey(i, initial);
             }

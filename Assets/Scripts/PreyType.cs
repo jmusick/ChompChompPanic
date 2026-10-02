@@ -59,6 +59,8 @@ namespace ChompChompPanic
         public CharacterSprites[] Variants;
         [Tooltip("How many are around at the start and at the end of the session")]
         public Vector2 Count = new(10f, 10f);
+        [Tooltip("Shape of the ramp from start to end count: 1 = steady, under 1 = most of the change comes early")]
+        public float CountRampExponent = 1f;
         [Tooltip("Collision radius. Doesn't change. The kaiju can eat it once the kaiju's radius is this x Eat Ratio.")]
         public float Radius = 0.45f;
         [Tooltip("Sets the sprite's scale: scale = 2 x radius / this. Equal to Radius draws at the people's 2x pixel scale.")]
