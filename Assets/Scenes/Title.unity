@@ -236,6 +236,9 @@ MonoBehaviour:
   backgroundColor: {r: 0.04, g: 0.04, b: 0.08, a: 1}
   itemColor: {r: 0.85, g: 0.85, b: 0.9, a: 1}
   selectedColor: {r: 1, g: 0.72, b: 0.15, a: 1}
+  menuMoveSound: {fileID: 8300000, guid: 94e81cf7bb07cc7428b8730f5c66e232, type: 3}
+  menuSelectSound: {fileID: 8300000, guid: 96663cfa3a9b6ab4082eb5ddc368210e, type: 3}
+  soundVolume: 0.6
 --- !u!4 &1351942523
 Transform:
   m_ObjectHideFlags: 0

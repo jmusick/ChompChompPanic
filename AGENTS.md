@@ -29,7 +29,9 @@ Instructions for coding agents working on Chomp Chomp Panic!, a top-down 2D pixe
 | `SpriteAnimator.cs`, `Sprites.cs` | Code-driven sprite animation (idle/walk/chomp/death) and sprite helpers |
 | `Projectile.cs`, `DustPuff.cs`, `GroundStain.cs`, `FlyingShadow.cs` | Small effect/behaviour components |
 | `TitleScreen.cs` | Title menu |
+| `SoundPlayer.cs` | Pooled one-shot sound effects that survive scene loads |
 | `Editor/ArtImporter.cs` | **Chomp Chomp Panic > Import Art** menu: slices sprite sheets and assigns sprites to the `GameManager` |
+| `Editor/SoundImporter.cs` | **Chomp Chomp Panic > Import Audio** menu: sets WAV import settings and assigns clips (and numbered variant arrays) to the `GameManager` and `TitleScreen` |
 
 ## Game design rules to keep intact
 
@@ -48,6 +50,12 @@ Instructions for coding agents working on Chomp Chomp Panic!, a top-down 2D pixe
 4. Never hand-edit files in `Assets/Art/` that a script generates. Change the script and re-run it.
 5. Keep the shared palette: navy outline `#10152D`, a dark, desaturated night city, a teal kaiju and warm-colored people.
 6. Don't commit image-generation prompt files.
+
+## Sound pipeline
+
+1. Sound effects are synthesized by `ArtSource/Audio/build_sfx.py` (standard library only, deterministic) into `Assets/Audio/sfx_<name>.wav`.
+2. **Chomp Chomp Panic > Import Audio** assigns `sfx_<name>.wav` to the `<name>Sound` field (`menu_move` -> `menuMoveSound`) in every build scene. Numbered variants, `sfx_<name>_<n>.wav`, fill a `<name>Sounds` array; use them for sounds that repeat a lot. To add a sound, add it to `SOUNDS` in the script and add a matching `AudioClip` field.
+3. Play sounds through `SoundPlayer.Play`; it ignores null clips, so the game stays silent rather than broken without them. Never hand-edit the generated WAVs.
 
 ## Conventions
 

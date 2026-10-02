@@ -20,6 +20,11 @@ namespace ChompChompPanic
         [SerializeField] Color itemColor = new(0.85f, 0.85f, 0.9f);
         [SerializeField, Tooltip("Selected entry, matched to the logo's orange")]
         Color selectedColor = new(1f, 0.72f, 0.15f);
+        [SerializeField, Tooltip("Moving between entries (from ArtSource/Audio/build_sfx.py)")]
+        AudioClip menuMoveSound;
+        [SerializeField, Tooltip("Confirming an entry")]
+        AudioClip menuSelectSound;
+        [SerializeField, Range(0f, 1f)] float soundVolume = 0.6f;
 
         struct MenuItem
         {
@@ -88,12 +93,27 @@ namespace ChompChompPanic
             }
 
             if (move != 0)
-                selected = (selected + move + items.Count) % items.Count;
+                Select((selected + move + items.Count) % items.Count);
 
             bool confirm = (kb != null && (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame))
                 || (pad != null && (pad.buttonSouth.wasPressedThisFrame || pad.startButton.wasPressedThisFrame));
             if (confirm)
-                items[selected].Run();
+                Confirm(selected);
+        }
+
+        void Select(int index)
+        {
+            if (index == selected)
+                return;
+            selected = index;
+            SoundPlayer.Play(menuMoveSound, soundVolume);
+        }
+
+        void Confirm(int index)
+        {
+            selected = index;
+            SoundPlayer.Play(menuSelectSound, soundVolume, 1f, 0f);
+            items[index].Run();
         }
 
         void OnGUI()
@@ -131,12 +151,11 @@ namespace ChompChompPanic
             {
                 var row = new Rect((Screen.width - rowW) * 0.5f, logoBottom + h * 0.03f + i * rowH, rowW, rowH);
                 if (mouseMoved && row.Contains(mouse))
-                    selected = i;
+                    Select(i);
                 if (Event.current.type == EventType.MouseDown && Event.current.button == 0 && row.Contains(mouse))
                 {
-                    selected = i;
                     Event.current.Use();
-                    items[i].Run();
+                    Confirm(i);
                     return;
                 }
 

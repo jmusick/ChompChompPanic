@@ -810,6 +810,24 @@ MonoBehaviour:
   - {fileID: 465634310, guid: da62907bd3055bf408a832a4a285f1d9, type: 3}
   bloodBurstSize: 0.8
   bloodStainHoldAndFade: {x: 6, y: 2}
+  soundVolume: 0.8
+  chompSound: {fileID: 8300000, guid: f396850b3ba8c3f4c81ac0fefc05c2bd, type: 3}
+  crunchSound: {fileID: 8300000, guid: fb92863d22fd2884a9e02712aeb1974f, type: 3}
+  gunshotSound: {fileID: 8300000, guid: f60051efd2218e241a4fbd22a0d00f29, type: 3}
+  launchSound: {fileID: 8300000, guid: 786bfb8d50f917748a368b36e94ff3d5, type: 3}
+  explosionSound: {fileID: 8300000, guid: 3c0881e512ab15c45b3a9106e294879f, type: 3}
+  hitSound: {fileID: 8300000, guid: aeb1fee2f7125604b8349b99e9cc1d77, type: 3}
+  smashSounds:
+  - {fileID: 8300000, guid: 4889a549e9a43954aa7484b8fc42cd62, type: 3}
+  - {fileID: 8300000, guid: f00bc483dd2fff644823b97badf623ac, type: 3}
+  - {fileID: 8300000, guid: d12d7612f707394479cfab88f38689ba, type: 3}
+  - {fileID: 8300000, guid: 9337fe32902b0cc4bb279388db525a82, type: 3}
+  smashSoundInterval: {x: 0.3, y: 0.55}
+  stompSound: {fileID: 8300000, guid: 8db8cb671f0b058459c378370129e657, type: 3}
+  growSound: {fileID: 8300000, guid: 4f18b92ec7eb7274293301e60b0c0b91, type: 3}
+  winSound: {fileID: 8300000, guid: bef12dddcb012994392b85cd670263a4, type: 3}
+  loseSound: {fileID: 8300000, guid: 3e2747ada2045a447ac8aba3dfd9ba4f, type: 3}
+  strideLength: 3
 --- !u!4 &310349947
 Transform:
   m_ObjectHideFlags: 0

@@ -71,6 +71,32 @@ namespace ChompChompPanic
         [SerializeField, Tooltip("Seconds a stain stays before it starts to fade, and how long the fade takes")]
         Vector2 bloodStainHoldAndFade = new(6f, 2f);
 
+        [Header("Sound (from ArtSource/Audio/build_sfx.py; assign with Chomp Chomp Panic > Import Audio; silent without it)")]
+        [SerializeField, Range(0f, 1f)] float soundVolume = 0.8f;
+        [SerializeField, Tooltip("Eating a person or soldier")]
+        AudioClip chompSound;
+        [SerializeField, Tooltip("Eating a vehicle or a rival kaiju")]
+        AudioClip crunchSound;
+        [SerializeField, Tooltip("Rifle and machine-gun shots")]
+        AudioClip gunshotSound;
+        [SerializeField, Tooltip("Rockets, tank shells and missiles being fired")]
+        AudioClip launchSound;
+        [SerializeField] AudioClip explosionSound;
+        [SerializeField, Tooltip("A bullet hitting the kaiju")]
+        AudioClip hitSound;
+        [SerializeField, Tooltip("A building being smashed; a different variant is picked each time")]
+        AudioClip[] smashSounds;
+        [SerializeField, Tooltip("Seconds between smash sounds (random in this range); buildings smashed in between make the next one louder")]
+        Vector2 smashSoundInterval = new(0.3f, 0.55f);
+        [SerializeField, Tooltip("Kaiju footsteps")]
+        AudioClip stompSound;
+        [SerializeField, Tooltip("The kaiju has grown big enough to eat the next tier of prey")]
+        AudioClip growSound;
+        [SerializeField] AudioClip winSound;
+        [SerializeField] AudioClip loseSound;
+        [SerializeField, Tooltip("Distance walked between footsteps, in kaiju radii")]
+        float strideLength = 3f;
+
         readonly List<EnemyBlob> blobs = new();
         int[] liveCounts;
         EnemyBlob rival;
@@ -93,11 +119,24 @@ namespace ChompChompPanic
         GUIStyle hudStyle;
         GUIStyle bannerStyle;
         GUIStyle markerStyle;
+        float[] tierRadii;
+        int nextTier;
+        Vector2 lastStepPosition;
+        float stepDistance;
+        int unheardSmashes;
+        float nextSmashSoundTime;
+        int lastSmashSound = -1;
 
         float Progress => Mathf.Clamp01(elapsed / sessionLength);
 
         /// <summary>Distance from the camera center to a screen corner.</summary>
         float ViewRadius => cam.orthographicSize * Mathf.Sqrt(1f + cam.aspect * cam.aspect);
+
+        /// <summary>
+        /// Count ramp for the ground military: front-loaded, so by minute 2 of 10 they are
+        /// about 45% of the way to their end-of-session numbers instead of 20%.
+        /// </summary>
+        const float MilitaryRamp = 0.5f;
 
         /// <summary>
         /// The prey ladder: each tier is about twice the one before, so the kaiju has to grow to reach the next.
@@ -132,12 +171,6 @@ namespace ChompChompPanic
             },
             new PreyType
             {
-        /// <summary>
-        /// Count ramp for the ground military: front-loaded, so by minute 2 of 10 they are
-        /// about 45% of the way to their end-of-session numbers instead of 20%.
-        /// </summary>
-        const float MilitaryRamp = 0.5f;
-
                 Name = "Cars", SpritePrefix = "car", Count = new(14f, 10f), Radius = 0.9f, VisualDiameter = 0.9f,
                 Movement = Movement.Drive, Speed = 2.5f, FleeSpeed = 4.5f, FleeDistance = 3.5f, CrunchShake = 0.03f,
             },
@@ -188,6 +221,16 @@ namespace ChompChompPanic
             else
                 CreateGrid();
             CreatePlayer();
+            lastStepPosition = player.transform.position;
+
+            // Prey sizes the kaiju has yet to grow into; reaching each one plays the grow sound.
+            var radii = new SortedSet<float>();
+            foreach (var type in preyTypes)
+                radii.Add(type.Radius);
+            tierRadii = new float[radii.Count];
+            radii.CopyTo(tierRadii);
+            while (nextTier < tierRadii.Length && CanEat(tierRadii[nextTier]))
+                nextTier++;
 
             blobRoot = new GameObject("Prey").transform;
             liveCounts = new int[preyTypes.Length];
@@ -220,6 +263,7 @@ namespace ChompChompPanic
                 SpawnRival();
             if (city != null)
                 StompBuildings();
+            Footsteps();
         }
 
         void StompBuildings()
@@ -229,10 +273,59 @@ namespace ChompChompPanic
             {
                 smashedCount += count;
                 shake = Mathf.Min(shake + smashShake * count, smashShake * 4f);
+                unheardSmashes += count;
             }
+            SmashSound();
             // Rivals flatten the city too.
             if (rival != null)
                 city.Stomp(rival.transform.position, rival.Blob.Radius);
+        }
+
+        /// <summary>
+        /// A big kaiju smashes buildings nearly every frame. Rather than a constant wall of the same clip,
+        /// play a random variant every so often, louder the more buildings fell since the last one.
+        /// </summary>
+        void SmashSound()
+        {
+            if (unheardSmashes == 0 || elapsed < nextSmashSoundTime || smashSounds is not { Length: > 0 })
+                return;
+            int pick = Random.Range(0, smashSounds.Length);
+            if (pick == lastSmashSound && smashSounds.Length > 1)
+                pick = (pick + 1) % smashSounds.Length;
+            lastSmashSound = pick;
+            float volume = Mathf.Lerp(0.55f, 0.9f, (unheardSmashes - 1) / 4f);
+            PlaySound(smashSounds[pick], volume, SizePitch * Random.Range(0.92f, 1.08f));
+            unheardSmashes = 0;
+            nextSmashSoundTime = elapsed + Random.Range(smashSoundInterval.x, smashSoundInterval.y);
+        }
+
+        /// <summary>A thud every stride; heavier, slower and deeper as the kaiju grows.</summary>
+        void Footsteps()
+        {
+            Vector2 position = player.transform.position;
+            stepDistance += Vector2.Distance(position, lastStepPosition);
+            lastStepPosition = position;
+            if (stepDistance < player.Radius * strideLength)
+                return;
+            stepDistance = 0f;
+            float growth = player.Radius / playerStartRadius;
+            PlaySound(stompSound, Mathf.Lerp(0.2f, 0.7f, (growth - 1f) / 4f), SizePitch);
+        }
+
+        /// <summary>Pitch for the kaiju's own sounds: lower as it grows.</summary>
+        float SizePitch => Mathf.Clamp(Mathf.Pow(playerStartRadius / player.Radius, 0.25f), 0.6f, 1.1f);
+
+        bool CanEat(float radius) => player.Radius >= radius * eatRatio;
+
+        /// <summary>Play a sound at the master volume; <paramref name="position"/>, if given, fades it with distance from the kaiju.</summary>
+        void PlaySound(AudioClip clip, float volume = 1f, float pitch = 1f, Vector2? position = null)
+        {
+            if (position.HasValue)
+            {
+                float distance = Vector2.Distance(position.Value, player.transform.position) - player.Radius;
+                volume *= Mathf.Clamp01(1.3f - distance / ViewRadius);
+            }
+            SoundPlayer.Play(clip, volume * soundVolume, pitch);
         }
 
         void LateUpdate()
@@ -312,6 +405,19 @@ namespace ChompChompPanic
                 health = Mathf.Min(maxHealth, health + type.Heal);
                 Flash(healColor, 0.6f);
             }
+
+            // Vehicles (anything that shakes the camera) crunch; people get chomped.
+            bool crunchy = blob.IsRival || type.CrunchShake > 0f;
+            PlaySound(crunchy ? crunchSound : chompSound, crunchy ? 1f : 0.7f, SizePitch);
+
+            bool grew = false;
+            while (nextTier < tierRadii.Length && CanEat(tierRadii[nextTier]))
+            {
+                nextTier++;
+                grew = true;
+            }
+            if (grew)
+                PlaySound(growSound, 0.6f, 1f);
         }
 
         void SplatterBlood(Vector2 position)
@@ -343,11 +449,19 @@ namespace ChompChompPanic
             // Fly on a little past the kaiju's far side, so misses still sail by.
             float range = weapon.Range + player.Radius * 2f + 2f;
             Projectile.Fire(weapon, muzzle, direction, range, player, OnImpact);
+            if (weapon.Explodes)
+                PlaySound(launchSound, 0.6f, Random.Range(0.9f, 1.15f), muzzle);
+            else
+                PlaySound(gunshotSound, 0.35f, Random.Range(0.9f, 1.2f), muzzle);
         }
 
         void OnImpact(Projectile projectile, bool hit)
         {
             var position = (Vector2)projectile.transform.position;
+            if (projectile.Explodes)
+                PlaySound(explosionSound, 0.9f, 1f, position);
+            else if (hit)
+                PlaySound(hitSound, 0.5f, 1f);
             if (projectile.Explodes && explosion is { Length: > 0 })
                 DustPuff.Spawn(explosion, position, explosionSize / explosion[0].bounds.size.x, short.MaxValue - 25);
             else if (hit && muzzleFlash is { Length: > 0 })
@@ -529,6 +643,7 @@ namespace ChompChompPanic
             state = result;
             lossMessage = message;
             Time.timeScale = 0f;
+            PlaySound(result == State.Won ? winSound : loseSound);
             if (result == State.Lost)
             {
                 if (playerAnimator != null)
