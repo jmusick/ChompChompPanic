@@ -7,7 +7,8 @@ namespace ChompChompPanic
 {
     /// <summary>
     /// Runs a session: spawns the player, prey and rival kaiju, resolves eating, gunfire and building
-    /// smashing, follows with the camera, tracks the timer and health, and draws a minimal HUD.
+    /// smashing, follows with the camera, tracks the timer and health, plays the map's music, and draws a minimal HUD.
+    /// Esc / Start pauses the game with a menu (resume, options, title screen, quit).
     /// </summary>
     public class GameManager : MonoBehaviour
     {
@@ -96,6 +97,18 @@ namespace ChompChompPanic
         [SerializeField] AudioClip loseSound;
         [SerializeField, Tooltip("Distance walked between footsteps, in kaiju radii")]
         float strideLength = 3f;
+        [SerializeField, Tooltip("Moving between pause-menu entries")]
+        AudioClip menuMoveSound;
+        [SerializeField, Tooltip("Confirming a pause-menu entry")]
+        AudioClip menuSelectSound;
+
+        [Header("Music (Assets/Audio/Music/music_tokyo_<n>.wav; assign with Chomp Chomp Panic > Import Audio; silent without it)")]
+        [SerializeField, Tooltip("Tokyo map tracks, played in random order with a crossfade between them")]
+        AudioClip[] tokyoMusic;
+        [SerializeField, Range(0f, 1f), Tooltip("Music mix level, before the player's music volume option")]
+        float musicVolume = 0.5f;
+        [SerializeField, Range(0f, 1f), Tooltip("Music level while paused or on the game-over screen, as a fraction of the mix level")]
+        float musicDuck = 0.4f;
 
         readonly List<EnemyBlob> blobs = new();
         int[] liveCounts;
@@ -126,6 +139,8 @@ namespace ChompChompPanic
         int unheardSmashes;
         float nextSmashSoundTime;
         int lastSmashSound = -1;
+        bool paused;
+        readonly Menu pauseMenu = new();
 
         float Progress => Mathf.Clamp01(elapsed / sessionLength);
 
@@ -235,16 +250,30 @@ namespace ChompChompPanic
             blobRoot = new GameObject("Prey").transform;
             liveCounts = new int[preyTypes.Length];
             SpawnPrey(initial: true);
+
+            MusicPlayer.Play(tokyoMusic, musicVolume);
+            pauseMenu.MoveSound = menuMoveSound;
+            pauseMenu.SelectSound = menuSelectSound;
         }
 
         void Update()
         {
+            if (paused)
+            {
+                pauseMenu.Update();
+                return;
+            }
             if (state != State.Playing)
             {
                 if (RestartPressed())
                     SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
                 else if (TitlePressed())
                     SceneManager.LoadScene(TitleScene);
+                return;
+            }
+            if (PausePressed())
+            {
+                Pause();
                 return;
             }
 
@@ -643,6 +672,7 @@ namespace ChompChompPanic
             state = result;
             lossMessage = message;
             Time.timeScale = 0f;
+            MusicPlayer.SetLevel(musicVolume * musicDuck);
             PlaySound(result == State.Won ? winSound : loseSound);
             if (result == State.Lost)
             {
@@ -651,6 +681,47 @@ namespace ChompChompPanic
                 else
                     player.gameObject.SetActive(false);
             }
+        }
+
+        // ------------------------------------------------------------------ pause menu
+
+        void Pause()
+        {
+            paused = true;
+            Time.timeScale = 0f;
+            MusicPlayer.SetLevel(musicVolume * musicDuck);
+            SoundPlayer.Play(menuSelectSound, pauseMenu.SoundVolume, 1f, 0f);
+            ShowPauseMenu();
+        }
+
+        void Resume()
+        {
+            paused = false;
+            Time.timeScale = 1f;
+            MusicPlayer.SetLevel(musicVolume);
+        }
+
+        void ShowPauseMenu()
+        {
+            var items = new List<Menu.Item>
+            {
+                Menu.Button("Resume", Resume),
+                Menu.Button("Options", () => pauseMenu.ShowOptions(ShowPauseMenu)),
+                Menu.Button("Title Screen", () => SceneManager.LoadScene(TitleScene)),
+            };
+            if (Menu.CanQuit)
+                items.Add(Menu.Button("Quit Game", Menu.QuitGame));
+            pauseMenu.Show("Paused", Resume, items.ToArray());
+        }
+
+        static bool PausePressed()
+        {
+            var kb = Keyboard.current;
+            if (kb != null && (kb.escapeKey.wasPressedThisFrame || kb.pKey.wasPressedThisFrame))
+                return true;
+
+            var pad = Gamepad.current;
+            return pad != null && pad.startButton.wasPressedThisFrame;
         }
 
         /// <summary>The title screen is the first scene in the build profile.</summary>
@@ -701,6 +772,11 @@ namespace ChompChompPanic
             if (rival != null && player != null)
                 DrawRivalMarker();
 
+            if (paused)
+            {
+                DrawPauseMenu();
+                return;
+            }
             if (state == State.Playing)
                 return;
 
@@ -709,6 +785,20 @@ namespace ChompChompPanic
             var bannerRect = new Rect(0, Screen.height * 0.35f, Screen.width, Screen.height * 0.15f);
             GUI.Label(bannerRect, title, bannerStyle);
             GUI.Label(new Rect(0, bannerRect.yMax, Screen.width, Screen.height * 0.1f), subtitle, hudStyle);
+        }
+
+        void DrawPauseMenu()
+        {
+            var old = GUI.color;
+            GUI.color = new Color(0.02f, 0.03f, 0.08f, 0.7f);
+            GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
+            GUI.color = old;
+            pauseMenu.Draw(Screen.height * 0.22f);
+            var hint = new Rect(0, 0, Screen.width, Screen.height * 0.98f);
+            hudStyle.fontSize = Mathf.RoundToInt(Screen.height * 0.022f);
+            hudStyle.alignment = TextAnchor.LowerCenter;
+            Menu.DrawShadowed(hint, Menu.Hint, hudStyle, new Color(1f, 1f, 1f, 0.45f));
+            hudStyle.alignment = TextAnchor.UpperCenter;
         }
 
         void DrawHealthBar()

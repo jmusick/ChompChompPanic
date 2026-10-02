@@ -828,6 +828,15 @@ MonoBehaviour:
   winSound: {fileID: 8300000, guid: bef12dddcb012994392b85cd670263a4, type: 3}
   loseSound: {fileID: 8300000, guid: 3e2747ada2045a447ac8aba3dfd9ba4f, type: 3}
   strideLength: 3
+  menuMoveSound: {fileID: 8300000, guid: 94e81cf7bb07cc7428b8730f5c66e232, type: 3}
+  menuSelectSound: {fileID: 8300000, guid: 96663cfa3a9b6ab4082eb5ddc368210e, type: 3}
+  tokyoMusic:
+  - {fileID: 8300000, guid: 5b66461310db054469022572f7945bcf, type: 3}
+  - {fileID: 8300000, guid: e31846c3b1d5597459d4a784c30b799f, type: 3}
+  - {fileID: 8300000, guid: ad6faf5d9817dca4fac90226bd9893a8, type: 3}
+  - {fileID: 8300000, guid: f84aff5fb38971d42886db76fcb0ffe3, type: 3}
+  musicVolume: 0.5
+  musicDuck: 0.4
 --- !u!4 &310349947
 Transform:
   m_ObjectHideFlags: 0

@@ -30,7 +30,7 @@ namespace ChompChompPanic
 
     /// <summary>
     /// Code-driven frame animation: loops idle/walk, plays chomp, attack and death as one-shots.
-    /// Uses unscaled time so the death animation still plays after the game pauses.
+    /// Freezes with the game when it pauses, except the death animation, which plays on over the game-over screen.
     /// Characters with up/down views (cars) turn to face the way they move; others flip left/right.
     /// </summary>
     [RequireComponent(typeof(SpriteRenderer))]
@@ -114,7 +114,7 @@ namespace ChompChompPanic
             if (frames == null)
                 return;
 
-            time += Time.unscaledDeltaTime;
+            time += dead ? Time.unscaledDeltaTime : Time.deltaTime;
             int frame = Mathf.FloorToInt(time * fps);
 
             if (frame >= frames.Length)

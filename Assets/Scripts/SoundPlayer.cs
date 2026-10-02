@@ -22,9 +22,10 @@ namespace ChompChompPanic
         readonly Dictionary<AudioClip, float> lastPlayed = new();
         int next;
 
-        /// <summary>Play <paramref name="clip"/> once at the given volume (0-1) and pitch (1 = as recorded).</summary>
+        /// <summary>Play <paramref name="clip"/> once at the given volume (0-1, scaled by <see cref="GameSettings.SfxVolume"/>) and pitch (1 = as recorded).</summary>
         public static void Play(AudioClip clip, float volume = 1f, float pitch = 1f, float pitchJitter = 0.05f)
         {
+            volume *= GameSettings.SfxVolume;
             if (clip == null || volume <= 0.01f)
                 return;
             if (instance == null)

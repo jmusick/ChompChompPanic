@@ -12,7 +12,7 @@ Instructions for coding agents working on Chomp Chomp Panic!, a top-down 2D pixe
 
 ## Scenes and flow
 
-- `Assets/Scenes/Title.unity` is build index 0. `TitleScreen.cs` draws the logo and menu. Menu entries come from `TitleScreen.BuildMenu`.
+- `Assets/Scenes/Title.unity` is build index 0. `TitleScreen.cs` draws the logo and menu. Menu entries come from `TitleScreen.BuildMenu`; the in-game pause menu (Esc) comes from `GameManager.ShowPauseMenu`. Both use `Menu.cs`.
 - `Assets/Scenes/SampleScene.unity` is the game. `GameManager.cs` runs the whole session. It builds the player, prey, city, camera and HUD in code at `Start`, so the scene itself holds very little besides the `GameManager` and its serialized settings.
 - The HUD and game-over screen use `OnGUI`.
 
@@ -29,6 +29,9 @@ Instructions for coding agents working on Chomp Chomp Panic!, a top-down 2D pixe
 | `SpriteAnimator.cs`, `Sprites.cs` | Code-driven sprite animation (idle/walk/chomp/death) and sprite helpers |
 | `Projectile.cs`, `DustPuff.cs`, `GroundStain.cs`, `FlyingShadow.cs` | Small effect/behaviour components |
 | `TitleScreen.cs` | Title menu |
+| `Menu.cs` | Shared IMGUI menu (buttons, volume sliders, keyboard/gamepad/mouse) and the Options page |
+| `GameSettings.cs` | Music and SFX volume options, saved in `PlayerPrefs` |
+| `MusicPlayer.cs` | Shuffled, crossfading music playlist that survives scene loads |
 | `SoundPlayer.cs` | Pooled one-shot sound effects that survive scene loads |
 | `Editor/ArtImporter.cs` | **Chomp Chomp Panic > Import Art** menu: slices sprite sheets and assigns sprites to the `GameManager` |
 | `Editor/SoundImporter.cs` | **Chomp Chomp Panic > Import Audio** menu: sets WAV import settings and assigns clips (and numbered variant arrays) to the `GameManager` and `TitleScreen` |
@@ -55,7 +58,8 @@ Instructions for coding agents working on Chomp Chomp Panic!, a top-down 2D pixe
 
 1. Sound effects are synthesized by `ArtSource/Audio/build_sfx.py` (standard library only, deterministic) into `Assets/Audio/sfx_<name>.wav`.
 2. **Chomp Chomp Panic > Import Audio** assigns `sfx_<name>.wav` to the `<name>Sound` field (`menu_move` -> `menuMoveSound`) in every build scene. Numbered variants, `sfx_<name>_<n>.wav`, fill a `<name>Sounds` array; use them for sounds that repeat a lot. To add a sound, add it to `SOUNDS` in the script and add a matching `AudioClip` field.
-3. Play sounds through `SoundPlayer.Play`; it ignores null clips, so the game stays silent rather than broken without them. Never hand-edit the generated WAVs.
+3. Music lives in `Assets/Audio/Music/music_<map>_<n>.wav`. It isn't generated, so it can be replaced freely. Import Audio streams it as stereo Vorbis and fills the `<map>Music` array (`music_tokyo_2` -> `tokyoMusic[1]`). `GameManager` hands the array to `MusicPlayer.Play`.
+4. Play sounds through `SoundPlayer.Play`; it ignores null clips, so the game stays silent rather than broken without them. Never hand-edit the generated WAVs.
 
 ## Conventions
 

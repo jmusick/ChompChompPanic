@@ -9,16 +9,19 @@ using UnityEngine;
 namespace ChompChompPanic.Editor
 {
     /// <summary>
-    /// Brings the procedurally generated sound effects (ArtSource/Audio/build_sfx.py) into the game:
-    /// 1. Sets every WAV in Assets/Audio to mono, decompressed on load (they're all short one-shots).
+    /// Brings the procedurally generated sound effects (ArtSource/Audio/build_sfx.py) and the music into the game:
+    /// 1. Sets every sfx_*.wav in Assets/Audio to mono, decompressed on load (they're all short one-shots),
+    ///    and every music_*.wav to stereo Vorbis, streamed from disk (they're minutes long).
     /// 2. Assigns sfx_&lt;name&gt;.wav to the &lt;name&gt;Sound field (snake_case to camelCase) of the
     ///    GameManager and TitleScreen in every scene of the build profile, saving the scenes it changes.
     ///    Numbered variants, sfx_&lt;name&gt;_&lt;n&gt;.wav, fill the &lt;name&gt;Sounds array in order.
+    ///    Music tracks, music_&lt;map&gt;_&lt;n&gt;.wav, fill the &lt;map&gt;Music array in order.
     /// </summary>
     static class SoundImporter
     {
         const string AudioRoot = "Assets/Audio";
         const string Prefix = "sfx_";
+        const string MusicPrefix = "music_";
 
         static readonly Regex Variant = new(@"^(.+)_(\d+)$");
 
@@ -34,20 +37,33 @@ namespace ChompChompPanic.Editor
             {
                 string path = AssetDatabase.GUIDToAssetPath(guid);
                 string name = Path.GetFileNameWithoutExtension(path);
-                if (!name.StartsWith(Prefix))
+                string field;
+                int order;
+                if (name.StartsWith(Prefix))
+                {
+                    Configure(path);
+                    name = name.Substring(Prefix.Length);
+                    var variant = Variant.Match(name);
+                    field = variant.Success ? FieldName(variant.Groups[1].Value, "Sound") + "s" : FieldName(name, "Sound");
+                    order = variant.Success ? int.Parse(variant.Groups[2].Value) : 0;
+                }
+                else if (name.StartsWith(MusicPrefix))
+                {
+                    ConfigureMusic(path);
+                    name = name.Substring(MusicPrefix.Length);
+                    var variant = Variant.Match(name);
+                    field = FieldName(variant.Success ? variant.Groups[1].Value : name, "Music");
+                    order = variant.Success ? int.Parse(variant.Groups[2].Value) : 0;
+                }
+                else
                     continue;
-                Configure(path);
-                name = name.Substring(Prefix.Length);
-                var variant = Variant.Match(name);
-                string field = variant.Success ? FieldName(variant.Groups[1].Value) + "s" : FieldName(name);
-                int order = variant.Success ? int.Parse(variant.Groups[2].Value) : 0;
                 if (!clips.TryGetValue(field, out var list))
                     clips[field] = list = new List<(int, AudioClip)>();
                 list.Add((order, AssetDatabase.LoadAssetAtPath<AudioClip>(path)));
             }
             if (clips.Count == 0)
             {
-                Debug.LogWarning($"Import Audio: no {Prefix}*.wav files in {AudioRoot}. Run ArtSource/Audio/build_sfx.py first.");
+                Debug.LogWarning($"Import Audio: no {Prefix}*.wav or {MusicPrefix}*.wav files in {AudioRoot}. Run ArtSource/Audio/build_sfx.py first.");
                 return;
             }
 
@@ -116,11 +132,28 @@ namespace ChompChompPanic.Editor
             importer.SaveAndReimport();
         }
 
-        /// <summary>"menu_move" -> "menuMoveSound".</summary>
-        static string FieldName(string snake)
+        /// <summary>Long music tracks: stereo, Vorbis-compressed and streamed, so they don't sit in memory.</summary>
+        static void ConfigureMusic(string path)
+        {
+            if (AssetImporter.GetAtPath(path) is not UnityEditor.AudioImporter importer)
+                return;
+            var settings = importer.defaultSampleSettings;
+            if (!importer.forceToMono && settings.loadType == AudioClipLoadType.Streaming
+                && settings.compressionFormat == AudioCompressionFormat.Vorbis)
+                return;
+            importer.forceToMono = false;
+            settings.loadType = AudioClipLoadType.Streaming;
+            settings.compressionFormat = AudioCompressionFormat.Vorbis;
+            settings.quality = 0.7f;
+            importer.defaultSampleSettings = settings;
+            importer.SaveAndReimport();
+        }
+
+        /// <summary>("menu_move", "Sound") -> "menuMoveSound".</summary>
+        static string FieldName(string snake, string suffix)
         {
             var parts = snake.Split('_');
-            return parts[0] + string.Concat(parts.Skip(1).Select(p => char.ToUpperInvariant(p[0]) + p.Substring(1))) + "Sound";
+            return parts[0] + string.Concat(parts.Skip(1).Select(p => char.ToUpperInvariant(p[0]) + p.Substring(1))) + suffix;
         }
     }
 }

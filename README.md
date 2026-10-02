@@ -20,11 +20,14 @@ Built with Unity 6 (6000.5.6f1) and the Universal Render Pipeline (2D).
 | Action | Keyboard | Gamepad |
 | --- | --- | --- |
 | Move | WASD / arrow keys | Left stick |
+| Pause menu (resume, options, title, quit) | Esc / P | Start |
+| Menu choose / adjust | Arrows / WASD | D-pad / left stick |
 | Menu select | Enter / Space | A (South) |
+| Menu back | Esc | B (East) |
 | Restart (game over) | R / Space / Enter | A (South) / Start |
 | Back to title (game over) | Esc | B (East) / Select |
 
-The title menu also works with the mouse.
+The title and pause menus also work with the mouse. **Options** sets the music and sound-effect volume, which is saved between runs.
 
 ## Getting started
 
