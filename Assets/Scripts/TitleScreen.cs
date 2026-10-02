@@ -5,7 +5,8 @@ using UnityEngine.SceneManagement;
 namespace ChompChompPanic
 {
     /// <summary>
-    /// The launch screen: shows the logo over a dark backdrop with a vertical menu underneath.
+    /// The launch screen: shows the logo over a dark backdrop with a vertical menu underneath,
+    /// and the game version (Player Settings > Version) in the bottom-right corner.
     /// Input and drawing are handled by <see cref="Menu"/>. Add entries in <see cref="BuildMenu"/>.
     /// </summary>
     public class TitleScreen : MonoBehaviour
@@ -25,6 +26,7 @@ namespace ChompChompPanic
 
         readonly Menu menu = new();
         GUIStyle footerStyle;
+        GUIStyle versionStyle;
 
         void Awake()
         {
@@ -61,9 +63,11 @@ namespace ChompChompPanic
             {
                 footerStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.LowerCenter };
                 footerStyle.normal.textColor = Color.white;
+                versionStyle = new GUIStyle(footerStyle) { alignment = TextAnchor.LowerRight };
             }
             float h = Screen.height;
             footerStyle.fontSize = Mathf.RoundToInt(h * 0.022f);
+            versionStyle.fontSize = footerStyle.fontSize;
 
             // Logo: fit into the top ~62% of the screen, bobbing gently.
             float logoBottom = h * 0.64f;
@@ -80,6 +84,8 @@ namespace ChompChompPanic
             menu.Draw(logoBottom + h * 0.03f, showTitle: false);
 
             Menu.DrawShadowed(new Rect(0, 0, Screen.width, h * 0.98f), Menu.Hint, footerStyle, new Color(1f, 1f, 1f, 0.45f));
+            Menu.DrawShadowed(new Rect(0, 0, Screen.width - h * 0.02f, h * 0.98f), $"v{Application.version}", versionStyle,
+                new Color(1f, 1f, 1f, 0.3f));
         }
     }
 }
