@@ -398,7 +398,8 @@ namespace ChompChompPanic
                 float distance = Vector2.Distance(playerPos, blob.transform.position);
 
                 // Something is eaten once its center is inside the eater.
-                if (playerRadius >= blobRadius * eatRatio && distance < playerRadius)
+                bool edible = playerRadius >= blobRadius * eatRatio;
+                if (edible && distance < playerRadius)
                 {
                     Eat(blob);
                     RemoveBlob(i);
@@ -406,7 +407,8 @@ namespace ChompChompPanic
                 }
 
                 // Running into a vehicle too big to eat hurts, once per vehicle every so often.
-                if (blob.Type is { RamDamage: > 0f } && elapsed >= blob.NextRamTime
+                // One the kaiju can eat is harmless, even before it's close enough to swallow.
+                if (!edible && blob.Type is { RamDamage: > 0f } && elapsed >= blob.NextRamTime
                     && distance < (playerRadius + blobRadius) * RamContact)
                 {
                     blob.NextRamTime = elapsed + RamCooldown;
