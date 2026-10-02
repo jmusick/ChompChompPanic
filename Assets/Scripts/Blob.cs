@@ -6,7 +6,19 @@ namespace ChompChompPanic
     [RequireComponent(typeof(SpriteRenderer))]
     public class Blob : MonoBehaviour
     {
+        /// <summary>Gap between neighbouring blobs' depths; small enough to be invisible to the camera.</summary>
+        const float DepthStep = 0.0001f;
+        const int DepthSlots = 10000;
+
+        static int nextDepthSlot;
+
         float radius = 0.5f;
+
+        /// <summary>
+        /// A z unique to this blob. Blobs of the same size share a sorting order, and with equal z Unity
+        /// swaps their draw order from frame to frame (flicker). A fixed z gives a stable tie-break.
+        /// </summary>
+        float depth;
 
         public SpriteRenderer Sprite { get; private set; }
 
@@ -32,6 +44,16 @@ namespace ChompChompPanic
         {
             Sprite = GetComponent<SpriteRenderer>();
             Sprite.sprite = Sprites.Circle;
+            depth = nextDepthSlot * DepthStep;
+            nextDepthSlot = (nextDepthSlot + 1) % DepthSlots;
+        }
+
+        void LateUpdate()
+        {
+            // Movement code assigns 2D positions, which resets z; put our depth back before rendering.
+            var position = transform.position;
+            if (position.z != depth)
+                transform.position = new Vector3(position.x, position.y, depth);
         }
 
         /// <summary>Absorb another blob, adding (a fraction of) its area to ours.</summary>
