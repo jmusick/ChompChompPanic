@@ -68,6 +68,12 @@ Instructions for coding agents working on Chomp Chomp Panic!, a top-down 2D pixe
 - Always commit Unity `.meta` files with their assets. Don't commit `Library/`, `Temp/`, `Logs/`, `UserSettings/` or generated `.csproj`/`.slnx` files.
 - Commit messages: short imperative subject in sentence case (e.g. "Add title screen with logo and Start Game / Quit menu"). For bigger changes, add a body explaining the what and why. Don't add AI co-author trailers.
 
+## Releases
+
+- Versions follow semantic versioning in **Player Settings > Version** (`bundleVersion` in `ProjectSettings/ProjectSettings.asset`). Builds read it as `Application.version`.
+- Set it through the Unity editor (`PlayerSettings.bundleVersion`, via the Unity MCP), then save project settings. Only edit `ProjectSettings.asset` by hand when Unity is closed, or the editor may overwrite it.
+- Before tagging, make sure Unity compiles cleanly.
+
 ## Verifying changes
 
 There are no automated tests yet. After changing code:
