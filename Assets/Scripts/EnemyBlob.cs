@@ -9,7 +9,7 @@ namespace ChompChompPanic
     ///
     /// Prey moves according to its <see cref="PreyType.Movement"/>. Given a street map, walkers and drivers
     /// stay on the streets: they move from junction to junction, and flee by turning around or taking the
-    /// side street that leads away. Drivers keep to roads (no alleys) in the left-hand lane. Planes make
+    /// side street that leads away. Prey only flees a kaiju big enough to eat it. Drivers keep to roads (no alleys) in the left-hand lane. Planes make
     /// straight passes over the kaiju. Armed prey fires at the kaiju while it is in range; some stand
     /// still to do it.
     ///
@@ -52,9 +52,11 @@ namespace ChompChompPanic
         int burstLeft;
         float burstTimer;
 
+        /// <summary>How many times bigger the kaiju must be to eat this (prey), or this the kaiju (rival).</summary>
+        float eatRatio;
+
         // Rival kaiju
         RivalSettings rival;
-        float eatRatio;
         float playerBaseSpeed;
         float referenceRadius;
         float stayTimer;
@@ -67,6 +69,8 @@ namespace ChompChompPanic
         public bool IsRival => rival != null;
         /// <summary>A rival that has had its time and is heading away.</summary>
         public bool IsLeaving => IsRival && stayTimer <= 0f;
+        /// <summary>Session time before this prey can hurt the kaiju again by being run into.</summary>
+        public float NextRamTime { get; set; }
 
         void Awake()
         {
@@ -82,10 +86,12 @@ namespace ChompChompPanic
         /// Set up as prey that runs from (or fights) <paramref name="kaiju"/>. With <paramref name="streetLayout"/>,
         /// walkers and drivers move onto the nearest street and stay on streets.
         /// </summary>
+        /// <param name="eatRatioToEat">How many times bigger the kaiju must be to eat this; it ignores a smaller kaiju.</param>
         /// <param name="onFire">Fires one shot: (shooter, muzzle position, direction).</param>
-        public void InitPrey(int typeIndex, PreyType type, Blob kaiju, StreetLayout streetLayout,
+        public void InitPrey(int typeIndex, PreyType type, Blob kaiju, float eatRatioToEat, StreetLayout streetLayout,
             Action<EnemyBlob, Vector2, Vector2> onFire)
         {
+            eatRatio = eatRatioToEat;
             TypeIndex = typeIndex;
             Type = type;
             threat = kaiju;
@@ -156,7 +162,8 @@ namespace ChompChompPanic
 
             Vector2 away = transform.position - threat.transform.position;
             float edgeDistance = away.magnitude - threat.Radius;
-            bool fleeing = fleeDistance > 0f && edgeDistance < fleeDistance;
+            bool threatened = threat.Radius >= Blob.Radius * eatRatio;
+            bool fleeing = threatened && fleeDistance > 0f && edgeDistance < fleeDistance;
             bool engaged = weapon != null && edgeDistance <= weapon.Range;
             bool holding = engaged && weapon.HoldsPosition && !fleeing;
 

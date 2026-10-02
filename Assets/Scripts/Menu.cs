@@ -6,21 +6,25 @@ using UnityEngine.InputSystem;
 namespace ChompChompPanic
 {
     /// <summary>
-    /// A vertical IMGUI menu of buttons and 0-1 sliders, shared by the title screen and the in-game pause menu.
+    /// A vertical IMGUI menu of buttons, on/off toggles and 0-1 sliders, shared by the title screen and the in-game pause menu.
     /// Navigate with arrows / WASD / d-pad / left stick or the mouse; confirm with Enter, Space, click or the south button;
-    /// adjust sliders with left/right or by clicking and dragging the bar; Esc / east button goes back.
+    /// adjust sliders with left/right or by clicking and dragging the bar; flip toggles with confirm or left/right; Esc / east button goes back.
     /// Call <see cref="Update"/> from the owner's Update and <see cref="Draw"/> from its OnGUI. Works while the game is paused.
     /// </summary>
     public class Menu
     {
-        /// <summary>One row: a button (<see cref="Run"/>) or a 0-1 slider (<see cref="Get"/> / <see cref="Set"/>).</summary>
+        /// <summary>One row: a button (<see cref="Run"/>), an on/off toggle (<see cref="IsOn"/> / <see cref="SetOn"/>)
+        /// or a 0-1 slider (<see cref="Get"/> / <see cref="Set"/>).</summary>
         public class Item
         {
             public string Label;
             public Action Run;
             public Func<float> Get;
             public Action<float> Set;
+            public Func<bool> IsOn;
+            public Action<bool> SetOn;
             public bool IsSlider => Get != null;
+            public bool IsToggle => IsOn != null;
         }
 
         /// <summary>Controls hint for the owner to show under the menu.</summary>
@@ -52,6 +56,9 @@ namespace ChompChompPanic
 
         public static Item Slider(string label, Func<float> get, Action<float> set) => new() { Label = label, Get = get, Set = set };
 
+        public static Item Toggle(string label, Func<bool> isOn, Action<bool> setOn) =>
+            new() { Label = label, IsOn = isOn, SetOn = setOn, Run = () => setOn(!isOn()) };
+
         /// <summary>Replace the entries. <paramref name="onBack"/> runs on Esc / east button; null means they do nothing.</summary>
         public void Show(string title, Action onBack, params Item[] entries)
         {
@@ -63,7 +70,7 @@ namespace ChompChompPanic
             dragging = -1;
         }
 
-        /// <summary>The options page: music and sound-effect volume, saved when it closes. Back (or Esc) runs <paramref name="onBack"/>.</summary>
+        /// <summary>The options page: music and sound-effect volume and screen shake, saved when it closes. Back (or Esc) runs <paramref name="onBack"/>.</summary>
         public void ShowOptions(Action onBack)
         {
             void Close()
@@ -75,6 +82,7 @@ namespace ChompChompPanic
             Show("Options", Close,
                 Slider("Music", () => GameSettings.MusicVolume, v => GameSettings.MusicVolume = v),
                 Slider("Sound Effects", () => GameSettings.SfxVolume, v => GameSettings.SfxVolume = v),
+                Toggle("Screen Shake", () => GameSettings.ScreenShake, v => GameSettings.ScreenShake = v),
                 Button("Back", Close));
         }
 
@@ -129,6 +137,8 @@ namespace ChompChompPanic
             var item = items[selected];
             if (adjust != 0 && item.IsSlider)
                 Adjust(item, item.Get() + adjust * SliderStep);
+            else if (adjust != 0 && item.IsToggle)
+                Confirm(selected);
 
             bool confirm = (kb != null && (kb.enterKey.wasPressedThisFrame || kb.numpadEnterKey.wasPressedThisFrame || kb.spaceKey.wasPressedThisFrame))
                 || (pad != null && (pad.buttonSouth.wasPressedThisFrame || pad.startButton.wasPressedThisFrame));
@@ -256,7 +266,8 @@ namespace ChompChompPanic
                 {
                     float pulse = isSelected ? 1f + Mathf.Sin(Time.unscaledTime * 6f) * 0.04f : 1f;
                     itemStyle.fontSize = Mathf.RoundToInt(h * 0.05f * pulse);
-                    DrawShadowed(row, isSelected ? $"> {item.Label} <" : item.Label, itemStyle, color);
+                    string label = item.IsToggle ? $"{item.Label}: {(item.IsOn() ? "On" : "Off")}" : item.Label;
+                    DrawShadowed(row, isSelected ? $"> {label} <" : label, itemStyle, color);
                 }
             }
         }

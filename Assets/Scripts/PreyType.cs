@@ -72,7 +72,7 @@ namespace ChompChompPanic
         public Movement Movement = Movement.Walk;
         public float Speed = 1.2f;
         public float FleeSpeed = 3.2f;
-        [Tooltip("Runs away when the kaiju's edge is this close (0 = never runs)")]
+        [Tooltip("Runs away when the kaiju's edge is this close and the kaiju is big enough to eat it (0 = never runs)")]
         public float FleeDistance = 2.5f;
         [Range(0f, 1f), Tooltip("Chance of stopping for a while at a junction instead of moving on")]
         public float IdleChance;
@@ -80,6 +80,8 @@ namespace ChompChompPanic
         public bool Bleeds = true;
         [Tooltip("Camera shake when eaten, as a fraction of the camera's half-height")]
         public float CrunchShake;
+        [Tooltip("Health taken from the kaiju when it runs into one while too small to eat it (0 = harmless)")]
+        public float RamDamage;
         public Weapon Weapon = new() { Damage = 0f };
 
         public bool HasSprites => Variants is { Length: > 0 } && Variants[0] != null && Variants[0].IsValid;

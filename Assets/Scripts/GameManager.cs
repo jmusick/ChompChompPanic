@@ -187,12 +187,12 @@ namespace ChompChompPanic
             new PreyType
             {
                 Name = "Cars", SpritePrefix = "car", Count = new(14f, 10f), Radius = 0.9f, VisualDiameter = 0.9f,
-                Movement = Movement.Drive, Speed = 2.5f, FleeSpeed = 4.5f, FleeDistance = 3.5f, CrunchShake = 0.03f,
+                Movement = Movement.Drive, Speed = 2.5f, FleeSpeed = 4.5f, FleeDistance = 3.5f, CrunchShake = 0.03f, RamDamage = 4f,
             },
             new PreyType
             {
                 Name = "Jeeps", SpritePrefix = "jeep", Count = new(0f, 6f), CountRampExponent = MilitaryRamp, Radius = 0.9f, VisualDiameter = 0.9f,
-                Movement = Movement.Drive, Speed = 3f, FleeSpeed = 4.5f, FleeDistance = 2f, CrunchShake = 0.03f,
+                Movement = Movement.Drive, Speed = 3f, FleeSpeed = 4.5f, FleeDistance = 2f, CrunchShake = 0.03f, RamDamage = 4f,
                 Weapon = new Weapon
                 {
                     Range = 6f, Cooldown = new(1.6f, 2.4f), BurstCount = 4, BurstInterval = 0.1f, Damage = 1f,
@@ -202,7 +202,7 @@ namespace ChompChompPanic
             new PreyType
             {
                 Name = "Tanks", SpritePrefix = "tank", Count = new(1f, 7f), CountRampExponent = MilitaryRamp, Radius = 1.8f, VisualDiameter = 1.8f,
-                Movement = Movement.Drive, Speed = 1.4f, FleeSpeed = 1.4f, FleeDistance = 0f, CrunchShake = 0.06f,
+                Movement = Movement.Drive, Speed = 1.4f, FleeSpeed = 1.4f, FleeDistance = 0f, CrunchShake = 0.06f, RamDamage = 10f,
                 Weapon = new Weapon
                 {
                     Range = 9f, Cooldown = new(3.5f, 5f), Damage = 10f, ProjectileSpeed = 11f, Spread = 2f,
@@ -369,7 +369,7 @@ namespace ChompChompPanic
 
             // Shake decays even while paused, so the game-over screen settles.
             shake *= Mathf.Exp(-12f * Time.unscaledDeltaTime);
-            if (shake > 0.0005f)
+            if (shake > 0.0005f && GameSettings.ScreenShake)
                 cam.transform.position += (Vector3)(Random.insideUnitCircle * (shake * cam.orthographicSize));
 
             // Hurt / heal tint fades back to normal.
@@ -405,6 +405,18 @@ namespace ChompChompPanic
                     continue;
                 }
 
+                // Running into a vehicle too big to eat hurts, once per vehicle every so often.
+                if (blob.Type is { RamDamage: > 0f } && elapsed >= blob.NextRamTime
+                    && distance < (playerRadius + blobRadius) * RamContact)
+                {
+                    blob.NextRamTime = elapsed + RamCooldown;
+                    PlaySound(crunchSound, 0.5f, 1.3f);
+                    shake = Mathf.Min(shake + blob.Type.CrunchShake, 0.12f);
+                    TakeDamage(blob.Type.RamDamage);
+                    if (state != State.Playing)
+                        return;
+                }
+
                 // Only rival kaiju eat the player; prey that's too big just gets away.
                 if (blob.IsRival && blobRadius >= playerRadius * eatRatio && distance < blobRadius)
                 {
@@ -418,6 +430,11 @@ namespace ChompChompPanic
                     RemoveBlob(i);
             }
         }
+
+        /// <summary>Fraction of the summed radii at which the kaiju counts as running into something (sprites have empty corners).</summary>
+        const float RamContact = 0.8f;
+        /// <summary>Seconds before the same vehicle can hurt the kaiju again.</summary>
+        const float RamCooldown = 1f;
 
         void Eat(EnemyBlob blob)
         {
@@ -498,10 +515,15 @@ namespace ChompChompPanic
 
             if (!hit || state != State.Playing)
                 return;
-            health -= projectile.Damage;
-            Flash(hurtColor, 0.8f);
             if (projectile.Explodes)
                 shake = Mathf.Min(shake + explosionShake, 0.12f);
+            TakeDamage(projectile.Damage);
+        }
+
+        void TakeDamage(float damage)
+        {
+            health -= damage;
+            Flash(hurtColor, 0.8f);
             if (health <= 0f)
             {
                 health = 0f;
@@ -540,11 +562,11 @@ namespace ChompChompPanic
             {
                 // Planes always come in from off screen, on a pass over the kaiju.
                 enemy.transform.position = OffScreenPoint(type.Radius, 1.2f);
-                enemy.InitPrey(index, type, player, null, Fire);
+                enemy.InitPrey(index, type, player, eatRatio, null, Fire);
             }
             else
             {
-                void Place() => enemy.InitPrey(index, type, player, city?.Layout, Fire);
+                void Place() => enemy.InitPrey(index, type, player, eatRatio, city?.Layout, Fire);
                 Place();
                 // Moving onto the nearest street can pull a new spawn into view; try other spots.
                 for (int tries = 0; !initial && tries < 6 && IsOnScreen(enemy.transform.position); tries++)

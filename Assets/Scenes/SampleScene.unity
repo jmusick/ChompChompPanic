@@ -294,6 +294,7 @@ MonoBehaviour:
     IdleChance: 0.3
     Bleeds: 1
     CrunchShake: 0
+    RamDamage: 0
     Weapon:
       Range: 6
       Cooldown: {x: 2, y: 3}
@@ -347,6 +348,7 @@ MonoBehaviour:
     IdleChance: 0.15
     Bleeds: 1
     CrunchShake: 0
+    RamDamage: 0
     Weapon:
       Range: 6
       Cooldown: {x: 1.8, y: 2.8}
@@ -401,6 +403,7 @@ MonoBehaviour:
     IdleChance: 0.15
     Bleeds: 1
     CrunchShake: 0
+    RamDamage: 0
     Weapon:
       Range: 7
       Cooldown: {x: 4, y: 5.5}
@@ -533,6 +536,7 @@ MonoBehaviour:
     IdleChance: 0
     Bleeds: 1
     CrunchShake: 0.03
+    RamDamage: 4
     Weapon:
       Range: 6
       Cooldown: {x: 2, y: 3}
@@ -588,6 +592,7 @@ MonoBehaviour:
     IdleChance: 0
     Bleeds: 1
     CrunchShake: 0.03
+    RamDamage: 4
     Weapon:
       Range: 6
       Cooldown: {x: 1.6, y: 2.4}
@@ -644,6 +649,7 @@ MonoBehaviour:
     IdleChance: 0
     Bleeds: 1
     CrunchShake: 0.06
+    RamDamage: 10
     Weapon:
       Range: 9
       Cooldown: {x: 3.5, y: 5}
@@ -696,6 +702,7 @@ MonoBehaviour:
     IdleChance: 0
     Bleeds: 1
     CrunchShake: 0.08
+    RamDamage: 0
     Weapon:
       Range: 11
       Cooldown: {x: 1, y: 1.6}
