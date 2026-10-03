@@ -2,6 +2,13 @@
 
 All notable changes to Chomp Chomp Panic! are listed here, newest first. Versions follow [semantic versioning](https://semver.org/); the current one is shown on the title screen.
 
+## [0.4.1] - 2026-10-03
+
+### Changed
+
+- **The city fills up over time** so the kaiju can't grow too fast off the start. A session opens with a thin crowd of people that builds over the first few minutes, then cars fill the streets, then soldiers, jeeps, tanks and finally fighter jets move in.
+- Rival kaiju can still turn up at any time, but they come back more and more often as the session goes on.
+
 ## [0.4.0] - 2026-10-03
 
 ### Added

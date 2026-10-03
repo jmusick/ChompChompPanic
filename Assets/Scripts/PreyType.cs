@@ -61,6 +61,8 @@ namespace ChompChompPanic
         public Vector2 Count = new(10f, 10f);
         [Tooltip("Shape of the ramp from start to end count: 1 = steady, under 1 = most of the change comes early")]
         public float CountRampExponent = 1f;
+        [Tooltip("Fraction of the session over which the count ramps: start count before x, end count after y. Staggers the tiers so people fill in first, then cars, then the military.")]
+        public Vector2 RampWindow = new(0f, 1f);
         [Tooltip("Collision radius. Doesn't change. The kaiju can eat it once the kaiju's radius is this x Eat Ratio.")]
         public float Radius = 0.45f;
         [Tooltip("Sets the sprite's scale: scale = 2 x radius / this. Equal to Radius draws at the people's 2x pixel scale.")]
@@ -85,6 +87,13 @@ namespace ChompChompPanic
         public Weapon Weapon = new() { Damage = 0f };
 
         public bool HasSprites => Variants is { Length: > 0 } && Variants[0] != null && Variants[0].IsValid;
+
+        /// <summary>How many should be around at <paramref name="progress"/> (0 to 1) through the session.</summary>
+        public int TargetCount(float progress)
+        {
+            float ramp = Mathf.Pow(Mathf.InverseLerp(RampWindow.x, RampWindow.y, progress), CountRampExponent);
+            return Mathf.RoundToInt(Mathf.Lerp(Count.x, Count.y, ramp));
+        }
     }
 
     /// <summary>Rare rival kaiju: bigger ones hunt the player, smaller ones run from it.</summary>
@@ -96,8 +105,10 @@ namespace ChompChompPanic
         public CharacterSprites[] Variants;
         [Tooltip("Seconds into the session before the first rival shows up")]
         public float FirstArrival = 60f;
-        [Tooltip("Seconds between one rival leaving and the next arriving (random in this range)")]
+        [Tooltip("Seconds between one rival leaving and the next arriving at the start of the session (random in this range)")]
         public Vector2 Interval = new(70f, 130f);
+        [Tooltip("Seconds between one rival leaving and the next arriving at the end of the session (random in this range). Shorter than Interval, so rivals turn up more often as the session goes on.")]
+        public Vector2 LateInterval = new(20f, 40f);
         [Tooltip("Rival radius as a multiple of the kaiju's start radius, at the start of the session (random in this range)")]
         public Vector2 StartSize = new(3.5f, 5f);
         [Tooltip("Rival radius as a multiple of the kaiju's start radius, at the end of the session (random in this range)")]

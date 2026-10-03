@@ -249,8 +249,9 @@ MonoBehaviour:
       ChompFps: 14
       DeathFps: 10
       AttackFps: 14
-    Count: {x: 40, y: 50}
+    Count: {x: 12, y: 50}
     CountRampExponent: 1
+    RampWindow: {x: 0, y: 0.3}
     Radius: 0.45
     VisualDiameter: 0.45
     GrowthEfficiency: 0.25
@@ -303,8 +304,9 @@ MonoBehaviour:
       ChompFps: 14
       DeathFps: 10
       AttackFps: 14
-    Count: {x: 4, y: 18}
+    Count: {x: 0, y: 18}
     CountRampExponent: 0.5
+    RampWindow: {x: 0.2, y: 0.75}
     Radius: 0.45
     VisualDiameter: 0.45
     GrowthEfficiency: 0.25
@@ -358,8 +360,9 @@ MonoBehaviour:
       ChompFps: 14
       DeathFps: 10
       AttackFps: 14
-    Count: {x: 1, y: 8}
+    Count: {x: 0, y: 8}
     CountRampExponent: 0.5
+    RampWindow: {x: 0.3, y: 0.85}
     Radius: 0.45
     VisualDiameter: 0.45
     GrowthEfficiency: 0.25
@@ -491,8 +494,9 @@ MonoBehaviour:
       ChompFps: 14
       DeathFps: 10
       AttackFps: 14
-    Count: {x: 14, y: 14}
+    Count: {x: 2, y: 14}
     CountRampExponent: 1
+    RampWindow: {x: 0.1, y: 0.45}
     Radius: 0.9
     VisualDiameter: 0.9
     GrowthEfficiency: 0.25
@@ -549,6 +553,7 @@ MonoBehaviour:
       AttackFps: 14
     Count: {x: 0, y: 6}
     CountRampExponent: 0.5
+    RampWindow: {x: 0.35, y: 0.85}
     Radius: 0.9
     VisualDiameter: 0.9
     GrowthEfficiency: 0.25
@@ -604,8 +609,9 @@ MonoBehaviour:
       ChompFps: 14
       DeathFps: 10
       AttackFps: 14
-    Count: {x: 1, y: 7}
+    Count: {x: 0, y: 7}
     CountRampExponent: 0.5
+    RampWindow: {x: 0.4, y: 0.9}
     Radius: 1.8
     VisualDiameter: 1.8
     GrowthEfficiency: 0.25
@@ -659,6 +665,7 @@ MonoBehaviour:
       AttackFps: 14
     Count: {x: 0, y: 3}
     CountRampExponent: 1
+    RampWindow: {x: 0.55, y: 1}
     Radius: 2.7
     VisualDiameter: 2.7
     GrowthEfficiency: 0.25
@@ -744,6 +751,7 @@ MonoBehaviour:
       AttackFps: 14
     FirstArrival: 60
     Interval: {x: 70, y: 130}
+    LateInterval: {x: 20, y: 40}
     StartSize: {x: 3.5, y: 5}
     EndSize: {x: 10, y: 16}
     SpeedFactor: 0.85
