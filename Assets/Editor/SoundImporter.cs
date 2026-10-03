@@ -16,6 +16,8 @@ namespace ChompChompPanic.Editor
     ///    GameManager and TitleScreen in every scene of the build profile, saving the scenes it changes.
     ///    Numbered variants, sfx_&lt;name&gt;_&lt;n&gt;.wav, fill the &lt;name&gt;Sounds array in order.
     ///    Music tracks, music_&lt;map&gt;_&lt;n&gt;.wav, fill the &lt;map&gt;Music array in order.
+    /// 3. Assigns sfx_&lt;prefix&gt;_&lt;name&gt;.wav to the &lt;Name&gt;Sound field of the playable kaiju with that
+    ///    sprite prefix in every Kaiju Roster asset (sfx_mecha_roar -> RoarSound on the "mecha" kaiju).
     /// </summary>
     static class SoundImporter
     {
@@ -111,9 +113,42 @@ namespace ChompChompPanic.Editor
                     EditorSceneManager.CloseScene(scene, true);
             }
 
+            AssignRosters(clips, assigned);
+
             foreach (var field in clips.Keys.Where(f => !assigned.Contains(f)))
                 Debug.LogWarning($"Import Audio: no GameManager or TitleScreen has a '{field}' field.");
             Debug.Log($"Import Audio: assigned {assigned.Count} of {clips.Count} sounds.");
+        }
+
+        static void AssignRosters(Dictionary<string, List<(int Order, AudioClip Clip)>> clips, HashSet<string> assigned)
+        {
+            foreach (var guid in AssetDatabase.FindAssets("t:KaijuRoster"))
+            {
+                var roster = AssetDatabase.LoadAssetAtPath<KaijuRoster>(AssetDatabase.GUIDToAssetPath(guid));
+                var so = new SerializedObject(roster);
+                var kaiju = so.FindProperty("Kaiju");
+                for (int i = 0; i < kaiju.arraySize; i++)
+                {
+                    var entry = kaiju.GetArrayElementAtIndex(i);
+                    string prefix = entry.FindPropertyRelative("SpritePrefix").stringValue;
+                    if (string.IsNullOrEmpty(prefix))
+                        continue;
+                    // "mecha" + "RoarSound" -> the entry's RoarSound.
+                    string owner = FieldName(prefix, "");
+                    foreach (var (field, list) in clips)
+                    {
+                        if (field.Length <= owner.Length || !field.StartsWith(owner) || !char.IsUpper(field[owner.Length]))
+                            continue;
+                        var property = entry.FindPropertyRelative(field.Substring(owner.Length));
+                        if (property is not { propertyType: SerializedPropertyType.ObjectReference })
+                            continue;
+                        property.objectReferenceValue = list.OrderBy(c => c.Order).First().Clip;
+                        assigned.Add(field);
+                    }
+                }
+                so.ApplyModifiedProperties();
+                AssetDatabase.SaveAssetIfDirty(roster);
+            }
         }
 
         /// <summary>Short one-shots: mono, uncompressed in memory, so playing them costs nothing.</summary>

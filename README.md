@@ -4,6 +4,8 @@
 
 A top-down pixel-art kaiju game set in an endless night-time Tokyo. You start small, eat whatever you can catch, and grow until you're chewing on tanks and swatting fighter jets out of the sky. Survive the full session to win.
 
+A game by [Stone Dragon Media, LLC](https://stonedragonmedia.com).
+
 Built with Unity 6 (6000.5.6f1) and the Universal Render Pipeline (2D).
 
 ## Gameplay
@@ -11,9 +13,10 @@ Built with Unity 6 (6000.5.6f1) and the Universal Render Pipeline (2D).
 - **Eat to grow.** Anything smaller than you is food. Prey comes in tiers, each roughly twice the size of the last:
   people and soldiers → cars and jeeps → tanks → fighter jets.
 - **Smash the city.** Buildings no bigger than you crumble when you walk through them. Bigger ones block your way.
-- **The military fights back.** Riflemen, bazooka troops, jeeps, tanks and jets shoot at you. You have 100 health, and eating people heals you.
+- **The military fights back.** Riflemen, bazooka troops, jeeps, tanks and jets shoot at you. You have 100 health. Eating people heals you a little, and eating a rival kaiju heals you completely.
 - **Rival kaiju.** Every so often another monster shows up. If it's bigger than you, it hunts you and can eat you. If it's smaller, it runs and you can eat it.
 - **Survive the clock.** A session lasts 10 minutes. You lose if your health runs out or a rival eats you.
+- **Unlock more kaiju.** Each time you survive a full session, you unlock the next kaiju: Mecha-Chomp the robot, then Octo-Chomp the octopus, then Moth-Chomp the giant moth. Once you have more than one, **Start Game** asks which kaiju you want to play. Each has its own look and sounds. Any kaiju you aren't playing can turn up as a rival, even before you've unlocked it.
 
 ## Controls
 
@@ -45,7 +48,7 @@ The title and pause menus also work with the mouse. **Options** sets the music a
 
 All game art is pixel art drawn by Python scripts in `ArtSource/`. The scripts write PNG strips into `Assets/Art/`, and the Unity importer slices them into sprites.
 
-1. Install Python 3 with Pillow (and numpy for the People and Kaiju scripts).
+1. Install Python 3 with Pillow (and numpy for the People and kaiju scripts).
 2. Run the script for whatever you changed, for example:
    ```bash
    python ArtSource/City/build_city.py
@@ -59,6 +62,9 @@ All game art is pixel art drawn by Python scripts in `ArtSource/`. The scripts w
 | `ArtSource/Cars/build_cars.py` | Cars |
 | `ArtSource/Military/build_military.py` | Soldiers, jeeps, tanks, jets, projectiles, muzzle flash, explosions |
 | `ArtSource/Rivals/build_rivals.py` | Recolored rival kaiju (made from the player's sprites) |
+| `ArtSource/Mecha/build_mecha.py` | Mecha-Chomp, the unlockable robot kaiju |
+| `ArtSource/Octo/build_octo.py` | Octo-Chomp, the unlockable octopus kaiju |
+| `ArtSource/Moth/build_moth.py` | Moth-Chomp, the unlockable moth kaiju |
 | `ArtSource/Effects/build_effects.py` | Blood spurts and ground stains |
 | `ArtSource/Kaiju/preview/build_sprites.py` | Player kaiju (cleans up a generated atlas) |
 

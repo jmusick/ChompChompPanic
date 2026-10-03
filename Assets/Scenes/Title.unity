@@ -233,6 +233,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChompChompPanic.TitleScreen
   logo: {fileID: 2800000, guid: 2a2e5e77ef140f14da494499cb47e2d7, type: 3}
   gameScene: SampleScene
+  kaijuRoster: {fileID: 11400000, guid: 7449bd93b88c93f4f8354bbb46b234f1, type: 2}
   backgroundColor: {r: 0.04, g: 0.04, b: 0.08, a: 1}
   itemColor: {r: 0.85, g: 0.85, b: 0.9, a: 1}
   selectedColor: {r: 1, g: 0.72, b: 0.15, a: 1}

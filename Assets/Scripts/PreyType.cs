@@ -110,6 +110,10 @@ namespace ChompChompPanic
         public Vector2 StayTime = new(45f, 75f);
         [Tooltip("Fraction of its area the kaiju gains when eating one")]
         public float GrowthEfficiency = 0.5f;
+        [Tooltip("Health the kaiju gets back when eating one (at or above Max Health = a full refill)")]
+        public float Heal = 1000f;
+        [Range(0f, 1f), Tooltip("Chance a rival is one of the other playable kaiju (unlocked or not) instead of a recolor")]
+        public float OtherKaijuChance = 0.3f;
 
         public bool HasSprites => Variants is { Length: > 0 } && Variants[0] != null && Variants[0].IsValid;
     }

@@ -1,0 +1,18 @@
+{
+  "moth_idle.png": [
+    64,
+    64
+  ],
+  "moth_walk.png": [
+    64,
+    64
+  ],
+  "moth_chomp.png": [
+    64,
+    64
+  ],
+  "moth_death.png": [
+    64,
+    64
+  ]
+}

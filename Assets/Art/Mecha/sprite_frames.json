@@ -1,0 +1,18 @@
+{
+  "mecha_idle.png": [
+    64,
+    64
+  ],
+  "mecha_walk.png": [
+    64,
+    64
+  ],
+  "mecha_chomp.png": [
+    64,
+    64
+  ],
+  "mecha_death.png": [
+    64,
+    64
+  ]
+}

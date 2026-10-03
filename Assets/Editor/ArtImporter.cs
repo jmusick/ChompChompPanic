@@ -15,6 +15,7 @@ namespace ChompChompPanic.Editor
     ///    (point filtered, uncompressed, 64 px per unit), keeping sprite IDs stable across re-imports.
     /// 2. Fills the scene's GameManager: each prey type's and the rivals' sprite variants from files named
     ///    &lt;prefix&gt;[_&lt;variant&gt;]_&lt;clip&gt;.png, weapon projectiles and weapon effects by file name.
+    /// 3. Fills each playable kaiju in every Kaiju Roster asset from &lt;prefix&gt;_&lt;clip&gt;.png (clips only; its frame rates are left alone).
     /// Clips: idle, run/walk/side/fly (walk), up, down, shoot (attack), chomp, death.
     /// </summary>
     static class ArtImporter
@@ -28,8 +29,9 @@ namespace ChompChompPanic.Editor
         static void ImportArt()
         {
             int sliced = SliceAll();
+            AssignRosters();
             AssignSprites();
-            Debug.Log($"Import Art: sliced {sliced} sprite sheets and assigned sprites to the GameManager.");
+            Debug.Log($"Import Art: sliced {sliced} sprite sheets and assigned sprites to the kaiju roster and GameManager.");
         }
 
         // ------------------------------------------------------------------ slicing
@@ -144,12 +146,62 @@ namespace ChompChompPanic.Editor
             EditorSceneManager.SaveScene(manager.gameObject.scene);
         }
 
+        static void AssignRosters()
+        {
+            foreach (var guid in AssetDatabase.FindAssets("t:KaijuRoster"))
+            {
+                var roster = AssetDatabase.LoadAssetAtPath<KaijuRoster>(AssetDatabase.GUIDToAssetPath(guid));
+                var so = new SerializedObject(roster);
+                var kaiju = so.FindProperty("Kaiju");
+                for (int i = 0; i < kaiju.arraySize; i++)
+                {
+                    var entry = kaiju.GetArrayElementAtIndex(i);
+                    string prefix = entry.FindPropertyRelative("SpritePrefix").stringValue;
+                    if (string.IsNullOrEmpty(prefix))
+                        continue;
+                    if (!FindClips(prefix).TryGetValue("", out var clips))
+                    {
+                        Debug.LogWarning($"Import Art: no {prefix}_<clip>.png sprites for the kaiju roster.");
+                        continue;
+                    }
+                    SetClips(entry.FindPropertyRelative("Sprites"), clips);
+                }
+                so.ApplyModifiedProperties();
+                AssetDatabase.SaveAssetIfDirty(roster);
+            }
+        }
+
         static void AssignVariants(SerializedProperty variants, string prefix)
         {
             if (string.IsNullOrEmpty(prefix))
                 return;
 
-            // variant -> clip -> frames
+            var found = FindClips(prefix);
+            if (found.Count == 0)
+            {
+                Debug.LogWarning($"Import Art: no sprites found for prefix '{prefix}'.");
+                return;
+            }
+
+            variants.arraySize = found.Count;
+            int index = 0;
+            foreach (var clips in found.Values)
+            {
+                var entry = variants.GetArrayElementAtIndex(index++);
+                SetClips(entry, clips);
+                int idleFrames = entry.FindPropertyRelative("Idle").arraySize;
+                // Short idle loops (breathing) play slowly; a fly loop is the afterburner flicker.
+                entry.FindPropertyRelative("IdleFps").floatValue = idleFrames <= 2 ? 3f : clips.ContainsKey("fly") ? 12f : 8f;
+                entry.FindPropertyRelative("WalkFps").floatValue = 12f;
+                entry.FindPropertyRelative("AttackFps").floatValue = 14f;
+                entry.FindPropertyRelative("ChompFps").floatValue = 14f;
+                entry.FindPropertyRelative("DeathFps").floatValue = 10f;
+            }
+        }
+
+        /// <summary>Every &lt;prefix&gt;[_&lt;variant&gt;]_&lt;clip&gt;.png under Assets/Art, as variant -> clip -> frames ("" for no variant).</summary>
+        static SortedDictionary<string, Dictionary<string, Sprite[]>> FindClips(string prefix)
+        {
             var found = new SortedDictionary<string, Dictionary<string, Sprite[]>>();
             foreach (var guid in AssetDatabase.FindAssets("t:Texture2D", new[] { ArtRoot }))
             {
@@ -165,38 +217,26 @@ namespace ChompChompPanic.Editor
                     found[variant] = clips = new Dictionary<string, Sprite[]>();
                 clips[clip] = LoadSprites(path);
             }
-            if (found.Count == 0)
-            {
-                Debug.LogWarning($"Import Art: no sprites found for prefix '{prefix}'.");
-                return;
-            }
+            return found;
+        }
 
-            variants.arraySize = found.Count;
-            int index = 0;
-            foreach (var clips in found.Values)
-            {
-                var entry = variants.GetArrayElementAtIndex(index++);
-                Sprite[] Clip(params string[] names) =>
-                    names.Select(n => clips.TryGetValue(n, out var s) ? s : null).FirstOrDefault(s => s != null) ?? new Sprite[0];
-                var walk = Clip("run", "walk", "side", "fly");
-                // Fliers are rotated to their heading rather than walked, so the fly loop is also their idle.
-                var idle = Clip("idle", "fly");
-                if (idle.Length == 0 && walk.Length > 0)
-                    idle = new[] { walk[0] };
-                SetSprites(entry.FindPropertyRelative("Idle"), idle);
-                SetSprites(entry.FindPropertyRelative("Walk"), walk);
-                SetSprites(entry.FindPropertyRelative("WalkUp"), Clip("up"));
-                SetSprites(entry.FindPropertyRelative("WalkDown"), Clip("down"));
-                SetSprites(entry.FindPropertyRelative("Attack"), Clip("shoot"));
-                SetSprites(entry.FindPropertyRelative("Chomp"), Clip("chomp"));
-                SetSprites(entry.FindPropertyRelative("Death"), Clip("death"));
-                // Short idle loops (breathing) play slowly; a fly loop is the afterburner flicker.
-                entry.FindPropertyRelative("IdleFps").floatValue = idle.Length <= 2 ? 3f : clips.ContainsKey("fly") ? 12f : 8f;
-                entry.FindPropertyRelative("WalkFps").floatValue = 12f;
-                entry.FindPropertyRelative("AttackFps").floatValue = 14f;
-                entry.FindPropertyRelative("ChompFps").floatValue = 14f;
-                entry.FindPropertyRelative("DeathFps").floatValue = 10f;
-            }
+        /// <summary>Fill a <see cref="CharacterSprites"/> property's clips from clip name -> frames.</summary>
+        static void SetClips(SerializedProperty entry, Dictionary<string, Sprite[]> clips)
+        {
+            Sprite[] Clip(params string[] names) =>
+                names.Select(n => clips.TryGetValue(n, out var s) ? s : null).FirstOrDefault(s => s != null) ?? new Sprite[0];
+            var walk = Clip("run", "walk", "side", "fly");
+            // Fliers are rotated to their heading rather than walked, so the fly loop is also their idle.
+            var idle = Clip("idle", "fly");
+            if (idle.Length == 0 && walk.Length > 0)
+                idle = new[] { walk[0] };
+            SetSprites(entry.FindPropertyRelative("Idle"), idle);
+            SetSprites(entry.FindPropertyRelative("Walk"), walk);
+            SetSprites(entry.FindPropertyRelative("WalkUp"), Clip("up"));
+            SetSprites(entry.FindPropertyRelative("WalkDown"), Clip("down"));
+            SetSprites(entry.FindPropertyRelative("Attack"), Clip("shoot"));
+            SetSprites(entry.FindPropertyRelative("Chomp"), Clip("chomp"));
+            SetSprites(entry.FindPropertyRelative("Death"), Clip("death"));
         }
 
         static Sprite[] SpritesNamed(string fileName)

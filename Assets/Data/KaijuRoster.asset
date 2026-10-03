@@ -1,0 +1,175 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dc6fc80f8c4e0b4e8dbfc6a54a0ede0, type: 3}
+  m_Name: KaijuRoster
+  m_EditorClassIdentifier: Assembly-CSharp::ChompChompPanic.KaijuRoster
+  Kaiju:
+  - Name: Chompy
+    SpritePrefix: kaiju
+    StartsUnlocked: 1
+    Sprites:
+      Idle:
+      - {fileID: -3921983447756672661, guid: d818ece35905f004c9462e35b65699cf, type: 3}
+      - {fileID: 7634513375917163977, guid: d818ece35905f004c9462e35b65699cf, type: 3}
+      - {fileID: 102438868800311110, guid: d818ece35905f004c9462e35b65699cf, type: 3}
+      - {fileID: -4867874872878688037, guid: d818ece35905f004c9462e35b65699cf, type: 3}
+      Walk:
+      - {fileID: 5649083205071071093, guid: fd56460406dc4054fb7ee0661d74ce6d, type: 3}
+      - {fileID: 6284410113154472661, guid: fd56460406dc4054fb7ee0661d74ce6d, type: 3}
+      - {fileID: -8004338291665459475, guid: fd56460406dc4054fb7ee0661d74ce6d, type: 3}
+      - {fileID: 5603851780567894956, guid: fd56460406dc4054fb7ee0661d74ce6d, type: 3}
+      - {fileID: 2126180292069355850, guid: fd56460406dc4054fb7ee0661d74ce6d, type: 3}
+      - {fileID: -2884097953022760805, guid: fd56460406dc4054fb7ee0661d74ce6d, type: 3}
+      Chomp:
+      - {fileID: 7091359360185173840, guid: c4e74a9871b94d2488374f4811757a77, type: 3}
+      - {fileID: 6536561636642538817, guid: c4e74a9871b94d2488374f4811757a77, type: 3}
+      - {fileID: -5289691166703011632, guid: c4e74a9871b94d2488374f4811757a77, type: 3}
+      - {fileID: -1997880903477515226, guid: c4e74a9871b94d2488374f4811757a77, type: 3}
+      Death:
+      - {fileID: 4314430967280645433, guid: 02679cd524c98e04880982b5dcebc88e, type: 3}
+      - {fileID: -4974730826597977718, guid: 02679cd524c98e04880982b5dcebc88e, type: 3}
+      - {fileID: 6246575733405126878, guid: 02679cd524c98e04880982b5dcebc88e, type: 3}
+      - {fileID: -5508302552761064948, guid: 02679cd524c98e04880982b5dcebc88e, type: 3}
+      - {fileID: 456115106162782844, guid: 02679cd524c98e04880982b5dcebc88e, type: 3}
+      - {fileID: -4283301781325502089, guid: 02679cd524c98e04880982b5dcebc88e, type: 3}
+      WalkUp: []
+      WalkDown: []
+      Attack: []
+      IdleFps: 6
+      WalkFps: 10
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    ChompSound: {fileID: 0}
+    StompSound: {fileID: 0}
+    RoarSound: {fileID: 0}
+    DeathSound: {fileID: 0}
+  - Name: Mecha-Chomp
+    SpritePrefix: mecha
+    StartsUnlocked: 0
+    Sprites:
+      Idle:
+      - {fileID: -4470427061486548723, guid: 7f82b5a28f71ff54c98b780a082196cb, type: 3}
+      - {fileID: 1199310577038068939, guid: 7f82b5a28f71ff54c98b780a082196cb, type: 3}
+      - {fileID: -3142138034762603121, guid: 7f82b5a28f71ff54c98b780a082196cb, type: 3}
+      - {fileID: -4069862459367270822, guid: 7f82b5a28f71ff54c98b780a082196cb, type: 3}
+      Walk:
+      - {fileID: -79429651147124169, guid: 39183a47bd1d37144bfd73afb4d0fe94, type: 3}
+      - {fileID: 2789484034619518978, guid: 39183a47bd1d37144bfd73afb4d0fe94, type: 3}
+      - {fileID: 2812851271403747165, guid: 39183a47bd1d37144bfd73afb4d0fe94, type: 3}
+      - {fileID: -6587214934206485381, guid: 39183a47bd1d37144bfd73afb4d0fe94, type: 3}
+      - {fileID: 25794550867739549, guid: 39183a47bd1d37144bfd73afb4d0fe94, type: 3}
+      - {fileID: 1644351463432870962, guid: 39183a47bd1d37144bfd73afb4d0fe94, type: 3}
+      Chomp:
+      - {fileID: -2241849724078924142, guid: 781731ca5a795c944a624c5dfa8407e9, type: 3}
+      - {fileID: -6269787870842135933, guid: 781731ca5a795c944a624c5dfa8407e9, type: 3}
+      - {fileID: -493665101483928675, guid: 781731ca5a795c944a624c5dfa8407e9, type: 3}
+      - {fileID: 2621848420934643069, guid: 781731ca5a795c944a624c5dfa8407e9, type: 3}
+      Death:
+      - {fileID: -2046810888220044988, guid: ff96f27d581c239489b4032278b09c81, type: 3}
+      - {fileID: 2559159887817652507, guid: ff96f27d581c239489b4032278b09c81, type: 3}
+      - {fileID: -1608924047803614697, guid: ff96f27d581c239489b4032278b09c81, type: 3}
+      - {fileID: -3106180883157919073, guid: ff96f27d581c239489b4032278b09c81, type: 3}
+      - {fileID: -1175790651295876281, guid: ff96f27d581c239489b4032278b09c81, type: 3}
+      - {fileID: 6486211413539164209, guid: ff96f27d581c239489b4032278b09c81, type: 3}
+      WalkUp: []
+      WalkDown: []
+      Attack: []
+      IdleFps: 6
+      WalkFps: 10
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    ChompSound: {fileID: 8300000, guid: 2fcb6cd8d8caab64f8a67de592df2b5b, type: 3}
+    StompSound: {fileID: 8300000, guid: 158ec23641eea3f4eb9f7716af75821e, type: 3}
+    RoarSound: {fileID: 8300000, guid: efa7d01f498751842af78e49161fc3fa, type: 3}
+    DeathSound: {fileID: 8300000, guid: 4e2312b81c177fb4e9bc29478a9c7ff2, type: 3}
+  - Name: Octo-Chomp
+    SpritePrefix: octo
+    StartsUnlocked: 0
+    Sprites:
+      Idle:
+      - {fileID: 551626549804469863, guid: 320b91e1a3d537e458f2ee6d3f0de1fa, type: 3}
+      - {fileID: 8706671513128088657, guid: 320b91e1a3d537e458f2ee6d3f0de1fa, type: 3}
+      - {fileID: -7311955878066016339, guid: 320b91e1a3d537e458f2ee6d3f0de1fa, type: 3}
+      - {fileID: -2851648806865077109, guid: 320b91e1a3d537e458f2ee6d3f0de1fa, type: 3}
+      Walk:
+      - {fileID: -5794922804924787750, guid: 08a2524114efb9d429a014647c879441, type: 3}
+      - {fileID: 3379263061699289865, guid: 08a2524114efb9d429a014647c879441, type: 3}
+      - {fileID: 4142303841600497179, guid: 08a2524114efb9d429a014647c879441, type: 3}
+      - {fileID: -9098819964386841775, guid: 08a2524114efb9d429a014647c879441, type: 3}
+      - {fileID: -2949200573209217251, guid: 08a2524114efb9d429a014647c879441, type: 3}
+      - {fileID: 6339639737190500210, guid: 08a2524114efb9d429a014647c879441, type: 3}
+      Chomp:
+      - {fileID: 2421793432483847917, guid: 52d66aedd5dd74c429d0c9944fc8d9de, type: 3}
+      - {fileID: 4273527188315127503, guid: 52d66aedd5dd74c429d0c9944fc8d9de, type: 3}
+      - {fileID: -4874437998199052624, guid: 52d66aedd5dd74c429d0c9944fc8d9de, type: 3}
+      - {fileID: -5018375350953944036, guid: 52d66aedd5dd74c429d0c9944fc8d9de, type: 3}
+      Death:
+      - {fileID: 8733635888939088279, guid: 24be6ebc993a2234da555a3763bd155a, type: 3}
+      - {fileID: -5476034001195350409, guid: 24be6ebc993a2234da555a3763bd155a, type: 3}
+      - {fileID: 1525878303938027050, guid: 24be6ebc993a2234da555a3763bd155a, type: 3}
+      - {fileID: 5410645917848500278, guid: 24be6ebc993a2234da555a3763bd155a, type: 3}
+      - {fileID: -6573846708220500612, guid: 24be6ebc993a2234da555a3763bd155a, type: 3}
+      - {fileID: 4493635652929691703, guid: 24be6ebc993a2234da555a3763bd155a, type: 3}
+      WalkUp: []
+      WalkDown: []
+      Attack: []
+      IdleFps: 6
+      WalkFps: 10
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    ChompSound: {fileID: 8300000, guid: 81bf1b4145a5ba346acd47382ec78b5a, type: 3}
+    StompSound: {fileID: 8300000, guid: 6075a537e3c32a54b9945c00674b7902, type: 3}
+    RoarSound: {fileID: 8300000, guid: 838e6c6e71258c14bb771b662e355c7f, type: 3}
+    DeathSound: {fileID: 8300000, guid: 39cce964801af4946a34180c181db10a, type: 3}
+  - Name: Moth-Chomp
+    SpritePrefix: moth
+    StartsUnlocked: 0
+    Sprites:
+      Idle:
+      - {fileID: -6833758318297532234, guid: 3df1cc2aa4b7e1744b4522cf4fce2c47, type: 3}
+      - {fileID: 4932347765366193956, guid: 3df1cc2aa4b7e1744b4522cf4fce2c47, type: 3}
+      - {fileID: -9178624593713433743, guid: 3df1cc2aa4b7e1744b4522cf4fce2c47, type: 3}
+      - {fileID: -4606899723102003823, guid: 3df1cc2aa4b7e1744b4522cf4fce2c47, type: 3}
+      Walk:
+      - {fileID: 1484136304518840681, guid: 01646730e8269b14da5e8b7ef3cae59b, type: 3}
+      - {fileID: -912435228928357352, guid: 01646730e8269b14da5e8b7ef3cae59b, type: 3}
+      - {fileID: 4073268404342156331, guid: 01646730e8269b14da5e8b7ef3cae59b, type: 3}
+      - {fileID: -9168159717137725672, guid: 01646730e8269b14da5e8b7ef3cae59b, type: 3}
+      - {fileID: 5405664730369309401, guid: 01646730e8269b14da5e8b7ef3cae59b, type: 3}
+      - {fileID: -2241129541806756440, guid: 01646730e8269b14da5e8b7ef3cae59b, type: 3}
+      Chomp:
+      - {fileID: 6101473281991459407, guid: 4c47d9310e085004c948dbd1301c7ba5, type: 3}
+      - {fileID: -4849521491866307132, guid: 4c47d9310e085004c948dbd1301c7ba5, type: 3}
+      - {fileID: -5432473359894620965, guid: 4c47d9310e085004c948dbd1301c7ba5, type: 3}
+      - {fileID: 1925866096331184100, guid: 4c47d9310e085004c948dbd1301c7ba5, type: 3}
+      Death:
+      - {fileID: -2909728250586891692, guid: 68c0a97fa89c3424cac7b97a6f019666, type: 3}
+      - {fileID: -2995132444461146918, guid: 68c0a97fa89c3424cac7b97a6f019666, type: 3}
+      - {fileID: -247290528911727488, guid: 68c0a97fa89c3424cac7b97a6f019666, type: 3}
+      - {fileID: 5866050872331722023, guid: 68c0a97fa89c3424cac7b97a6f019666, type: 3}
+      - {fileID: -2053579894, guid: 68c0a97fa89c3424cac7b97a6f019666, type: 3}
+      - {fileID: -844845898, guid: 68c0a97fa89c3424cac7b97a6f019666, type: 3}
+      WalkUp: []
+      WalkDown: []
+      Attack: []
+      IdleFps: 6
+      WalkFps: 10
+      ChompFps: 14
+      DeathFps: 10
+      AttackFps: 14
+    ChompSound: {fileID: 8300000, guid: f6f39c768d8dcb64e85c2b9567bf5f87, type: 3}
+    StompSound: {fileID: 8300000, guid: 561c7f929cccd354b82ee50aca23e927, type: 3}
+    RoarSound: {fileID: 8300000, guid: a162e7ce5bbba314996a6d7df2fe9fdd, type: 3}
+    DeathSound: {fileID: 8300000, guid: 22732ad6031598c41a3be96114736a05, type: 3}

@@ -1,0 +1,18 @@
+{
+  "octo_idle.png": [
+    64,
+    64
+  ],
+  "octo_walk.png": [
+    64,
+    64
+  ],
+  "octo_chomp.png": [
+    64,
+    64
+  ],
+  "octo_death.png": [
+    64,
+    64
+  ]
+}

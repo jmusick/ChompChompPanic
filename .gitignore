@@ -52,3 +52,6 @@ crashlytics-build.properties
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Python bytecode from the ArtSource scripts
+__pycache__/

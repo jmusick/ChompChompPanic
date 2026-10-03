@@ -1,4 +1,4 @@
-Required Notice: Copyright (c) 2026 Justin Musick (https://github.com/jmusick/ChompChompPanic)
+Required Notice: Copyright (c) 2026 Stone Dragon Media, LLC (https://stonedragonmedia.com)
 
 # PolyForm Noncommercial License 1.0.0
 

@@ -23,7 +23,8 @@ namespace ChompChompPanic
         [SerializeField] float playerBaseSpeed = 5f;
         [SerializeField, Tooltip("Player tint when no character sprites are assigned")]
         Color playerColor = new(0.35f, 0.75f, 1f);
-        [SerializeField] CharacterSprites playerSprites;
+        [SerializeField, Tooltip("Playable kaiju (Assets/Data/KaijuRoster.asset). The player plays the one picked on the title screen; the others can show up as rivals.")]
+        KaijuRoster kaijuRoster;
         [SerializeField] float maxHealth = 100f;
         [SerializeField, Tooltip("Player tint when hit, and when healed by eating a human")]
         Color hurtColor = new(1f, 0.3f, 0.3f);
@@ -112,7 +113,14 @@ namespace ChompChompPanic
 
         readonly List<EnemyBlob> blobs = new();
         int[] liveCounts;
+        /// <summary>The kaiju being played; null without a roster (the player is then a tinted circle).</summary>
+        PlayableKaiju kaiju;
+        /// <summary>Playable kaiju other than the player's, which can arrive as rivals even before they're unlocked.</summary>
+        readonly List<PlayableKaiju> guestRivals = new();
         EnemyBlob rival;
+        string rivalName;
+        /// <summary>The kaiju this win unlocked, if any.</summary>
+        PlayableKaiju newlyUnlocked;
         float nextRivalTime;
         Camera cam;
         Blob player;
@@ -161,7 +169,7 @@ namespace ChompChompPanic
         {
             new PreyType
             {
-                Name = "People", SpritePrefix = "person", Count = new(40f, 28f), Radius = 0.45f, VisualDiameter = 0.45f,
+                Name = "People", SpritePrefix = "person", Count = new(40f, 50f), Radius = 0.45f, VisualDiameter = 0.45f,
                 Heal = 3f, Movement = Movement.Walk, Speed = 1.2f, FleeSpeed = 3.2f, FleeDistance = 2.5f, IdleChance = 0.3f,
             },
             new PreyType
@@ -186,7 +194,7 @@ namespace ChompChompPanic
             },
             new PreyType
             {
-                Name = "Cars", SpritePrefix = "car", Count = new(14f, 10f), Radius = 0.9f, VisualDiameter = 0.9f,
+                Name = "Cars", SpritePrefix = "car", Count = new(14f, 14f), Radius = 0.9f, VisualDiameter = 0.9f,
                 Movement = Movement.Drive, Speed = 2.5f, FleeSpeed = 4.5f, FleeDistance = 3.5f, CrunchShake = 0.03f, RamDamage = 4f,
             },
             new PreyType
@@ -226,6 +234,13 @@ namespace ChompChompPanic
             Time.timeScale = 1f;
             health = maxHealth;
             nextRivalTime = rivals.FirstArrival;
+            if (kaijuRoster != null)
+            {
+                kaiju = kaijuRoster.Selected;
+                foreach (var other in kaijuRoster.Kaiju)
+                    if (other != kaiju && other.HasSprites)
+                        guestRivals.Add(other);
+            }
 
             cam = Camera.main;
             cam.backgroundColor = backgroundColor;
@@ -288,7 +303,7 @@ namespace ChompChompPanic
             if (state != State.Playing)
                 return;
             SpawnPrey(initial: false);
-            if (rival == null && elapsed >= nextRivalTime && rivals.HasSprites)
+            if (rival == null && elapsed >= nextRivalTime && (rivals.HasSprites || guestRivals.Count > 0))
                 SpawnRival();
             if (city != null)
                 StompBuildings();
@@ -338,11 +353,14 @@ namespace ChompChompPanic
                 return;
             stepDistance = 0f;
             float growth = player.Radius / playerStartRadius;
-            PlaySound(stompSound, Mathf.Lerp(0.2f, 0.7f, (growth - 1f) / 4f), SizePitch);
+            PlaySound(KaijuSound(kaiju?.StompSound, stompSound), Mathf.Lerp(0.2f, 0.7f, (growth - 1f) / 4f), SizePitch);
         }
 
         /// <summary>Pitch for the kaiju's own sounds: lower as it grows.</summary>
         float SizePitch => Mathf.Clamp(Mathf.Pow(playerStartRadius / player.Radius, 0.25f), 0.6f, 1.1f);
+
+        /// <summary>The played kaiju's own sound, or the shared one when it has none. (Not ??: unassigned Unity references aren't always plain null.)</summary>
+        static AudioClip KaijuSound(AudioClip own, AudioClip shared) => own != null ? own : shared;
 
         bool CanEat(float radius) => player.Radius >= radius * eatRatio;
 
@@ -388,7 +406,8 @@ namespace ChompChompPanic
         void UpdateBlobs()
         {
             Vector2 playerPos = player.transform.position;
-            float despawnDistance = ViewRadius * 3.5f;
+            // Prey left this far behind is recycled into a fresh spawn near the screen, so the crowd stays where the kaiju is.
+            float despawnDistance = ViewRadius * 2.2f;
 
             for (int i = blobs.Count - 1; i >= 0; i--)
             {
@@ -448,15 +467,16 @@ namespace ChompChompPanic
             if (blob.IsRival || type.Bleeds)
                 SplatterBlood(blob.transform.position);
             shake = Mathf.Min(shake + (blob.IsRival ? 0.1f : type.CrunchShake), 0.12f);
-            if (type != null && type.Heal > 0f)
+            float heal = blob.IsRival ? rivals.Heal : type.Heal;
+            if (heal > 0f)
             {
-                health = Mathf.Min(maxHealth, health + type.Heal);
-                Flash(healColor, 0.6f);
+                health = Mathf.Min(maxHealth, health + heal);
+                Flash(healColor, blob.IsRival ? 1f : 0.6f);
             }
 
             // Vehicles (anything that shakes the camera) crunch; people get chomped.
             bool crunchy = blob.IsRival || type.CrunchShake > 0f;
-            PlaySound(crunchy ? crunchSound : chompSound, crunchy ? 1f : 0.7f, SizePitch);
+            PlaySound(crunchy ? crunchSound : KaijuSound(kaiju?.ChompSound, chompSound), crunchy ? 1f : 0.7f, SizePitch);
 
             bool grew = false;
             while (nextTier < tierRadii.Length && CanEat(tierRadii[nextTier]))
@@ -585,9 +605,19 @@ namespace ChompChompPanic
             var range = new Vector2(Mathf.Lerp(rivals.StartSize.x, rivals.EndSize.x, Progress),
                 Mathf.Lerp(rivals.StartSize.y, rivals.EndSize.y, Progress));
             float radius = playerStartRadius * Random.Range(range.x, range.y);
-            rival = CreateEnemy("Rival kaiju", radius, 1f, rivals.Variants, initial: false);
+
+            // Now and then it's one of the other playable kaiju, which roars as it arrives, instead of a recolor.
+            PlayableKaiju guest = null;
+            if (guestRivals.Count > 0 && (!rivals.HasSprites || Random.value < rivals.OtherKaijuChance))
+                guest = guestRivals[Random.Range(0, guestRivals.Count)];
+            var variants = guest != null ? new[] { guest.Sprites } : rivals.Variants;
+            rivalName = guest != null ? guest.Name.ToUpperInvariant() : "RIVAL KAIJU";
+
+            rival = CreateEnemy(guest != null ? guest.Name : "Rival kaiju", radius, 1f, variants, initial: false);
             rival.transform.position = OffScreenPoint(radius, 1.1f);
             rival.InitRival(rivals, player, eatRatio, playerBaseSpeed, playerStartRadius);
+            if (guest != null)
+                PlaySound(guest.RoarSound, 0.7f, Mathf.Clamp(Mathf.Pow(playerStartRadius / radius, 0.15f), 0.75f, 1f));
         }
 
         EnemyBlob CreateEnemy(string objectName, float radius, float visualDiameter, CharacterSprites[] variants, bool initial)
@@ -608,12 +638,12 @@ namespace ChompChompPanic
 
         /// <summary>
         /// At the start, fill the area around the player (leaving some breathing room).
-        /// Afterwards, spawn just off screen.
+        /// Afterwards, spawn just off screen, close enough that the kaiju soon runs into them.
         /// </summary>
         Vector2 SpawnPoint(float radius, bool initial)
         {
             float view = ViewRadius;
-            float distance = initial ? Random.Range(view * 0.4f, view * 2.5f) : Random.Range(view * 1.1f, view * 2.5f);
+            float distance = initial ? Random.Range(view * 0.4f, view * 1.8f) : Random.Range(view * 1.05f, view * 1.6f);
             return (Vector2)player.transform.position + Random.insideUnitCircle.normalized * (distance + radius);
         }
 
@@ -649,10 +679,10 @@ namespace ChompChompPanic
             var go = new GameObject("Player");
             player = go.AddComponent<Blob>();
             player.Radius = playerStartRadius;
-            if (playerSprites != null && playerSprites.IsValid)
+            if (kaiju != null && kaiju.HasSprites)
             {
                 playerAnimator = go.AddComponent<SpriteAnimator>();
-                playerAnimator.Init(playerSprites);
+                playerAnimator.Init(kaiju.Sprites);
             }
             else
             {
@@ -698,8 +728,11 @@ namespace ChompChompPanic
             Time.timeScale = 0f;
             MusicPlayer.SetLevel(musicVolume * musicDuck);
             PlaySound(result == State.Won ? winSound : loseSound);
+            if (result == State.Won && kaijuRoster != null)
+                newlyUnlocked = kaijuRoster.UnlockNext();
             if (result == State.Lost)
             {
+                PlaySound(kaiju?.DeathSound, 0.8f);
                 if (playerAnimator != null)
                     playerAnimator.PlayDeath();
                 else
@@ -809,6 +842,8 @@ namespace ChompChompPanic
             var bannerRect = new Rect(0, Screen.height * 0.35f, Screen.width, Screen.height * 0.15f);
             GUI.Label(bannerRect, title, bannerStyle);
             GUI.Label(new Rect(0, bannerRect.yMax, Screen.width, Screen.height * 0.1f), subtitle, hudStyle);
+            if (newlyUnlocked != null)
+                DrawUnlocks(bannerRect.yMax + Screen.height * 0.1f);
         }
 
         void DrawPauseMenu()
@@ -823,6 +858,15 @@ namespace ChompChompPanic
             hudStyle.alignment = TextAnchor.LowerCenter;
             Menu.DrawShadowed(hint, Menu.Hint, hudStyle, new Color(1f, 1f, 1f, 0.45f));
             hudStyle.alignment = TextAnchor.UpperCenter;
+        }
+
+        /// <summary>Announces the kaiju unlocked by this win, with a pulse so it isn't missed.</summary>
+        void DrawUnlocks(float top)
+        {
+            string text = $"NEW KAIJU UNLOCKED: {newlyUnlocked.Name.ToUpperInvariant()}!\nChoose it from Start Game on the title screen.";
+            float pulse = 0.75f + 0.25f * Mathf.Sin(Time.unscaledTime * 5f);
+            Menu.DrawShadowed(new Rect(0, top, Screen.width, Screen.height * 0.12f), text, hudStyle,
+                Color.Lerp(Color.white, new Color(1f, 0.72f, 0.15f), pulse));
         }
 
         void DrawHealthBar()
@@ -846,7 +890,7 @@ namespace ChompChompPanic
             bool dangerous = rival.Blob.Radius >= player.Radius * eatRatio;
             bool edible = player.Radius >= rival.Blob.Radius * eatRatio;
             var color = dangerous ? new Color(1f, 0.35f, 0.35f) : edible ? new Color(0.45f, 0.95f, 0.5f) : new Color(1f, 0.85f, 0.35f);
-            string label = dangerous ? "RIVAL KAIJU - RUN!" : edible ? "RIVAL KAIJU - EAT IT!" : "RIVAL KAIJU";
+            string label = dangerous ? $"{rivalName} - RUN!" : edible ? $"{rivalName} - EAT IT!" : rivalName;
 
             var old = GUI.contentColor;
             GUI.contentColor = color;

@@ -2,6 +2,23 @@
 
 All notable changes to Chomp Chomp Panic! are listed here, newest first. Versions follow [semantic versioning](https://semver.org/); the current one is shown on the title screen.
 
+## [0.4.0] - 2026-10-03
+
+### Added
+
+- **Three unlockable kaiju**, each with its own look, animations and sounds:
+  - **Mecha-Chomp**, a robot T-rex with a glowing visor and a piston jaw that short-circuits and explodes when it dies.
+  - **Octo-Chomp**, a glowing violet octopus that crawls on its tentacles and bursts into ink.
+  - **Moth-Chomp**, a giant luna moth that hovers on its wings and dies in a cloud of wing dust.
+- Surviving a full session unlocks the next kaiju, one per win. Once you have more than one, **Start Game** opens a kaiju select page that shows each one and remembers your pick.
+- Kaiju you aren't playing can arrive as rivals, locked or not. They roar as they arrive, and the warning shows their name.
+- Eating a rival kaiju restores your health completely.
+- The title screen credits Stone Dragon Media, LLC.
+
+### Changed
+
+- People and cars no longer thin out as the military arrives. The crowd grows a little over the session, and people and vehicles now spawn near the edge of the screen instead of far away, so there's always something to eat.
+
 ## [0.3.0] - 2026-10-02
 
 ### Added

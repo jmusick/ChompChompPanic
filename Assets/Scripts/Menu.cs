@@ -41,6 +41,13 @@ namespace ChompChompPanic
         /// <summary>Heading drawn above the entries; null for none.</summary>
         public string Title { get; private set; }
 
+        /// <summary>The highlighted entry. Set it after <see cref="Show"/> to start somewhere other than the top.</summary>
+        public int Selected
+        {
+            get => selected;
+            set => selected = Mathf.Clamp(value, 0, Mathf.Max(0, items.Count - 1));
+        }
+
         readonly List<Item> items = new();
         Action back;
         int selected;

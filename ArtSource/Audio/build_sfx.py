@@ -16,6 +16,19 @@ which maps sfx_<name>.wav to the <name>Sound field on the GameManager / TitleScr
   sfx_lose.wav         falling jingle when the kaiju is chomped or taken down
   sfx_menu_move.wav    title menu selection blip
   sfx_menu_select.wav  title menu confirm
+  sfx_mecha_stomp.wav  Mecha-Chomp's footstep: a metal clank and a hydraulic hiss
+  sfx_mecha_chomp.wav  Mecha-Chomp's bite: servo whine, steel jaws clamping, a grinder chewing
+  sfx_mecha_roar.wav   Mecha-Chomp's distorted synth roar (when picked, and when it turns up as a rival)
+  sfx_mecha_death.wav  Mecha-Chomp powering down, sputtering and blowing its reactor
+  sfx_octo_stomp.wav   Octo-Chomp's step: a wet tentacle slap
+  sfx_octo_chomp.wav   Octo-Chomp's bite: beak crack, slurp and gulp
+  sfx_octo_roar.wav    Octo-Chomp's bubbling, gurgling bellow
+  sfx_octo_death.wav   Octo-Chomp deflating with a gurgle and bursting into ink
+  sfx_moth_stomp.wav   Moth-Chomp's "step": a heavy wingbeat
+  sfx_moth_chomp.wav   Moth-Chomp's bite: clicking mandibles and a crunch
+  sfx_moth_roar.wav    Moth-Chomp's shrill, trilling cry
+  sfx_moth_death.wav   Moth-Chomp's wings faltering, a falling whistle and a puff of dust
+Sounds named sfx_<kaiju>_<name>.wav belong to that kaiju in the Kaiju Roster asset (its <Name>Sound field).
 Standard library only. Output is deterministic (every sound has its own seed).
 """
 from pathlib import Path
@@ -367,6 +380,206 @@ def menu_select(rng):
     return chiptune([("E5", 0.0, 0.07), ("B5", 0.07, 0.18)], decay=0.06)
 
 
+def metal(seconds, rng, partials, n=None):
+    """A struck steel plate: inharmonic partials of (freq, decay), roughened by noise."""
+    n = n or int(seconds * RATE)
+    out = [0.0] * n
+    for f, d in partials:
+        part = apply(osc(seconds, f * rng.uniform(0.98, 1.02)), env(n, 0.001, d))
+        out = [a + b for a, b in zip(out, part)]
+    grit = lowpass(white(n, rng), 2500)
+    return [m * (0.6 + 0.4 * g) for m, g in zip(out, grit)]
+
+
+def crush(samples, levels):
+    """Bit-crush to a few amplitude levels: the robot's buzzy, digital edge."""
+    return [round(s * levels) / levels for s in samples]
+
+
+def mecha_stomp(rng):
+    seconds = 0.5
+    n = int(seconds * RATE)
+    thud = apply(osc(seconds, sweep(90, 34, 0.2)), env(n, 0.002, 0.08))
+    clank = metal(seconds, rng, ((310, 0.07), (687, 0.05), (1210, 0.035), (1975, 0.025)))
+    # The leg's hydraulics venting after the foot lands.
+    hiss = apply(bandpass(white(n, rng), 2500, 7000), env(n, 0.03, 0.06, hold=0.04))
+    return mix((0, thud, 1.0), (0, clank, 0.45), (0.06, hiss, 0.18))
+
+
+def mecha_chomp(rng):
+    # Servo whine as the jaw opens, a hard steel clamp, then a grinder chewing.
+    whine = osc(0.12, sweep(380, 1100, 0.12), "saw")
+    whine = apply(lowpass(whine, 3000), env(len(whine), 0.01, 0.06, hold=0.05))
+    m = int(0.25 * RATE)
+    clamp = mix((0, apply(highpass(white(m, rng), 2000), env(m, 0.0003, 0.006)), 0.8),
+                (0, metal(0.25, rng, ((520, 0.06), (1340, 0.04), (2250, 0.03), (3400, 0.02))), 0.7),
+                (0, apply(osc(0.25, sweep(150, 60, 0.05)), env(m, 0.001, 0.04)), 0.7))
+    g = int(0.3 * RATE)
+    grind = bandpass(white(g, rng), 300, 2500)
+    grind = [v * (0.5 + 0.5 * math.sin(TAU * 34 * i / RATE)) for i, v in enumerate(grind)]
+    grind = apply(grind, env(g, 0.01, 0.08, hold=0.08))
+    crackle = clicks(0.3, rng, 40, 0.08)
+    return mix((0, whine, 0.35), (0.11, clamp, 1.0), (0.16, grind, 0.45), (0.16, resonant(crackle, 1900, 3), 0.5))
+
+
+def mecha_roar(rng):
+    seconds = 1.4
+    n = int(seconds * RATE)
+
+    def pitch(t):
+        # Rears up, holds, then sags.
+        if t < 0.25:
+            return 70 + 60 * t / 0.25
+        return 130 - 55 * min(1.0, (t - 0.25) / 1.15) ** 1.5
+
+    voices = [0.0] * n
+    for detune in (0.99, 1.0, 1.013, 2.005):
+        v = osc(seconds, lambda t, d=detune: pitch(t) * d * (1 + 0.02 * math.sin(TAU * 9 * t)), "saw")
+        voices = [a + b for a, b in zip(voices, v)]
+    # A formant sweep makes it open its mouth; a metal ring-mod and crusher make it a machine.
+    voices = resonant(voices, sweep(500, 1400, 0.4, 0.6), 1.5)
+    voices = [v * math.sin(TAU * 57 * i / RATE) * 0.6 + v * 0.4 for i, v in enumerate(voices)]
+    voices = crush(normalize(voices, 1.0), 9)
+    voices = apply(voices, env(n, 0.06, 0.35, hold=0.55))
+    growl = apply(lowpass(brown(n, rng), 400), env(n, 0.05, 0.4, hold=0.5))
+    hiss = apply(bandpass(white(n, rng), 3000, 8000), env(n, 0.02, 0.15, hold=0.2))
+    return mix((0, voices, 1.0), (0, growl, 0.5), (0, hiss, 0.12))
+
+
+def mecha_death(rng):
+    seconds = 1.3
+    n = int(seconds * RATE)
+    # Power-down: the core's whine falls away, sputtering as the supply cuts in and out.
+    whine = osc(seconds, sweep(900, 45, seconds, 0.7), "square", 0.3)
+    gate = [1.0 if (math.sin(TAU * (6 + 20 * i / n) * i / RATE) > -0.2 or i < n * 0.25) else 0.15 for i in range(n)]
+    whine = apply(lowpass([w * g for w, g in zip(whine, gate)], 2500), env(n, 0.005, 0.5, hold=0.6))
+    sparks = highpass(grains(seconds, rng, 50, 0.006, (4000, 9000), 0.5), 2500)
+    # Then the reactor goes.
+    b = 1.0
+    m = int(b * RATE)
+    boom = mix((0, apply(osc(b, sweep(80, 28, 0.6)), env(m, 0.003, 0.25)), 0.9),
+               (0, apply(lowpass(white(m, rng), sweep(5000, 300, 0.3)), env(m, 0.001, 0.08)), 0.8),
+               (0, apply(lowpass(brown(m, rng), 900), env(m, 0.005, 0.3)), 0.7),
+               (0.05, metal(b, rng, ((440, 0.2), (1130, 0.12), (1870, 0.08))), 0.25))
+    return mix((0, whine, 0.55), (0, sparks, 0.3), (0.9, boom, 1.0))
+
+
+def bubbles(seconds, rng, count, spread=None):
+    """Little rising sine chirps scattered through `seconds`: underwater blips."""
+    out = [0.0] * int(seconds * RATE)
+    for _ in range(count):
+        start = rng.uniform(0, seconds - 0.06) if spread is None else min(seconds - 0.06, rng.expovariate(1.0 / spread))
+        length = rng.uniform(0.025, 0.05)
+        f0 = rng.uniform(350, 900)
+        blip = apply(osc(length, sweep(f0, f0 * 2.2, length)), env(int(length * RATE), 0.002, length * 0.4))
+        gain = rng.uniform(0.4, 1.0)
+        s = int(start * RATE)
+        for i, v in enumerate(blip):
+            if s + i < len(out):
+                out[s + i] += v * gain
+    return out
+
+
+def octo_stomp(rng):
+    seconds = 0.35
+    n = int(seconds * RATE)
+    # A wet slap: noise rung through a falling "wah", over a soft thud.
+    slap = apply(resonant(white(n, rng), sweep(900, 250, 0.08), 4), env(n, 0.001, 0.035))
+    thud = apply(osc(seconds, sweep(110, 45, 0.15)), env(n, 0.002, 0.06))
+    drip = bubbles(seconds, rng, 2, 0.12)
+    return mix((0, normalize(slap, 1.0), 0.8), (0, thud, 0.7), (0.05, drip, 0.25))
+
+
+def octo_chomp(rng):
+    # The beak cracks shut, a long slurp, then a gulp.
+    crack = resonant(clicks(0.12, rng, 50, 0.02), 2400, 4)
+    s = int(0.25 * RATE)
+    slurp = resonant(white(s, rng), sweep(300, 1400, 0.25), 6)
+    slurp = [v * (0.6 + 0.4 * math.sin(TAU * 22 * i / RATE)) for i, v in enumerate(slurp)]
+    slurp = apply(slurp, env(s, 0.03, 0.08, hold=0.1))
+    g = int(0.15 * RATE)
+    gulp = apply(osc(0.15, sweep(320, 110, 0.12)), env(g, 0.005, 0.05))
+    return mix((0, normalize(crack, 1.0), 0.8), (0.06, normalize(slurp, 1.0), 0.5), (0.3, gulp, 0.8))
+
+
+def octo_roar(rng):
+    seconds = 1.5
+    n = int(seconds * RATE)
+
+    def pitch(t):
+        return 75 + 25 * math.sin(math.pi * min(1.0, t / seconds)) - 15 * t
+
+    voice = osc(seconds, pitch, "saw")
+    # A deep "ooh" vowel, broken up by bubbles as if bellowed underwater.
+    voice = mix((0, resonant(voice, 320, 2.5), 1.0), (0, resonant(voice, 800, 4), 0.4))
+    gate = lowpass([1.0 if rng.random() < 0.6 else 0.25 for _ in range(n // 600 + 1) for _ in range(600)][:n], 60)
+    voice = apply(normalize(voice, 1.0), [g * e for g, e in zip(gate, env(n, 0.08, 0.4, hold=0.6))])
+    gurgle = apply(lowpass(brown(n, rng), 300), env(n, 0.1, 0.4, hold=0.5))
+    return mix((0, voice, 1.0), (0, gurgle, 0.4), (0.1, bubbles(1.4, rng, 30), 0.3))
+
+
+def octo_death(rng):
+    seconds = 1.2
+    n = int(seconds * RATE)
+    # Deflating: a gurgle sinking in pitch, full of bubbles...
+    groan = osc(seconds, sweep(190, 45, seconds, 0.8), "saw")
+    groan = apply(normalize(resonant(groan, sweep(700, 250, seconds), 3), 1.0), env(n, 0.02, 0.4, hold=0.4))
+    # ...then bursting into ink.
+    b = 0.6
+    m = int(b * RATE)
+    splat = mix((0, apply(resonant(white(m, rng), sweep(1200, 200, 0.2), 2), env(m, 0.001, 0.07)), 1.0),
+                (0, apply(osc(b, sweep(90, 35, 0.3)), env(m, 0.002, 0.12)), 0.8))
+    return mix((0, groan, 0.7), (0, bubbles(seconds, rng, 35), 0.35), (1.0, normalize(splat, 1.0), 1.0),
+               (1.1, bubbles(0.5, rng, 8, 0.15), 0.3))
+
+
+def wingbeat(rng, seconds=0.25, depth=1.0):
+    """One heavy flap: a swell of air through a sweeping band, with a low push under it."""
+    n = int(seconds * RATE)
+    air = bandpass(white(n, rng), 150, 1800)
+    air = apply(air, [math.sin(math.pi * i / n) ** 2 for i in range(n)])
+    push = apply(osc(seconds, sweep(70, 50, seconds)), [math.sin(math.pi * i / n) ** 3 for i in range(n)])
+    return mix((0, normalize(air, 1.0), 0.9), (0, push, 0.5 * depth))
+
+
+def moth_stomp(rng):
+    return wingbeat(rng, 0.28)
+
+
+def moth_chomp(rng):
+    # Mandibles clicking shut in quick succession, then a dry crunch.
+    layers = []
+    for k in range(5):
+        c = resonant(clicks(0.03, rng, 6, 0.003), 3200 + 300 * k, 5)
+        layers.append((k * 0.045, normalize(c, 1.0), 1.0 - 0.1 * k))
+    crunch = highpass(grains(0.3, rng, 60, 0.01, (1500, 6000), 0.08), 800)
+    return mix(*layers, (0.2, normalize(crunch, 1.0), 0.6))
+
+
+def moth_roar(rng):
+    # Three shrill, trilling cries, each a little higher, over a beating of wings.
+    layers = []
+    for k, (start, base) in enumerate(((0.0, 820), (0.32, 960), (0.64, 1120))):
+        length = 0.28 if k < 2 else 0.6
+        n = int(length * RATE)
+        cry = osc(length, lambda t, b=base: b * (1 + 0.25 * min(1.0, t / 0.08)) * (1 + 0.04 * math.sin(TAU * 28 * t)), "saw")
+        cry = lowpass(cry, 3500)
+        layers.append((start, apply(cry, env(n, 0.01, length * 0.4, hold=length * 0.4)), 0.8))
+    flaps = mix(*((t, wingbeat(rng, 0.22, 0.5), 0.35) for t in (0.0, 0.3, 0.6, 0.9)))
+    return mix(*layers, (0, flaps, 1.0))
+
+
+def moth_death(rng):
+    # Wingbeats faltering and slowing, a falling whistle, then a soft puff of scales.
+    flaps = mix(*((t, wingbeat(rng, 0.2 + 0.05 * k, 0.4), 0.9 - 0.15 * k) for k, t in enumerate((0.0, 0.2, 0.45, 0.8))))
+    whistle = osc(1.0, sweep(1300, 280, 1.0, 0.7), "triangle")
+    whistle = apply(whistle, env(len(whistle), 0.05, 0.4, hold=0.4))
+    p = int(0.7 * RATE)
+    poof = apply(lowpass(white(p, rng), sweep(3000, 400, 0.4)), env(p, 0.01, 0.15))
+    dust = highpass(grains(0.7, rng, 40, 0.005, (5000, 9000), 0.25), 4000)
+    return mix((0, flaps, 1.0), (0.1, whistle, 0.3), (1.05, poof, 0.8), (1.05, dust, 0.25))
+
+
 # Each sound's seed is its position in this list, so add new sounds at the end to keep the others unchanged.
 # Variants of one sound are named sfx_<name>_<n> and fill the <name>Sounds array.
 SOUNDS = {
@@ -386,12 +599,30 @@ SOUNDS = {
     "sfx_smash_2": smash_glass,
     "sfx_smash_3": smash_heavy,
     "sfx_smash_4": smash_short,
+    "sfx_mecha_stomp": mecha_stomp,
+    "sfx_mecha_chomp": mecha_chomp,
+    "sfx_mecha_roar": mecha_roar,
+    "sfx_mecha_death": mecha_death,
+    "sfx_octo_stomp": octo_stomp,
+    "sfx_octo_chomp": octo_chomp,
+    "sfx_octo_roar": octo_roar,
+    "sfx_octo_death": octo_death,
+    "sfx_moth_stomp": moth_stomp,
+    "sfx_moth_chomp": moth_chomp,
+    "sfx_moth_roar": moth_roar,
+    "sfx_moth_death": moth_death,
+}
+
+
+# Peak level for sounds that would otherwise be much louder than their neighbours (default about -1 dBFS).
+PEAKS = {
+    "sfx_moth_roar": 0.6,
 }
 
 
 def main():
     for seed, (name, build) in enumerate(SOUNDS.items()):
-        write(name, finish(build(random.Random(1000 + seed))))
+        write(name, finish(build(random.Random(1000 + seed)), peak=PEAKS.get(name, 0.89)))
 
 
 if __name__ == "__main__":
